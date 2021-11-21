@@ -7,7 +7,7 @@ using WatchMonitorPlugin.Lib;
 
 namespace WatchMonitorPlugin
 {
-    internal class Process05
+    internal class ProcessDir01
     {
         public string _Serial { get; set; }
         public string[] _Path { get; set; }
@@ -23,15 +23,18 @@ namespace WatchMonitorPlugin
         public bool? _IsSHA256Hash { get; set; }
         public bool? _IsSHA512Hash { get; set; }
         public bool? _IsSize { get; set; }
-        //public bool? _IsChildCount { get; set; }
+        public bool? _IsChildCount { get; set; }
         //public bool? _IsRegistryType { get; set; }
 
         public bool? _IsDateOnly { get; set; }
         public bool? _IsTimeOnly { get; set; }
 
+        public int? _MaxDepth { get; set; }
+
         public bool _IsStart { get; set; }
 
         private int _serial;
+        private string _checkingPath;
 
         protected bool Success { get; set; }
 
@@ -42,17 +45,18 @@ namespace WatchMonitorPlugin
 
             var dictionary = new Dictionary<string, string>();
 
+            this._MaxDepth ??= 5;
+
             foreach (string path in _Path)
             {
                 _serial++;
+                _checkingPath = path;
 
-                WatchPath watch = collection.GetWatchPath(path);
-                Success |= WatchFileCheck(ref watch, dictionary, path);
-                
-                collection[path] = watch;
+
             }
 
             collection.Save(dbDir, _Serial);
+
 
 
             //  確認
@@ -74,69 +78,69 @@ namespace WatchMonitorPlugin
             }
         }
 
-
-        public bool WatchFileCheck(ref WatchPath watch, Dictionary<string, string> dictionary, string path)
+        private bool RecursiveTree(ref WatchPath watch, Dictionary<string, string> dictionary, string path)
         {
             bool ret = false;
-            var info = new FileInfo(path);
+            var info = new DirectoryInfo(path);
 
-            dictionary[$"file_{_serial}"] = path;
+            dictionary[$"directory_{_serial}"] = path.Replace(_checkingPath, "\\");
             if (watch == null || this._IsStart)
             {
                 ret = true;
-                watch = new WatchPath(PathType.File);
+                watch = new WatchPath(PathType.Directory);
 
-                if (File.Exists(path))
+                if (Directory.Exists(path))
                 {
                     watch.Exists = true;
                     if (_IsCreationTime ?? false)
                     {
-                        watch.CreationTime = MonitorTimeStamp.GetFileCreationTime(info, _IsDateOnly ?? false, _IsTimeOnly ?? false);
+                        watch.CreationTime = MonitorTimeStamp.GetDirectoryCreationTime(info, _IsDateOnly ?? false, _IsTimeOnly ?? false);
                         watch.IsDateOnly = _IsDateOnly;
                         watch.IsTimeOnly = _IsTimeOnly;
                     }
                     if (_IsLastWriteTime ?? false)
                     {
-                        watch.LastWriteTime = MonitorTimeStamp.GetFileLastWriteTime(info, _IsDateOnly ?? false, _IsTimeOnly ?? false);
+                        watch.LastWriteTime = MonitorTimeStamp.GetDirectoryLastWriteTime(info, _IsDateOnly ?? false, _IsTimeOnly ?? false);
                         watch.IsDateOnly = _IsDateOnly;
                         watch.IsTimeOnly = _IsTimeOnly;
                     }
                     if (_IsLastAccessTime ?? false)
                     {
-                        watch.LastAccessTime = MonitorTimeStamp.GetFileLastAccessTime(info, _IsDateOnly ?? false, _IsTimeOnly ?? false);
+                        watch.LastAccessTime = MonitorTimeStamp.GetDirectoryLastAccessTime(info, _IsDateOnly ?? false, _IsTimeOnly ?? false);
                         watch.IsDateOnly = _IsDateOnly;
                         watch.IsTimeOnly = _IsTimeOnly;
                     }
-                    if (_IsAccess ?? false) { watch.Access = AccessRuleSummary.FileToAccessString(info); }
-                    if (_IsOwner ?? false) { watch.Owner = MonitorSecurity.GetFileOwner(info); }
-                    if (_IsInherited ?? false) { watch.Inherited = MonitorSecurity.GetFileInherited(info); }
+                    if (_IsAccess ?? false) { watch.Access = AccessRuleSummary.DirectoryToAccessString(info); }
+                    if (_IsOwner ?? false) { watch.Owner = MonitorSecurity.GetDirectoryOwner(info); }
+                    if (_IsInherited ?? false) { watch.Inherited = MonitorSecurity.GetDirectoryInherited(info); }
                     if (_IsAttributes ?? false) { watch.Attributes = MonitorAttributes.GetAttributes(path); }
-                    if (_IsMD5Hash ?? false) { watch.MD5Hash = MonitorHash.GetMD5Hash(path); }
-                    if (_IsSHA256Hash ?? false) { watch.SHA256Hash = MonitorHash.GetSHA256Hash(path); }
-                    if (_IsSHA512Hash ?? false) { watch.SHA512Hash = MonitorHash.GetSHA512Hash(path); }
-                    if (_IsSize ?? false) { watch.Size = info.Length; }
+
+
+
+
+
                 }
-            }
-            else
-            {
-                ret |= MonitorExists.WatchFile(watch, dictionary, _serial, path);
-                if (File.Exists(path))
+                else
                 {
-                    ret |= MonitorTimeStamp.WatchFileCreation(watch, dictionary, _serial, _IsCreationTime, info, _IsDateOnly, _IsTimeOnly);
-                    ret |= MonitorTimeStamp.WatchFileLastWrite(watch, dictionary, _serial, _IsLastWriteTime, info, _IsDateOnly, _IsTimeOnly);
-                    ret |= MonitorTimeStamp.WatchFileLastAccess(watch, dictionary, _serial, _IsLastAccessTime, info, _IsDateOnly, _IsTimeOnly);
-                    ret |= MonitorSecurity.WatchFileAccess(watch, dictionary, _serial, _IsAccess, info);
-                    ret |= MonitorSecurity.WatchFileOwner(watch, dictionary, _serial, _IsOwner, info);
-                    ret |= MonitorSecurity.WatchFileInherited(watch, dictionary, _serial, _IsInherited, info);
-                    ret |= MonitorAttributes.WatchFile(watch, dictionary, _serial, _IsAttributes, path);
-                    ret |= MonitorHash.WatchFileMD5Hash(watch, dictionary, _serial, _IsMD5Hash, path);
-                    ret |= MonitorHash.WatchFileSHA256Hash(watch, dictionary, _serial, _IsSHA256Hash, path);
-                    ret |= MonitorHash.WatchFileSHA512Hash(watch, dictionary, _serial, _IsSHA512Hash, path);
-                    ret |= MonitorSize.WatchFile(watch, dictionary, _serial, _IsSize, info);
+
                 }
             }
 
+
+
+
             return ret;
+        }
+
+        private bool WatchFileCheck()
+        {
+            
+            return false;
+        }
+
+        private bool WatchDirectoryCheck()
+        {
+            return false;
         }
     }
 }

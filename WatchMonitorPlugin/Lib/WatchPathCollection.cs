@@ -15,11 +15,6 @@ namespace WatchMonitorPlugin.Lib
         public WatchPath GetWatchPath(string path)
         {
             string matchKey = this.Keys.FirstOrDefault(x => x.Equals(path, StringComparison.OrdinalIgnoreCase));
-            /*
-            return matchKey == null ?
-                new WatchPath(pathType) :
-                this[matchKey];
-            */
             return matchKey == null ? null : this[matchKey];
         }
 
@@ -28,28 +23,31 @@ namespace WatchMonitorPlugin.Lib
             this[path] = watchData;
         }
 
-        public static WatchPathCollection Load(string path)
+        public static WatchPathCollection Load(string dbDir, string serial)
         {
             try
             {
-                using (var sr = new StreamReader(path, Encoding.UTF8))
+                using (var sr = new StreamReader(Path.Combine(dbDir, serial), Encoding.UTF8))
                 {
                     return JsonSerializer.Deserialize<WatchPathCollection>(sr.ReadToEnd());
                 }
             }
             catch { }
-
             return new WatchPathCollection();
         }
 
-        public void Save(string path)
+        public void Save(string dbDir, string serial)
         {
-            using (var sw = new StreamWriter(path, false, Encoding.UTF8))
+            if (!Directory.Exists(dbDir))
+            {
+                Directory.CreateDirectory(dbDir);
+            }
+            using (var sw = new StreamWriter(Path.Combine(dbDir, serial), false, Encoding.UTF8))
             {
                 string json = JsonSerializer.Serialize(this, new JsonSerializerOptions()
                 {
                     WriteIndented = true,
-                    DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull,
+                    DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull
                 });
                 sw.WriteLine(json);
             }

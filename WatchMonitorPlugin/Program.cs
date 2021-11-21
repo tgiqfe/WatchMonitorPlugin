@@ -6,6 +6,32 @@ using System.Text;
 
 
 string path = @"C:\Users\User\Downloads\aaaa\aaaa.txt";
+
+Process05 proc1 = new Process05()
+{
+    _Serial = "aaaa",
+    _Path = new string[] {path},
+    _IsLastWriteTime = true,
+    _IsSize = true,
+    _IsStart = true,
+};
+proc1.MainProcess();
+
+Console.ReadLine();
+
+Process05 proc2 = new Process05()
+{
+    _Serial = "aaaa",
+    _Path = new string[] { path },
+};
+proc2.MainProcess();
+
+
+Console.ReadLine();
+
+
+
+/*
 string confFile = @"C:\Users\User\Downloads\aaaa\test.json";
 
 var collection = WatchPathCollection.Load(confFile);
@@ -21,13 +47,13 @@ var proc01 = new Process05()
     _IsAccess = true,
     _IsStart = true,
 };
-bool ret = proc01.Monitor(ref watch, path);
+bool ret = proc01.WatchFileCheck(ref watch, path);
 Console.WriteLine(ret);
 
 Console.ReadLine();
 
 var proc02 = new Process05();
-ret = proc02.Monitor(ref watch, path);
+ret = proc02.WatchFileCheck(ref watch, path);
 Console.WriteLine(ret);
 
 collection.SetWatchPath(path, watch);
@@ -35,6 +61,4 @@ collection.SetWatchPath(path, watch);
 //  複数ファイルの場合のforeach終了部
 
 collection.Save(confFile);
-
-Console.ReadLine();
-
+*/
