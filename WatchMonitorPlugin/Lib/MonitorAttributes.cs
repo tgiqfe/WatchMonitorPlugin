@@ -11,8 +11,8 @@ namespace WatchMonitorPlugin.Lib
     {
         #region Check method
 
-        public static bool Watch
-            (WatchPath watch, Dictionary<string, string> dictionary, int serial, bool? isAttributes, string path)
+        public static bool Watch(
+            WatchPath watch, Dictionary<string, string> dictionary, int serial, bool? isAttributes, string path)
         {
             bool ret = false;
             string pathType = "file";
@@ -21,7 +21,7 @@ namespace WatchMonitorPlugin.Lib
             if ((isAttributes ?? false) || watch.Attributes != null)
             {
                 bool[] ret_bools = GetAttributes(path);
-                ret = ret_bools.SequenceEqual(watch.Attributes);
+                ret = !ret_bools.SequenceEqual(watch.Attributes);
                 watch.Attributes = ret_bools;
                 dictionary[$"{pathType}_{checkTarget}_{serial}"] = string.Format(
                     "[{0}]Readonly [{1}]Hidden [{2}]System",
