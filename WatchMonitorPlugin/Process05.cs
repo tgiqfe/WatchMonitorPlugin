@@ -31,60 +31,65 @@ namespace WatchMonitorPlugin
             bool ret = false;
             var dictionary = new Dictionary<string, string>();
 
+            _serial++;
             var info = new FileInfo(path);
 
-
-            _serial++;
             dictionary[$"file_{_serial}"] = path;
             if (watch == null)
             {
                 ret = true;
                 watch = new WatchPath(PathType.File);
 
-                if (_IsCreationTime ?? false)
+                ret |= MonitorExists.Watch(watch, dictionary, _serial, path);
+                if (File.Exists(path))
                 {
-                    watch.CreationTime = MonitorTimeStamp.GetCreationTime(info, _IsDateOnly ?? false, _IsTimeOnly ?? false);
-                    watch.IsDateOnly = _IsDateOnly;
-                    watch.IsTimeOnly = _IsTimeOnly;
+                    if (_IsCreationTime ?? false)
+                    {
+                        watch.CreationTime = MonitorTimeStamp.GetCreationTime(info, _IsDateOnly ?? false, _IsTimeOnly ?? false);
+                        watch.IsDateOnly = _IsDateOnly;
+                        watch.IsTimeOnly = _IsTimeOnly;
+                    }
+                    if (_IsLastWriteTime ?? false)
+                    {
+                        watch.LastWriteTime = MonitorTimeStamp.GetLastWriteTime(info, _IsDateOnly ?? false, _IsTimeOnly ?? false);
+                        watch.IsDateOnly = _IsDateOnly;
+                        watch.IsTimeOnly = _IsTimeOnly;
+                    }
+                    if (_IsLastAccessTime ?? false)
+                    {
+                        watch.LastAccessTime = MonitorTimeStamp.GetLastAccessTime(info, _IsDateOnly ?? false, _IsTimeOnly ?? false);
+                        watch.IsDateOnly = _IsDateOnly;
+                        watch.IsTimeOnly = _IsTimeOnly;
+                    }
+                    if (_IsAccess ?? false) { watch.Access = AccessRuleSummary.FileToAccessString(info); }
+                    if (_IsOwner ?? false) { watch.Owner = MonitorSecurity.GetOwner(info); }
+                    if (_IsInherited ?? false) { watch.Inherited = MonitorSecurity.GetInherited(info); }
+                    if (_IsAttributes ?? false) { watch.Attributes = MonitorAttributes.GetAttributes(path); }
+                    if (_IsMD5Hash ?? false) { watch.MD5Hash = MonitorHash.GetMD5Hash(path); }
+                    if (_IsSHA256Hash ?? false) { watch.SHA256Hash = MonitorHash.GetSHA256Hash(path); }
+                    if (_IsSHA512Hash ?? false) { watch.SHA512Hash = MonitorHash.GetSHA512Hash(path); }
+                    if (_IsSize ?? false) { watch.Size = info.Length; }
                 }
-                if (_IsLastWriteTime ?? false)
-                {
-                    watch.LastWriteTime = MonitorTimeStamp.GetLastWriteTime(info, _IsDateOnly ?? false, _IsTimeOnly ?? false);
-                    watch.IsDateOnly = _IsDateOnly;
-                    watch.IsTimeOnly = _IsTimeOnly;
-                }
-                if (_IsLastAccessTime ?? false)
-                {
-                    watch.LastAccessTime = MonitorTimeStamp.GetLastAccessTime(info, _IsDateOnly ?? false, _IsTimeOnly ?? false);
-                    watch.IsDateOnly = _IsDateOnly;
-                    watch.IsTimeOnly = _IsTimeOnly;
-                }
-                if (_IsAccess ?? false) { watch.Access = AccessRuleSummary.FileToAccessString(info); }
-                if (_IsOwner ?? false) { watch.Owner = MonitorSecurity.GetOwner(info); }
-                if (_IsInherited ?? false) { watch.Inherited = MonitorSecurity.GetInherited(info); }
-                if (_IsAttributes ?? false) { watch.Attributes = MonitorAttributes.GetAttributes(path); }
-                if (_IsMD5Hash ?? false) { watch.MD5Hash = MonitorHash.GetMD5Hash(path); }
-                if (_IsSHA256Hash ?? false) { watch.SHA256Hash = MonitorHash.GetSHA256Hash(path); }
-                if (_IsSHA512Hash ?? false) { watch.SHA512Hash = MonitorHash.GetSHA512Hash(path); }
-                if (_IsSize ?? false) { watch.Size = info.Length; }
-
             }
             else
             {
-                ret |= MonitorTimeStamp.WatchCreation(watch, dictionary, _serial, _IsCreationTime, info, _IsDateOnly, _IsTimeOnly);
-                ret |= MonitorTimeStamp.WatchLastWrite(watch, dictionary, _serial, _IsLastWriteTime, info, _IsDateOnly, _IsTimeOnly);
-                ret |= MonitorTimeStamp.WatchLastAccess(watch, dictionary, _serial, _IsLastAccessTime, info, _IsDateOnly, _IsTimeOnly);
-                ret |= MonitorSecurity.WatchAccess(watch, dictionary, _serial, _IsAccess, info);
-                ret |= MonitorSecurity.WatchOwner(watch, dictionary, _serial, _IsOwner, info);
-                ret |= MonitorSecurity.WatchInherited(watch, dictionary, _serial, _IsInherited, info);
-                ret |= MonitorAttributes.Watch(watch, dictionary, _serial, _IsAttributes, path);
-                ret |= MonitorHash.WatchMD5Hash(watch, dictionary, _serial, _IsMD5Hash, path);
-                ret |= MonitorHash.WatchSHA256Hash(watch, dictionary, _serial, _IsSHA256Hash, path);
-                ret |= MonitorHash.WatchSHA512Hash(watch, dictionary, _serial, _IsSHA512Hash, path);
-                ret |= MonitorSize.Watch(watch, dictionary, _serial, _IsSize, info);
-
-
+                ret |= MonitorExists.Watch(watch, dictionary, _serial, path);
+                if (File.Exists(path))
+                {
+                    ret |= MonitorTimeStamp.WatchCreation(watch, dictionary, _serial, _IsCreationTime, info, _IsDateOnly, _IsTimeOnly);
+                    ret |= MonitorTimeStamp.WatchLastWrite(watch, dictionary, _serial, _IsLastWriteTime, info, _IsDateOnly, _IsTimeOnly);
+                    ret |= MonitorTimeStamp.WatchLastAccess(watch, dictionary, _serial, _IsLastAccessTime, info, _IsDateOnly, _IsTimeOnly);
+                    ret |= MonitorSecurity.WatchAccess(watch, dictionary, _serial, _IsAccess, info);
+                    ret |= MonitorSecurity.WatchOwner(watch, dictionary, _serial, _IsOwner, info);
+                    ret |= MonitorSecurity.WatchInherited(watch, dictionary, _serial, _IsInherited, info);
+                    ret |= MonitorAttributes.Watch(watch, dictionary, _serial, _IsAttributes, path);
+                    ret |= MonitorHash.WatchMD5Hash(watch, dictionary, _serial, _IsMD5Hash, path);
+                    ret |= MonitorHash.WatchSHA256Hash(watch, dictionary, _serial, _IsSHA256Hash, path);
+                    ret |= MonitorHash.WatchSHA512Hash(watch, dictionary, _serial, _IsSHA512Hash, path);
+                    ret |= MonitorSize.Watch(watch, dictionary, _serial, _IsSize, info);
+                }
             }
+
 
             foreach (KeyValuePair<string, string> pair in dictionary)
             {
