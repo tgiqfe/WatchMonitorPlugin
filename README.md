@@ -1,0 +1,3 @@
+# WatchMonitorPlugin
+
+WinBMのプラグイン用

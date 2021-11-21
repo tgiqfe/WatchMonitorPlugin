@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.0.31903.59
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WatchMonitorPlugin", "WatchMonitorPlugin\WatchMonitorPlugin.csproj", "{5BA1D4B1-84C8-42CF-A27A-A6F331B512DF}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{5BA1D4B1-84C8-42CF-A27A-A6F331B512DF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5BA1D4B1-84C8-42CF-A27A-A6F331B512DF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5BA1D4B1-84C8-42CF-A27A-A6F331B512DF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5BA1D4B1-84C8-42CF-A27A-A6F331B512DF}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {5F71EECF-225C-4DF0-904A-06EA4CBBA8F4}
+	EndGlobalSection
+EndGlobal
