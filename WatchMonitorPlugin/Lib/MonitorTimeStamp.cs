@@ -24,10 +24,12 @@ namespace WatchMonitorPlugin.Lib
                     isDateOnly ?? watch.IsDateOnly ?? false,
                     isTimeOnly ?? watch.IsTimeOnly ?? false);
                 ret = ret_string != watch.CreationTime;
+                dictionary[$"{pathType}_{checkTarget}_{serial}"] = ret ?
+                    $"{watch.CreationTime} -> {ret_string}" :
+                    ret_string;
                 watch.CreationTime = ret_string;
                 watch.IsDateOnly ??= isDateOnly;
                 watch.IsTimeOnly ??= isTimeOnly;
-                dictionary[$"{pathType}_{checkTarget}_{serial}"] = ret_string;
             }
             return ret;
         }
@@ -45,10 +47,12 @@ namespace WatchMonitorPlugin.Lib
                     isDateOnly ?? watch.IsDateOnly ?? false,
                     isTimeOnly ?? watch.IsTimeOnly ?? false);
                 ret = ret_string != watch.LastWriteTime;
+                dictionary[$"{pathType}_{checkTarget}_{serial}"] = ret ?
+                    $"{watch.LastWriteTime} -> {ret_string}" :
+                    ret_string;
                 watch.LastWriteTime = ret_string;
                 watch.IsDateOnly ??= isDateOnly;
                 watch.IsTimeOnly ??= isTimeOnly;
-                dictionary[$"{pathType}_{checkTarget}_{serial}"] = ret_string;
             }
             return ret;
         }
@@ -66,10 +70,12 @@ namespace WatchMonitorPlugin.Lib
                     isDateOnly ?? watch.IsDateOnly ?? false,
                     isTimeOnly ?? watch.IsTimeOnly ?? false);
                 ret = ret_string != watch.LastAccessTime;
+                dictionary[$"{pathType}_{checkTarget}_{serial}"] = ret ?
+                    $"{watch.LastAccessTime} -> {ret_string}" :
+                    ret_string;
                 watch.LastAccessTime = ret_string;
                 watch.IsDateOnly ??= isDateOnly;
                 watch.IsTimeOnly ??= isTimeOnly;
-                dictionary[$"{pathType}_{checkTarget}_{serial}"] = ret_string;
             }
             return ret;
         }

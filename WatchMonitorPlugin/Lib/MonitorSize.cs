@@ -22,8 +22,11 @@ namespace WatchMonitorPlugin.Lib
             {
                 long ret_long = info.Length;
                 ret = ret_long != watch.Size;
+                dictionary[$"{pathType}_{checkTarget}_{serial}"] = ret ?
+                    $"{watch.Size} -> {ret_long}" :
+                    ret_long.ToString();
+
                 watch.Size = ret_long;
-                dictionary[$"{pathType}_{checkTarget}_{serial}"] = ret_long.ToString();
             }
             return ret;
         }

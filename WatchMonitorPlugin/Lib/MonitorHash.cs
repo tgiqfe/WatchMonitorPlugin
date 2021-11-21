@@ -23,8 +23,11 @@ namespace WatchMonitorPlugin.Lib
             {
                 string ret_string = GetMD5Hash(path);
                 ret = ret_string != watch.MD5Hash;
+                dictionary[$"{pathType}_{checkTarget}_{serial}"] = ret ?
+                    $"{watch.MD5Hash} -> {ret_string}" :
+                    ret_string;
+
                 watch.MD5Hash = ret_string;
-                dictionary[$"{pathType}_{checkTarget}_{serial}"] = ret_string;
             }
             return ret;
         }
@@ -40,8 +43,11 @@ namespace WatchMonitorPlugin.Lib
             {
                 string ret_string = GetSHA256Hash(path);
                 ret = ret_string != watch.SHA256Hash;
+                dictionary[$"{pathType}_{checkTarget}_{serial}"] = ret ?
+                    $"{watch.SHA256Hash} -> {ret_string}" :
+                    ret_string;
+
                 watch.SHA256Hash = ret_string;
-                dictionary[$"{pathType}_{checkTarget}_{serial}"] = ret_string;
             }
             return ret;
         }
@@ -57,8 +63,11 @@ namespace WatchMonitorPlugin.Lib
             {
                 string ret_string = GetSHA512Hash(path);
                 ret = ret_string != watch.SHA512Hash;
+                dictionary[$"{pathType}_{checkTarget}_{serial}"] = ret ?
+                    $"{watch.SHA512Hash} -> {ret_string}" :
+                    ret_string;
+
                 watch.SHA512Hash = ret_string;
-                dictionary[$"{pathType}_{checkTarget}_{serial}"] = ret_string;
             }
             return ret;
         }

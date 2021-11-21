@@ -24,8 +24,11 @@ namespace WatchMonitorPlugin.Lib
             {
                 string ret_string = AccessRuleSummary.FileToAccessString(info);
                 ret = ret_string != watch.Access;
+                dictionary[$"{pathType}_{checkTarget}_{serial}"] = ret ?
+                    $"{watch.Access} -> {ret_string}" :
+                    ret_string;
+
                 watch.Access = ret_string;
-                dictionary[$"{pathType}_{checkTarget}_{serial}"] = ret_string;
             }
             return ret;
         }
@@ -41,8 +44,11 @@ namespace WatchMonitorPlugin.Lib
             {
                 string ret_string = GetOwner(info);
                 ret = ret_string != watch.Owner;
+                dictionary[$"{pathType}_{checkTarget}_{serial}"] = ret ?
+                    $"{watch.Owner} -> {ret_string}" :
+                    ret_string;
+
                 watch.Owner = ret_string;
-                dictionary[$"{pathType}_{checkTarget}_{serial}"] = ret_string;
             }
             return ret;
         }
@@ -58,8 +64,11 @@ namespace WatchMonitorPlugin.Lib
             {
                 bool ret_bool = GetInherited(info);
                 ret = ret_bool != watch.Inherited;
+                dictionary[$"{pathType}_{checkTarget}_{serial}"] = ret ?
+                    $"{watch.Inherited} -> {ret_bool}" :
+                    ret_bool.ToString();
+
                 watch.Inherited = ret_bool;
-                dictionary[$"{pathType}_{checkTarget}_{serial}"] = ret_bool.ToString();
             }
             return ret;
         }

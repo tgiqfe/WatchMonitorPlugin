@@ -25,8 +25,10 @@ namespace WatchMonitorPlugin.Lib
             {
                 watch = new WatchPath(PathType.File);
             }
+            dictionary[$"{pathType}_{checkTarget}_{serial}"] = ret ?
+                $"{watch.Exists} -> {ret_bool}" :
+                ret_bool.ToString();
             watch.Exists = ret_bool;
-            dictionary[$"{pathType}_{checkTarget}_{serial}"] = ret_bool.ToString();
 
             return ret;
         }
