@@ -19,6 +19,7 @@ namespace WatchMonitorPlugin
         public bool? _IsMD5Hash { get; set; }
         public bool? _IsSHA256Hash { get; set; }
         public bool? _IsSHA512Hash { get; set; }
+        public bool? _IsSize { get; set; }
 
         public bool? _IsDateOnly { get; set; }
         public bool? _IsTimeOnly { get; set; }
@@ -62,10 +63,10 @@ namespace WatchMonitorPlugin
                 if (_IsOwner ?? false) { watch.Owner = MonitorSecurity.GetOwner(info); }
                 if (_IsInherited ?? false) { watch.Inherited = MonitorSecurity.GetInherited(info); }
                 if (_IsAttributes ?? false) { watch.Attributes = MonitorAttributes.GetAttributes(path); }
-                if(_IsMD5Hash ?? false) { watch.MD5Hash = MonitorHash.GetMD5Hash(path); }
+                if (_IsMD5Hash ?? false) { watch.MD5Hash = MonitorHash.GetMD5Hash(path); }
                 if (_IsSHA256Hash ?? false) { watch.SHA256Hash = MonitorHash.GetSHA256Hash(path); }
                 if (_IsSHA512Hash ?? false) { watch.SHA512Hash = MonitorHash.GetSHA512Hash(path); }
-
+                if (_IsSize ?? false) { watch.Size = info.Length; }
 
             }
             else
@@ -80,6 +81,7 @@ namespace WatchMonitorPlugin
                 ret |= MonitorHash.WatchMD5Hash(watch, dictionary, _serial, _IsMD5Hash, path);
                 ret |= MonitorHash.WatchSHA256Hash(watch, dictionary, _serial, _IsSHA256Hash, path);
                 ret |= MonitorHash.WatchSHA512Hash(watch, dictionary, _serial, _IsSHA512Hash, path);
+                ret |= MonitorSize.Watch(watch, dictionary, _serial, _IsSize, info);
 
 
             }

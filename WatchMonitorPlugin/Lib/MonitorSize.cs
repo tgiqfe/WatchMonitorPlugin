@@ -31,7 +31,6 @@ namespace WatchMonitorPlugin.Lib
         #endregion
         #region Get method
 
-
         public static string ToReadable(long size)
         {
             if (size < 1024 * 0.9)
