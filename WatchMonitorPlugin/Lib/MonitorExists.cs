@@ -33,6 +33,27 @@ namespace WatchMonitorPlugin.Lib
             return ret;
         }
 
+        public static bool WatchDirectory(
+            WatchPath watch, Dictionary<string, string> dictionary, int serial, string path)
+        {
+            bool ret = false;
+            string pathType = "directory";
+            string checkTarget = "Exists";
+
+            bool ret_bool = Directory.Exists(path);
+            ret = ret_bool != watch.Exists;
+            if (!ret_bool && watch.Exists)
+            {
+                watch = new WatchPath(PathType.File);
+            }
+            dictionary[$"{pathType}_{checkTarget}_{serial}"] = ret ?
+                $"{watch.Exists} -> {ret_bool}" :
+                ret_bool.ToString();
+            watch.Exists = ret_bool;
+
+            return ret;
+        }   
+
         #endregion
         #region Get method
 

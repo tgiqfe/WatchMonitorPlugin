@@ -20,6 +20,8 @@ namespace WatchMonitorPlugin
         public bool? _IsSHA256Hash { get; set; }
         public bool? _IsSHA512Hash { get; set; }
         public bool? _IsSize { get; set; }
+        public bool? _IsChildCount { get; set; }
+        public bool? _IsRegistryType { get; set; }
 
         public bool? _IsDateOnly { get; set; }
         public bool? _IsTimeOnly { get; set; }
@@ -47,25 +49,25 @@ namespace WatchMonitorPlugin
                     watch.Exists = true;
                     if (_IsCreationTime ?? false)
                     {
-                        watch.CreationTime = MonitorTimeStamp.GetCreationTime(info, _IsDateOnly ?? false, _IsTimeOnly ?? false);
+                        watch.CreationTime = MonitorTimeStamp.GetFileCreationTime(info, _IsDateOnly ?? false, _IsTimeOnly ?? false);
                         watch.IsDateOnly = _IsDateOnly;
                         watch.IsTimeOnly = _IsTimeOnly;
                     }
                     if (_IsLastWriteTime ?? false)
                     {
-                        watch.LastWriteTime = MonitorTimeStamp.GetLastWriteTime(info, _IsDateOnly ?? false, _IsTimeOnly ?? false);
+                        watch.LastWriteTime = MonitorTimeStamp.GetFileLastWriteTime(info, _IsDateOnly ?? false, _IsTimeOnly ?? false);
                         watch.IsDateOnly = _IsDateOnly;
                         watch.IsTimeOnly = _IsTimeOnly;
                     }
                     if (_IsLastAccessTime ?? false)
                     {
-                        watch.LastAccessTime = MonitorTimeStamp.GetLastAccessTime(info, _IsDateOnly ?? false, _IsTimeOnly ?? false);
+                        watch.LastAccessTime = MonitorTimeStamp.GetFileLastAccessTime(info, _IsDateOnly ?? false, _IsTimeOnly ?? false);
                         watch.IsDateOnly = _IsDateOnly;
                         watch.IsTimeOnly = _IsTimeOnly;
                     }
                     if (_IsAccess ?? false) { watch.Access = AccessRuleSummary.FileToAccessString(info); }
-                    if (_IsOwner ?? false) { watch.Owner = MonitorSecurity.GetOwner(info); }
-                    if (_IsInherited ?? false) { watch.Inherited = MonitorSecurity.GetInherited(info); }
+                    if (_IsOwner ?? false) { watch.Owner = MonitorSecurity.GetFileOwner(info); }
+                    if (_IsInherited ?? false) { watch.Inherited = MonitorSecurity.GetFileInherited(info); }
                     if (_IsAttributes ?? false) { watch.Attributes = MonitorAttributes.GetAttributes(path); }
                     if (_IsMD5Hash ?? false) { watch.MD5Hash = MonitorHash.GetMD5Hash(path); }
                     if (_IsSHA256Hash ?? false) { watch.SHA256Hash = MonitorHash.GetSHA256Hash(path); }

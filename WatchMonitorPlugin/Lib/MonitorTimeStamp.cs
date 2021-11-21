@@ -20,7 +20,30 @@ namespace WatchMonitorPlugin.Lib
 
             if ((isCreationTime ?? false) || watch.CreationTime != null)
             {
-                string ret_string = GetCreationTime(info,
+                string ret_string = GetFileCreationTime(info,
+                    isDateOnly ?? watch.IsDateOnly ?? false,
+                    isTimeOnly ?? watch.IsTimeOnly ?? false);
+                ret = ret_string != watch.CreationTime;
+                dictionary[$"{pathType}_{checkTarget}_{serial}"] = ret ?
+                    $"{watch.CreationTime} -> {ret_string}" :
+                    ret_string;
+                watch.CreationTime = ret_string;
+                watch.IsDateOnly ??= isDateOnly;
+                watch.IsTimeOnly ??= isTimeOnly;
+            }
+            return ret;
+        }
+
+        public static bool WatchDirectoryCreation(
+            WatchPath watch, Dictionary<string, string> dictionary, int serial, bool? isCreationTime, DirectoryInfo info, bool? isDateOnly, bool? isTimeOnly)
+        {
+            bool ret = false;
+            string pathType = "directory";
+            string checkTarget = "CreationTime";
+
+            if ((isCreationTime ?? false) || watch.CreationTime != null)
+            {
+                string ret_string = GetDirectoryCreationTime(info,
                     isDateOnly ?? watch.IsDateOnly ?? false,
                     isTimeOnly ?? watch.IsTimeOnly ?? false);
                 ret = ret_string != watch.CreationTime;
@@ -43,7 +66,30 @@ namespace WatchMonitorPlugin.Lib
 
             if ((isLastWriteTime ?? false) || watch.LastWriteTime != null)
             {
-                string ret_string = GetLastWriteTime(info,
+                string ret_string = GetFileLastWriteTime(info,
+                    isDateOnly ?? watch.IsDateOnly ?? false,
+                    isTimeOnly ?? watch.IsTimeOnly ?? false);
+                ret = ret_string != watch.LastWriteTime;
+                dictionary[$"{pathType}_{checkTarget}_{serial}"] = ret ?
+                    $"{watch.LastWriteTime} -> {ret_string}" :
+                    ret_string;
+                watch.LastWriteTime = ret_string;
+                watch.IsDateOnly ??= isDateOnly;
+                watch.IsTimeOnly ??= isTimeOnly;
+            }
+            return ret;
+        }
+
+        public static bool WatchDirectoryLastWrite(
+            WatchPath watch, Dictionary<string, string> dictionary, int serial, bool? isLastWriteTime, DirectoryInfo info, bool? isDateOnly, bool? isTimeOnly)
+        {
+            bool ret = false;
+            string pathType = "directory";
+            string checkTarget = "LastWriteTime";
+
+            if ((isLastWriteTime ?? false) || watch.LastWriteTime != null)
+            {
+                string ret_string = GetDirectoryLastWriteTime(info,
                     isDateOnly ?? watch.IsDateOnly ?? false,
                     isTimeOnly ?? watch.IsTimeOnly ?? false);
                 ret = ret_string != watch.LastWriteTime;
@@ -66,7 +112,30 @@ namespace WatchMonitorPlugin.Lib
 
             if ((isLastAccessTime ?? false) || watch.LastAccessTime != null)
             {
-                string ret_string = GetLastAccessTime(info,
+                string ret_string = GetFileLastAccessTime(info,
+                    isDateOnly ?? watch.IsDateOnly ?? false,
+                    isTimeOnly ?? watch.IsTimeOnly ?? false);
+                ret = ret_string != watch.LastAccessTime;
+                dictionary[$"{pathType}_{checkTarget}_{serial}"] = ret ?
+                    $"{watch.LastAccessTime} -> {ret_string}" :
+                    ret_string;
+                watch.LastAccessTime = ret_string;
+                watch.IsDateOnly ??= isDateOnly;
+                watch.IsTimeOnly ??= isTimeOnly;
+            }
+            return ret;
+        }
+
+        public static bool WatchDirectoryLastAccess(
+            WatchPath watch, Dictionary<string, string> dictionary, int serial, bool? isLastAccessTime, DirectoryInfo info, bool? isDateOnly, bool? isTimeOnly)
+        {
+            bool ret = false;
+            string pathType = "directory";
+            string checkTarget = "LastAccessTime";
+
+            if ((isLastAccessTime ?? false) || watch.LastAccessTime != null)
+            {
+                string ret_string = GetDirectoryLastAccessTime(info,
                     isDateOnly ?? watch.IsDateOnly ?? false,
                     isTimeOnly ?? watch.IsTimeOnly ?? false);
                 ret = ret_string != watch.LastAccessTime;
@@ -83,32 +152,53 @@ namespace WatchMonitorPlugin.Lib
         #endregion
         #region Get method
 
-        public static string GetCreationTime(string filePath, bool isDateOnly, bool isTimeOnly)
+        public static string GetFileCreationTime(string path, bool isDateOnly, bool isTimeOnly)
         {
-            return DateToString(new FileInfo(filePath).CreationTime, isDateOnly, isTimeOnly);
+            return DateToString(new FileInfo(path).CreationTime, isDateOnly, isTimeOnly);
         }
-
-        public static string GetCreationTime(FileInfo info, bool isDateOnly, bool isTimeOnly)
+        public static string GetFileCreationTime(FileInfo info, bool isDateOnly, bool isTimeOnly)
+        {
+            return DateToString(info.CreationTime, isDateOnly, isTimeOnly);
+        }
+        public static string GetDirectoryCreationTime(string path, bool isDateOnly, bool isTimeOnly)
+        {
+            return DateToString(new DirectoryInfo(path).CreationTime, isDateOnly, isTimeOnly);
+        }
+        public static string GetDirectoryCreationTime(DirectoryInfo info, bool isDateOnly, bool isTimeOnly)
         {
             return DateToString(info.CreationTime, isDateOnly, isTimeOnly);
         }
 
-        public static string GetLastWriteTime(string filePath, bool isDateOnly, bool isTimeOnly)
+        public static string GetFileLastWriteTime(string path, bool isDateOnly, bool isTimeOnly)
         {
-            return DateToString(new FileInfo(filePath).LastWriteTime, isDateOnly, isTimeOnly);
+            return DateToString(new FileInfo(path).LastWriteTime, isDateOnly, isTimeOnly);
         }
-
-        public static string GetLastWriteTime(FileInfo info, bool isDateOnly, bool isTimeOnly)
+        public static string GetFileLastWriteTime(FileInfo info, bool isDateOnly, bool isTimeOnly)
+        {
+            return DateToString(info.LastWriteTime, isDateOnly, isTimeOnly);
+        }
+        public static string GetDirectoryLastWriteTime(string path, bool isDateOnly, bool isTimeOnly)
+        {
+            return DateToString(new DirectoryInfo(path).LastWriteTime, isDateOnly, isTimeOnly);
+        }
+        public static string GetDirectoryLastWriteTime(DirectoryInfo info, bool isDateOnly, bool isTimeOnly)
         {
             return DateToString(info.LastWriteTime, isDateOnly, isTimeOnly);
         }
 
-        public static string GetLastAccessTime(string filePath, bool isDateOnly, bool isTimeOnly)
+        public static string GetFileLastAccessTime(string path, bool isDateOnly, bool isTimeOnly)
         {
-            return DateToString(new FileInfo(filePath).LastAccessTime, isDateOnly, isTimeOnly);
+            return DateToString(new FileInfo(path).LastAccessTime, isDateOnly, isTimeOnly);
         }
-
-        public static string GetLastAccessTime(FileInfo info, bool isDateOnly, bool isTimeOnly)
+        public static string GetFileLastAccessTime(FileInfo info, bool isDateOnly, bool isTimeOnly)
+        {
+            return DateToString(info.LastAccessTime, isDateOnly, isTimeOnly);
+        }
+        public static string GetDirectoryLastAccessTime(string path, bool isDateOnly, bool isTimeOnly)
+        {
+            return DateToString(new DirectoryInfo(path).LastAccessTime, isDateOnly, isTimeOnly);
+        }
+        public static string GetDirectoryLastAccessTime(DirectoryInfo info, bool isDateOnly, bool isTimeOnly)
         {
             return DateToString(info.LastAccessTime, isDateOnly, isTimeOnly);
         }

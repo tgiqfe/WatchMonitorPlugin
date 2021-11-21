@@ -45,6 +45,38 @@ namespace WatchMonitorPlugin.Lib
             return ret;
         }
 
+        public static bool WatchDirectory(
+            WatchPath watch, Dictionary<string, string> dictionary, int serial, bool? isAttributes, string path)
+        {
+            bool ret = false;
+            string pathType = "directory";
+            string checkTarget = "Attributes";
+
+            if ((isAttributes ?? false) || watch.Attributes != null)
+            {
+                bool[] ret_bools = GetAttributes(path);
+                ret = !ret_bools.SequenceEqual(watch.Attributes);
+
+                dictionary[$"{pathType}_{checkTarget}_{serial}"] = ret ?
+                    string.Format(
+                        "[{0}]Readonly [{1}]Hidden [{2}]System -> [{3}]Readonly [{4}]Hidden [{5}]System",
+                        watch.Attributes[0] ? "x" : " ",
+                        watch.Attributes[1] ? "x" : " ",
+                        watch.Attributes[2] ? "x" : " ",
+                        ret_bools[0] ? "x" : " ",
+                        ret_bools[1] ? "x" : " ",
+                        ret_bools[2] ? "x" : " ") :
+                    string.Format(
+                        "[{0}]Readonly [{1}]Hidden [{2}]System",
+                        ret_bools[0] ? "x" : " ",
+                        ret_bools[1] ? "x" : " ",
+                        ret_bools[2] ? "x" : " ");
+
+                watch.Attributes = ret_bools;
+            }
+            return ret;
+        }
+
         #endregion
         #region Get method
 
