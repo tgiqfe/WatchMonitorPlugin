@@ -24,6 +24,8 @@ namespace WatchMonitorPlugin
         public bool? _IsDateOnly { get; set; }
         public bool? _IsTimeOnly { get; set; }
 
+        public bool _IsStart { get; set; }
+
         private int _serial;
 
         public bool Monitor(ref WatchPath watch, string path)
@@ -35,14 +37,14 @@ namespace WatchMonitorPlugin
             var info = new FileInfo(path);
 
             dictionary[$"file_{_serial}"] = path;
-            if (watch == null)
+            if (watch == null || this._IsStart)
             {
                 ret = true;
                 watch = new WatchPath(PathType.File);
 
-                ret |= MonitorExists.Watch(watch, dictionary, _serial, path);
                 if (File.Exists(path))
                 {
+                    watch.Exists = true;
                     if (_IsCreationTime ?? false)
                     {
                         watch.CreationTime = MonitorTimeStamp.GetCreationTime(info, _IsDateOnly ?? false, _IsTimeOnly ?? false);
@@ -73,20 +75,20 @@ namespace WatchMonitorPlugin
             }
             else
             {
-                ret |= MonitorExists.Watch(watch, dictionary, _serial, path);
+                ret |= MonitorExists.WatchFile(watch, dictionary, _serial, path);
                 if (File.Exists(path))
                 {
-                    ret |= MonitorTimeStamp.WatchCreation(watch, dictionary, _serial, _IsCreationTime, info, _IsDateOnly, _IsTimeOnly);
-                    ret |= MonitorTimeStamp.WatchLastWrite(watch, dictionary, _serial, _IsLastWriteTime, info, _IsDateOnly, _IsTimeOnly);
-                    ret |= MonitorTimeStamp.WatchLastAccess(watch, dictionary, _serial, _IsLastAccessTime, info, _IsDateOnly, _IsTimeOnly);
-                    ret |= MonitorSecurity.WatchAccess(watch, dictionary, _serial, _IsAccess, info);
-                    ret |= MonitorSecurity.WatchOwner(watch, dictionary, _serial, _IsOwner, info);
-                    ret |= MonitorSecurity.WatchInherited(watch, dictionary, _serial, _IsInherited, info);
-                    ret |= MonitorAttributes.Watch(watch, dictionary, _serial, _IsAttributes, path);
-                    ret |= MonitorHash.WatchMD5Hash(watch, dictionary, _serial, _IsMD5Hash, path);
-                    ret |= MonitorHash.WatchSHA256Hash(watch, dictionary, _serial, _IsSHA256Hash, path);
-                    ret |= MonitorHash.WatchSHA512Hash(watch, dictionary, _serial, _IsSHA512Hash, path);
-                    ret |= MonitorSize.Watch(watch, dictionary, _serial, _IsSize, info);
+                    ret |= MonitorTimeStamp.WatchFileCreation(watch, dictionary, _serial, _IsCreationTime, info, _IsDateOnly, _IsTimeOnly);
+                    ret |= MonitorTimeStamp.WatchFileLastWrite(watch, dictionary, _serial, _IsLastWriteTime, info, _IsDateOnly, _IsTimeOnly);
+                    ret |= MonitorTimeStamp.WatchFileLastAccess(watch, dictionary, _serial, _IsLastAccessTime, info, _IsDateOnly, _IsTimeOnly);
+                    ret |= MonitorSecurity.WatchFileAccess(watch, dictionary, _serial, _IsAccess, info);
+                    ret |= MonitorSecurity.WatchFileOwner(watch, dictionary, _serial, _IsOwner, info);
+                    ret |= MonitorSecurity.WatchFileInherited(watch, dictionary, _serial, _IsInherited, info);
+                    ret |= MonitorAttributes.WatchFile(watch, dictionary, _serial, _IsAttributes, path);
+                    ret |= MonitorHash.WatchFileMD5Hash(watch, dictionary, _serial, _IsMD5Hash, path);
+                    ret |= MonitorHash.WatchFileSHA256Hash(watch, dictionary, _serial, _IsSHA256Hash, path);
+                    ret |= MonitorHash.WatchFileSHA512Hash(watch, dictionary, _serial, _IsSHA512Hash, path);
+                    ret |= MonitorSize.WatchFile(watch, dictionary, _serial, _IsSize, info);
                 }
             }
 

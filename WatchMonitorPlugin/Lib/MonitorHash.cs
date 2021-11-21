@@ -12,7 +12,7 @@ namespace WatchMonitorPlugin.Lib
     {
         #region Check method
 
-        public static bool WatchMD5Hash(
+        public static bool WatchFileMD5Hash(
             WatchPath watch, Dictionary<string, string> dictionary, int serial, bool? isMD5Hash, string path)
         {
             bool ret = false;
@@ -32,7 +32,7 @@ namespace WatchMonitorPlugin.Lib
             return ret;
         }
 
-        public static bool WatchSHA256Hash(
+        public static bool WatchFileSHA256Hash(
             WatchPath watch, Dictionary<string, string> dictionary, int serial, bool? isSHA256Hash, string path)
         {
             bool ret = false;
@@ -52,7 +52,7 @@ namespace WatchMonitorPlugin.Lib
             return ret;
         }
 
-        public static bool WatchSHA512Hash(
+        public static bool WatchFileSHA512Hash(
             WatchPath watch, Dictionary<string, string> dictionary, int serial, bool? isSHA512Hash, string path)
         {
             bool ret = false;

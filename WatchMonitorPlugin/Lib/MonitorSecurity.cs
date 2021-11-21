@@ -13,7 +13,7 @@ namespace WatchMonitorPlugin.Lib
     {
         #region Check method
 
-        public static bool WatchAccess(
+        public static bool WatchFileAccess(
             WatchPath watch, Dictionary<string, string> dictionary, int serial, bool? isAccess, FileInfo info)
         {
             bool ret = false;
@@ -33,7 +33,7 @@ namespace WatchMonitorPlugin.Lib
             return ret;
         }
 
-        public static bool WatchOwner(
+        public static bool WatchFileOwner(
             WatchPath watch, Dictionary<string, string> dictionary, int serial, bool? isOwner, FileInfo info)
         {
             bool ret = false;
@@ -53,7 +53,7 @@ namespace WatchMonitorPlugin.Lib
             return ret;
         }
 
-        public static bool WatchInherited(
+        public static bool WatchFileInherited(
             WatchPath watch, Dictionary<string, string> dictionary, int serial, bool? isInherited, FileInfo info)
         {
             bool ret = false;

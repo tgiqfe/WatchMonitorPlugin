@@ -46,10 +46,12 @@ namespace WatchMonitorPlugin.Lib
         {
             using (var sw = new StreamWriter(path, false, Encoding.UTF8))
             {
-                JsonSerializer.Serialize(sw, new JsonSerializerOptions()
+                string json = JsonSerializer.Serialize(this, new JsonSerializerOptions()
                 {
-                    WriteIndented = true
+                    WriteIndented = true,
+                    DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull,
                 });
+                sw.WriteLine(json);
             }
         }
     }

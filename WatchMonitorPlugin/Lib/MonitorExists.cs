@@ -12,7 +12,7 @@ namespace WatchMonitorPlugin.Lib
     {
         #region Check method
 
-        public static bool Watch(
+        public static bool WatchFile(
             WatchPath watch, Dictionary<string, string> dictionary, int serial, string path)
         {
             bool ret = false;

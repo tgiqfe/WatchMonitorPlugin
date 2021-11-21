@@ -11,7 +11,7 @@ namespace WatchMonitorPlugin.Lib
     {
         #region Check method
 
-        public static bool WatchCreation(
+        public static bool WatchFileCreation(
             WatchPath watch, Dictionary<string, string> dictionary, int serial, bool? isCreationTime, FileInfo info, bool? isDateOnly, bool? isTimeOnly)
         {
             bool ret = false;
@@ -34,7 +34,7 @@ namespace WatchMonitorPlugin.Lib
             return ret;
         }
 
-        public static bool WatchLastWrite(
+        public static bool WatchFileLastWrite(
             WatchPath watch, Dictionary<string, string> dictionary, int serial, bool? isLastWriteTime, FileInfo info, bool? isDateOnly, bool? isTimeOnly)
         {
             bool ret = false;
@@ -57,7 +57,7 @@ namespace WatchMonitorPlugin.Lib
             return ret;
         }
 
-        public static bool WatchLastAccess(
+        public static bool WatchFileLastAccess(
             WatchPath watch, Dictionary<string, string> dictionary, int serial, bool? isLastAccessTime, FileInfo info, bool? isDateOnly, bool? isTimeOnly)
         {
             bool ret = false;
