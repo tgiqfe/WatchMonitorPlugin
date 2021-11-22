@@ -18,9 +18,10 @@ namespace WatchMonitorPlugin.Lib
             return matchKey == null ? null : this[matchKey];
         }
 
-        public void SetWatchPath(string path, WatchPath watchData)
+        public void SetWatchPath(string path, WatchPath watchPath)
         {
-            this[path] = watchData;
+            watchPath.FullPath = path;
+            this[path] = watchPath;
         }
 
         public static WatchPathCollection Load(string dbDir, string serial)

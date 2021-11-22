@@ -5,8 +5,37 @@ using System.Text;
 
 
 
-string path = @"C:\Users\User\Downloads\aaaa\aaaa.txt";
+string path = @"C:\Users\User\Downloads\aaaa\dbdbdb";
 
+ProcessDir01 proc1 = new ProcessDir01()
+{
+    _Serial = "aaaa",
+    _Path = new string[]{ path },
+    _IsAccess = true,
+    _IsAttributes = true,
+    _IsLastAccessTime = true,
+    _IsChildCount = true,
+};
+proc1.MainProcess();
+
+
+
+ProcessDir01 proc2 = new ProcessDir01()
+{
+    _Serial = "aaaa",
+    _Path = new string[] { path },
+};
+proc2.MainProcess();
+
+
+Console.ReadLine();
+
+
+
+
+
+
+/*
 Process05 proc1 = new Process05()
 {
     _Serial = "aaaa",
@@ -25,11 +54,7 @@ Process05 proc2 = new Process05()
     _Path = new string[] { path },
 };
 proc2.MainProcess();
-
-
-Console.ReadLine();
-
-
+*/
 
 /*
 string confFile = @"C:\Users\User\Downloads\aaaa\test.json";

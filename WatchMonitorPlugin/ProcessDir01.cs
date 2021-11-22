@@ -49,17 +49,16 @@ namespace WatchMonitorPlugin
 
             foreach (string path in _Path)
             {
-                _serial++;
                 _checkingPath = path;
 
 
+                Success = RecursiveTree(collection, dictionary, path, 0);
             }
 
             collection.Save(dbDir, _Serial);
 
 
-
-            //  確認
+            //  確認用
             foreach (KeyValuePair<string, string> pair in dictionary)
             {
                 Console.WriteLine(pair.Key + " : " + pair.Value);
@@ -78,18 +77,44 @@ namespace WatchMonitorPlugin
             }
         }
 
-        private bool RecursiveTree(ref WatchPath watch, Dictionary<string, string> dictionary, string path)
+        private bool RecursiveTree(WatchPathCollection collection, Dictionary<string, string> dictionary, string path, int depth)
         {
             bool ret = false;
-
+            _serial++;
             dictionary[$"directory_{_serial}"] = path.Replace(_checkingPath, "\\");
+
+            WatchPath watch = collection.GetWatchPath(path);
             if (watch == null || this._IsStart)
             {
                 ret = true;
                 watch = new WatchPath(PathType.Directory);
+
                 if (Directory.Exists(path))
                 {
                     WatchDirectoryCheck_Start(watch, path);
+                    if (depth == 0 && (_IsChildCount ?? false))
+                    {
+                        watch.ChildCount = MonitorChildCount.GetDirectoryChildCount(path);
+                    }
+
+                    collection.SetWatchPath(path, watch);
+
+                    if (depth < _MaxDepth)
+                    {
+                        //  配下ファイルチェック
+                        foreach (string childPath in Directory.GetFiles(path))
+                        {
+                            _serial++;
+                            WatchPath childWatch = new WatchPath(PathType.File);
+                            WatchFileCheck_Start(childWatch, childPath);
+                            collection.SetWatchPath(childPath, childWatch);
+                        }
+                        //  配下ディレクトリチェック
+                        foreach (string childPath in Directory.GetDirectories(path))
+                        {
+                            RecursiveTree(collection, dictionary, childPath, depth + 1);
+                        }
+                    }
                 }
             }
             else
@@ -97,13 +122,38 @@ namespace WatchMonitorPlugin
                 if (Directory.Exists(path))
                 {
                     ret |= WatchDirectoryCheck(watch, dictionary, path);
+                    if (depth == 0 && (_IsChildCount ?? false))
+                    {
+                        ret |= MonitorChildCount.WatchDirectory(watch, dictionary, _serial, _IsChildCount, path);
+                    }
+                    collection.SetWatchPath(path, watch);
+
+                    if (depth < _MaxDepth)
+                    {
+                        //  配下ファイルチェック
+                        foreach (string childPath in Directory.GetFiles(path))
+                        {
+                            _serial++;
+                            WatchPath childWatch = collection.GetWatchPath(childPath);
+                            if (childWatch == null)
+                            {
+                                childWatch = new WatchPath(PathType.File);
+                                WatchFileCheck_Start(childWatch, childPath);
+                            }
+                            else
+                            {
+                                WatchFileCheck(childWatch, dictionary, childPath);
+                            }
+                            collection.SetWatchPath(childPath, childWatch);
+                        }
+                        //  配下ディレクトリチェック
+                        foreach (string childPath in Directory.GetDirectories(path))
+                        {
+                            RecursiveTree(collection, dictionary, childPath, depth + 1);
+                        }
+                    }
                 }
             }
-
-
-
-
-
 
             return ret;
         }
@@ -135,7 +185,6 @@ namespace WatchMonitorPlugin
             if (_IsOwner ?? false) { watch.Owner = MonitorSecurity.GetDirectoryOwner(info); }
             if (_IsInherited ?? false) { watch.Inherited = MonitorSecurity.GetDirectoryInherited(info); }
             if (_IsAttributes ?? false) { watch.Attributes = MonitorAttributes.GetAttributes(path); }
-            if (_IsChildCount ?? false) { watch.ChildCount = MonitorChildCount.GetDirectoryChildCount(path); }
 
             return;
         }
@@ -185,7 +234,6 @@ namespace WatchMonitorPlugin
             ret |= MonitorSecurity.WatchDirectoryOwner(watch, dictionary, _serial, _IsOwner, info);
             ret |= MonitorSecurity.WatchDirectoryInherited(watch, dictionary, _serial, _IsInherited, info);
             ret |= MonitorAttributes.WatchDirectory(watch, dictionary, _serial, _IsAttributes, path);
-            ret |= MonitorChildCount.WatchDirectory(watch, dictionary, _serial, _IsChildCount, path);
 
             return ret;
         }
