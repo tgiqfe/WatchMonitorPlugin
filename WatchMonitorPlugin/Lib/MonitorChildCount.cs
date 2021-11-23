@@ -45,13 +45,47 @@ namespace WatchMonitorPlugin.Lib
             return ret;
         }
 
+        public static bool WatchDirectory(
+            WatchPath watch, Dictionary<string, string> dictionary, int serial, string path)
+        {
+            bool ret = false;
+            if (watch.IsChildCount ?? false)
+            {
+                if (Directory.Exists(path))
+                {
+                    int[] ret_integers = GetDirectoryChildCount(path);
+                    ret = !ret_integers.SequenceEqual(watch.ChildCount);
+                    if (watch.ChildCount != null)
+                    {
+                        string pathType = "directory";
+                        string checkTarget = "ChildCount";
+                        dictionary[$"{pathType}_{checkTarget}_{serial}"] = ret ?
+                            string.Format("Directory:{0} / File:{1} -> Directory:{2} / File:{3}",
+                                watch.ChildCount[0],
+                                watch.ChildCount[1],
+                                ret_integers[0],
+                                ret_integers[1]) :
+                            string.Format("Directory:{0} / File:{1}",
+                                ret_integers[0],
+                                ret_integers[1]);
+                    }
+                    watch.ChildCount = ret_integers;
+                }
+                else
+                {
+                    watch.ChildCount = null;
+                }
+            }
+            return ret;
+        }
+
         public static bool WatchRegistryKey(
             WatchPath watch, Dictionary<string, string> dictionary, int serial, bool? isMonitor, RegistryKey regKey)
         {
             if ((!isMonitor ?? true) && watch.ChildCount == null) { return false; }
 
             bool ret = false;
-            if(watch.ChildCount == null)
+            if (watch.ChildCount == null)
             {
                 ret = true;
                 watch.ChildCount = GetRegistryKeyChildCount(regKey);
@@ -74,6 +108,40 @@ namespace WatchMonitorPlugin.Lib
                         ret_integers[1]);
 
                 watch.ChildCount = ret_integers;
+            }
+            return ret;
+        }
+
+        public static bool WatchRegistryKey(
+            WatchPath watch, Dictionary<string, string> dictionary, int serial, RegistryKey regKey)
+        {
+            bool ret = false;
+            if (watch.IsChildCount ?? false)
+            {
+                if (regKey != null)
+                {
+                    int[] ret_integers = GetRegistryKeyChildCount(regKey);
+                    ret = !ret_integers.SequenceEqual(watch.ChildCount);
+                    if(watch.ChildCount != null)
+                    {
+                        string pathType = "registry";
+                        string checkTarget = "ChildCount";
+                        dictionary[$"{pathType}_{checkTarget}_{serial}"] = ret ?
+                            string.Format("RegistryKey:{0} / Value:{1} -> RegistryKey:{2} / Value:{3}",
+                                watch.ChildCount[0],
+                                watch.ChildCount[1],
+                                ret_integers[0],
+                                ret_integers[1]) :
+                            string.Format("RegistryKey:{0} / Value:{1}",
+                                ret_integers[0],
+                                ret_integers[1]);
+                    }
+                    watch.ChildCount = ret_integers;
+                }
+                else
+                {
+                    watch.ChildCount = null;
+                }
             }
             return ret;
         }

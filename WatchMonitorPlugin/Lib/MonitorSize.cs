@@ -38,6 +38,34 @@ namespace WatchMonitorPlugin.Lib
             return ret;
         }
 
+        public static bool WatchFile(
+            WatchPath watch, Dictionary<string, string> dictionary, int serial, FileInfo info)
+        {
+            bool ret = false;
+            if (watch.IsSize ?? false)
+            {
+                if (info.Exists)
+                {
+                    long ret_long = info.Length;
+                    ret = ret_long != watch.Size;
+                    if(watch.Size != null)
+                    {
+                        string pathType = "file";
+                        string checkTarget = "Size";
+                        dictionary[$"{pathType}_{checkTarget}_{serial}"] = ret ?
+                            $"{watch.Size} -> {ret_long}" :
+                            ret_long.ToString();
+                    }
+                    watch.Size = ret_long;
+                }
+                else
+                {
+                    watch.Size = null;
+                }
+            }
+            return ret;
+        }
+
         #endregion
         #region Get method
 

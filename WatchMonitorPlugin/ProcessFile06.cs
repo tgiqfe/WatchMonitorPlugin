@@ -35,6 +35,24 @@ namespace WatchMonitorPlugin
 
         protected bool Success { get; set; }
 
+        private WatchPath CreateWatchFile()
+        {
+            return new WatchPath(PathType.File)
+            {
+                IsCreationTime = _IsCreationTime,
+                IsLastWriteTime = _IsLastWriteTime,
+                IsLastAccessTime = _IsLastAccessTime,
+                IsAccess = _IsAccess,
+                IsOwner = _IsOwner,
+                IsInherited = _IsInherited,
+                IsAttributes = _IsAttributes,
+                IsMD5Hash = _IsMD5Hash,
+                IsSHA256Hash = _IsSHA256Hash,
+                IsSHA512Hash = _IsSHA512Hash,
+                IsSize = _IsSize,
+            };
+        }
+
         public void MainProcess()
         {
             bool ret = false;
@@ -93,9 +111,9 @@ namespace WatchMonitorPlugin
             var info = new FileInfo(path);
 
             bool ret = MonitorExists.WatchFile(watch, dictionary, _serial, path);
-            ret |= MonitorTimeStamp.WatchFileCreation(watch, dictionary, _serial, _IsCreationTime, info, _IsDateOnly, _IsTimeOnly);
-            ret |= MonitorTimeStamp.WatchFileLastWrite(watch, dictionary, _serial, _IsLastWriteTime, info, _IsDateOnly, _IsTimeOnly);
-            ret |= MonitorTimeStamp.WatchFileLastAccess(watch, dictionary, _serial, _IsLastAccessTime, info, _IsDateOnly, _IsTimeOnly);
+            ret |= MonitorTimeStamp.WatchFileCreationTime(watch, dictionary, _serial, _IsCreationTime, info, _IsDateOnly, _IsTimeOnly);
+            ret |= MonitorTimeStamp.WatchFileLastWriteTime(watch, dictionary, _serial, _IsLastWriteTime, info, _IsDateOnly, _IsTimeOnly);
+            ret |= MonitorTimeStamp.WatchFileLastAccessTime(watch, dictionary, _serial, _IsLastAccessTime, info, _IsDateOnly, _IsTimeOnly);
             ret |= MonitorSecurity.WatchFileAccess(watch, dictionary, _serial, _IsAccess, info);
             ret |= MonitorSecurity.WatchFileOwner(watch, dictionary, _serial, _IsOwner, info);
             ret |= MonitorSecurity.WatchFileInherited(watch, dictionary, _serial, _IsInherited, info);

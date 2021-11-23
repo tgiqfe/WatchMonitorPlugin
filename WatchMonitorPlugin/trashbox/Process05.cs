@@ -126,9 +126,9 @@ namespace WatchMonitorPlugin
                 ret |= MonitorExists.WatchFile(watch, dictionary, _serial, path);
                 if (File.Exists(path))
                 {
-                    ret |= MonitorTimeStamp.WatchFileCreation(watch, dictionary, _serial, _IsCreationTime, info, _IsDateOnly, _IsTimeOnly);
-                    ret |= MonitorTimeStamp.WatchFileLastWrite(watch, dictionary, _serial, _IsLastWriteTime, info, _IsDateOnly, _IsTimeOnly);
-                    ret |= MonitorTimeStamp.WatchFileLastAccess(watch, dictionary, _serial, _IsLastAccessTime, info, _IsDateOnly, _IsTimeOnly);
+                    ret |= MonitorTimeStamp.WatchFileCreationTime(watch, dictionary, _serial, _IsCreationTime, info, _IsDateOnly, _IsTimeOnly);
+                    ret |= MonitorTimeStamp.WatchFileLastWriteTime(watch, dictionary, _serial, _IsLastWriteTime, info, _IsDateOnly, _IsTimeOnly);
+                    ret |= MonitorTimeStamp.WatchFileLastAccessTime(watch, dictionary, _serial, _IsLastAccessTime, info, _IsDateOnly, _IsTimeOnly);
                     ret |= MonitorSecurity.WatchFileAccess(watch, dictionary, _serial, _IsAccess, info);
                     ret |= MonitorSecurity.WatchFileOwner(watch, dictionary, _serial, _IsOwner, info);
                     ret |= MonitorSecurity.WatchFileInherited(watch, dictionary, _serial, _IsInherited, info);

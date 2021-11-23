@@ -133,9 +133,9 @@ namespace WatchMonitorPlugin
             var info = new DirectoryInfo(path);
 
             bool ret = MonitorExists.WatchDirectory(watch, dictionary, _serial, path);
-            ret |= MonitorTimeStamp.WatchDirectoryCreation(watch, dictionary, _serial, _IsCreationTime, info, _IsDateOnly, _IsTimeOnly);
-            ret |= MonitorTimeStamp.WatchDirectoryLastWrite(watch, dictionary, _serial, _IsLastWriteTime, info, _IsDateOnly, _IsTimeOnly);
-            ret |= MonitorTimeStamp.WatchDirectoryLastAccess(watch, dictionary, _serial, _IsLastAccessTime, info, _IsDateOnly, _IsTimeOnly);
+            ret |= MonitorTimeStamp.WatchDirectoryCreationTime(watch, dictionary, _serial, _IsCreationTime, info, _IsDateOnly, _IsTimeOnly);
+            ret |= MonitorTimeStamp.WatchDirectoryLastWriteTime(watch, dictionary, _serial, _IsLastWriteTime, info, _IsDateOnly, _IsTimeOnly);
+            ret |= MonitorTimeStamp.WatchDirectoryLastAccessTime(watch, dictionary, _serial, _IsLastAccessTime, info, _IsDateOnly, _IsTimeOnly);
             ret |= MonitorSecurity.WatchDirectoryAccess(watch, dictionary, _serial, _IsAccess, info);
             ret |= MonitorSecurity.WatchDirectoryOwner(watch, dictionary, _serial, _IsOwner, info);
             ret |= MonitorSecurity.WatchDirectoryInherited(watch, dictionary, _serial, _IsInherited, info);
@@ -149,9 +149,9 @@ namespace WatchMonitorPlugin
             var info = new FileInfo(path);
 
             bool ret = MonitorExists.WatchFile(watch, dictionary, _serial, path);
-            ret |= MonitorTimeStamp.WatchFileCreation(watch, dictionary, _serial, _IsCreationTime, info, _IsDateOnly, _IsTimeOnly);
-            ret |= MonitorTimeStamp.WatchFileLastWrite(watch, dictionary, _serial, _IsLastWriteTime, info, _IsDateOnly, _IsTimeOnly);
-            ret |= MonitorTimeStamp.WatchFileLastAccess(watch, dictionary, _serial, _IsLastAccessTime, info, _IsDateOnly, _IsTimeOnly);
+            ret |= MonitorTimeStamp.WatchFileCreationTime(watch, dictionary, _serial, _IsCreationTime, info, _IsDateOnly, _IsTimeOnly);
+            ret |= MonitorTimeStamp.WatchFileLastWriteTime(watch, dictionary, _serial, _IsLastWriteTime, info, _IsDateOnly, _IsTimeOnly);
+            ret |= MonitorTimeStamp.WatchFileLastAccessTime(watch, dictionary, _serial, _IsLastAccessTime, info, _IsDateOnly, _IsTimeOnly);
             ret |= MonitorSecurity.WatchFileAccess(watch, dictionary, _serial, _IsAccess, info);
             ret |= MonitorSecurity.WatchFileOwner(watch, dictionary, _serial, _IsOwner, info);
             ret |= MonitorSecurity.WatchFileInherited(watch, dictionary, _serial, _IsInherited, info);

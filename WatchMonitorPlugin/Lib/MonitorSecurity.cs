@@ -41,6 +41,34 @@ namespace WatchMonitorPlugin.Lib
             return ret;
         }
 
+        public static bool WatchFileAccess(
+            WatchPath watch, Dictionary<string, string> dictionary, int serial, FileInfo info)
+        {
+            bool ret = false;
+            if (watch.IsAccess ?? false)
+            {
+                if (info.Exists)
+                {
+                    string ret_string = AccessRuleSummary.FileToAccessString(info);
+                    ret = ret_string != watch.Access;
+                    if (watch.Access != null)
+                    {
+                        string pathType = "file";
+                        string checkTarget = "Access";
+                        dictionary[$"{pathType}_{checkTarget}_{serial}"] = ret ?
+                            $"{watch.Access} -> {ret_string}" :
+                            ret_string;
+                    }
+                    watch.Access = ret_string;
+                }
+                else
+                {
+                    watch.Access = null;
+                }
+            }
+            return ret;
+        }
+
         public static bool WatchFileOwner(
             WatchPath watch, Dictionary<string, string> dictionary, int serial, bool? isMonitor, FileInfo info)
         {
@@ -64,6 +92,34 @@ namespace WatchMonitorPlugin.Lib
                     ret_string;
 
                 watch.Owner = ret_string;
+            }
+            return ret;
+        }
+
+        public static bool WatchFileOwner(
+            WatchPath watch, Dictionary<string, string> dictionary, int serial, FileInfo info)
+        {
+            bool ret = false;
+            if (watch.IsOwner ?? false)
+            {
+                if (info.Exists)
+                {
+                    string ret_string = GetFileOwner(info);
+                    ret = ret_string != watch.Owner;
+                    if (watch.Owner != null)
+                    {
+                        string pathType = "file";
+                        string checkTarget = "Owner";
+                        dictionary[$"{pathType}_{checkTarget}_{serial}"] = ret ?
+                            $"{watch.Owner} -> {ret_string}" :
+                            ret_string;
+                    }
+                    watch.Owner = ret_string;
+                }
+                else
+                {
+                    watch.Owner = null;
+                }
             }
             return ret;
         }
@@ -95,6 +151,34 @@ namespace WatchMonitorPlugin.Lib
             return ret;
         }
 
+        public static bool WatchFileInherited(
+            WatchPath watch, Dictionary<string, string> dictionary, int serial, FileInfo info)
+        {
+            bool ret = false;
+            if (watch.Inherited ?? false)
+            {
+                if (info.Exists)
+                {
+                    bool ret_bool = GetFileInherited(info);
+                    ret = ret_bool != watch.Inherited;
+                    if (watch.Inherited != null)
+                    {
+                        string pathType = "file";
+                        string checkTarget = "Inherited";
+                        dictionary[$"{pathType}_{checkTarget}_{serial}"] = ret ?
+                            $"{watch.Inherited} -> {ret_bool}" :
+                            ret_bool.ToString();
+                    }
+                    watch.Inherited = ret_bool;
+                }
+                else
+                {
+                    watch.Inherited = null;
+                }
+            }
+            return ret;
+        }
+
         public static bool WatchDirectoryAccess(
             WatchPath watch, Dictionary<string, string> dictionary, int serial, bool? isMonitor, DirectoryInfo info)
         {
@@ -118,6 +202,34 @@ namespace WatchMonitorPlugin.Lib
                     ret_string;
 
                 watch.Access = ret_string;
+            }
+            return ret;
+        }
+
+        public static bool WatchDirectoryAccess(
+            WatchPath watch, Dictionary<string, string> dictionary, int serial, DirectoryInfo info)
+        {
+            bool ret = false;
+            if (watch.IsAccess ?? false)
+            {
+                if (info.Exists)
+                {
+                    string ret_string = AccessRuleSummary.DirectoryToAccessString(info);
+                    ret = ret_string != watch.Access;
+                    if (watch.Access != null)
+                    {
+                        string pathType = "directory";
+                        string checkTarget = "Access";
+                        dictionary[$"{pathType}_{checkTarget}_{serial}"] = ret ?
+                            $"{watch.Access} -> {ret_string}" :
+                            ret_string;
+                    }
+                    watch.Access = ret_string;
+                }
+                else
+                {
+                    watch.Access = null;
+                }
             }
             return ret;
         }
@@ -149,6 +261,34 @@ namespace WatchMonitorPlugin.Lib
             return ret;
         }
 
+        public static bool WatchDirectoryOwner(
+            WatchPath watch, Dictionary<string, string> dictionary, int serial, DirectoryInfo info)
+        {
+            bool ret = false;
+            if (watch.IsOwner ?? false)
+            {
+                if (info.Exists)
+                {
+                    string ret_string = GetDirectoryOwner(info);
+                    ret = ret_string != watch.Owner;
+                    if (watch.Owner != null)
+                    {
+                        string pathType = "directory";
+                        string checkTarget = "Owner";
+                        dictionary[$"{pathType}_{checkTarget}_{serial}"] = ret ?
+                            $"{watch.Owner} -> {ret_string}" :
+                            ret_string;
+                    }
+                    watch.Owner = ret_string;
+                }
+                else
+                {
+                    watch.Owner = null;
+                }
+            }
+            return ret;
+        }
+
         public static bool WatchDirectoryInherited(
             WatchPath watch, Dictionary<string, string> dictionary, int serial, bool? isMonitor, DirectoryInfo info)
         {
@@ -172,6 +312,34 @@ namespace WatchMonitorPlugin.Lib
                     ret_bool.ToString();
 
                 watch.Inherited = ret_bool;
+            }
+            return ret;
+        }
+
+        public static bool WatchDirectoryInherited(
+            WatchPath watch, Dictionary<string, string> dictionary, int serial, DirectoryInfo info)
+        {
+            bool ret = false;
+            if (watch.Inherited ?? false)
+            {
+                if (info.Exists)
+                {
+                    bool ret_bool = GetDirectoryInherited(info);
+                    ret = ret_bool != watch.Inherited;
+                    if (watch.Inherited != null)
+                    {
+                        string pathType = "directory";
+                        string checkTarget = "Inherited";
+                        dictionary[$"{pathType}_{checkTarget}_{serial}"] = ret ?
+                            $"{watch.Inherited} -> {ret_bool}" :
+                            ret_bool.ToString();
+                    }
+                    watch.Inherited = ret_bool;
+                }
+                else
+                {
+                    watch.Inherited = null;
+                }
             }
             return ret;
         }
@@ -203,6 +371,34 @@ namespace WatchMonitorPlugin.Lib
             return ret;
         }
 
+        public static bool WatchRegistryKeyAccess(
+            WatchPath watch, Dictionary<string, string> dictionary, int serial, RegistryKey regKey)
+        {
+            bool ret = false;
+            if (watch.IsAccess ?? false)
+            {
+                if (regKey != null)
+                {
+                    string ret_string = AccessRuleSummary.RegistryKeyToAccessString(regKey);
+                    ret = ret_string != watch.Access;
+                    if (watch.Access != null)
+                    {
+                        string pathType = "registry";
+                        string checkTarget = "Access";
+                        dictionary[$"{pathType}_{checkTarget}_{serial}"] = ret ?
+                            $"{watch.Access} -> {ret_string}" :
+                            ret_string;
+                    }
+                    watch.Access = ret_string;
+                }
+                else
+                {
+                    watch.Access = null;
+                }
+            }
+            return ret;
+        }
+
         public static bool WatchRegistryKeyOwner(
             WatchPath watch, Dictionary<string, string> dictionary, int serial, bool? isMonitor, RegistryKey regKey)
         {
@@ -230,6 +426,34 @@ namespace WatchMonitorPlugin.Lib
             return ret;
         }
 
+        public static bool WatchRegistryKeyOwner(
+            WatchPath watch, Dictionary<string, string> dictionary, int serial, RegistryKey regKey)
+        {
+            bool ret = false;
+            if (watch.IsOwner ?? false)
+            {
+                if (regKey != null)
+                {
+                    string ret_string = GetRegistryKeyOwner(regKey);
+                    ret = ret_string != watch.Owner;
+                    if (watch.Owner != null)
+                    {
+                        string pathType = "registry";
+                        string checkTarget = "Owner";
+                        dictionary[$"{pathType}_{checkTarget}_{serial}"] = ret ?
+                            $"{watch.Owner} -> {ret_string}" :
+                            ret_string;
+                    }
+                    watch.Owner = ret_string;
+                }
+                else
+                {
+                    watch.Owner = null;
+                }
+            }
+            return ret;
+        }
+
         public static bool WatchRegistryKeyInherited(
             WatchPath watch, Dictionary<string, string> dictionary, int serial, bool? isMonitor, RegistryKey regKey)
         {
@@ -253,6 +477,34 @@ namespace WatchMonitorPlugin.Lib
                     ret_bool.ToString();
 
                 watch.Inherited = ret_bool;
+            }
+            return ret;
+        }
+
+        public static bool WatchRegistryKeyInherited(
+            WatchPath watch, Dictionary<string, string> dictionary, int serial, RegistryKey regKey)
+        {
+            bool ret = false;
+            if (watch.IsInherited ?? false)
+            {
+                if (regKey != null)
+                {
+                    bool ret_bool = GetRegistryKeyInherited(regKey);
+                    ret = ret_bool != watch.Inherited;
+                    if (watch.Inherited != null)
+                    {
+                        string pathType = "registry";
+                        string checkTarget = "Inherited";
+                        dictionary[$"{pathType}_{checkTarget}_{serial}"] = ret ?
+                            $"{watch.Inherited} -> {ret_bool}" :
+                            ret_bool.ToString();
+                    }
+                    watch.Inherited = ret_bool;
+                }
+                else
+                {
+                    watch.Inherited = null;
+                }
             }
             return ret;
         }

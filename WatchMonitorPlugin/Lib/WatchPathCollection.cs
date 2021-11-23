@@ -20,6 +20,9 @@ namespace WatchMonitorPlugin.Lib
 
         public void SetWatchPath(string path, WatchPath watchPath)
         {
+            watchPath.FullPath = path;
+            this[path] = watchPath;
+            /*
             if(watchPath.PathType == PathType.Registry)
             {
                 if (path.EndsWith("\\"))
@@ -44,6 +47,7 @@ namespace WatchMonitorPlugin.Lib
                 watchPath.LeafName = Path.GetFileName(path);
             }
             this[watchPath.FullPath] = watchPath;
+            */
         }
 
         public void setWatchPath(string containerPath, string leafName, WatchPath watchPath)
