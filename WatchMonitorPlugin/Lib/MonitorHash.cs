@@ -189,16 +189,6 @@ namespace WatchMonitorPlugin.Lib
             }
         }
 
-        /*
-        public static string GetMD5Hash(FileStream fs)
-        {
-            var hashAlg = MD5.Create();
-            string text = BitConverter.ToString(hashAlg.ComputeHash(fs)).Replace("-", "");
-            hashAlg.Clear();
-            return text;
-        }
-        */
-
         public static string GetFileSHA256Hash(string filePath)
         {
             using (var fs = new FileStream(filePath, FileMode.Open, FileAccess.Read))
@@ -210,16 +200,6 @@ namespace WatchMonitorPlugin.Lib
             }
         }
 
-        /*
-        public static string GetSHA256Hash(FileStream fs)
-        {
-            var hashAlg = SHA256.Create();
-            string text = BitConverter.ToString(hashAlg.ComputeHash(fs)).Replace("-", "");
-            hashAlg.Clear();
-            return text;
-        }
-        */
-
         public static string GetFileSHA512Hash(string filePath)
         {
             using (var fs = new FileStream(filePath, FileMode.Open, FileAccess.Read))
@@ -230,16 +210,6 @@ namespace WatchMonitorPlugin.Lib
                 return text;
             }
         }
-
-        /*
-        public static string GetSHA512Hash(FileStream fs)
-        {
-            var hashAlg = SHA512.Create();
-            string text = BitConverter.ToString(hashAlg.ComputeHash(fs)).Replace("-", "");
-            hashAlg.Clear();
-            return text;
-        }
-        */
 
         public static string GetRegistryValueMD5Hash(RegistryKey regKey, string name)
         {
