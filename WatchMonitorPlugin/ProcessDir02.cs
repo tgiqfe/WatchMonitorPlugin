@@ -95,7 +95,7 @@ namespace WatchMonitorPlugin
 
             if (Directory.Exists(path))
             {
-                WatchDirectoryCheck(watch, dictionary, path);
+                ret |= WatchDirectoryCheck(watch, dictionary, path);
                 collection.SetWatchPath(path, watch);
 
                 if (depth < _MaxDepth)
@@ -107,7 +107,7 @@ namespace WatchMonitorPlugin
                         dictionary[$"file_{_serial}"] = childPath.Replace(_checkingPath, "");
                         WatchPath childWatch = _Begin ? new WatchPath(PathType.File) : collection.GetWatchPath(childPath);
                         childWatch ??= new WatchPath(PathType.File);
-                        WatchFileCheck(childWatch, dictionary, childPath);
+                        ret |= WatchFileCheck(childWatch, dictionary, childPath);
                         collection.SetWatchPath(childPath, childWatch);
                     }
                     //  配下ディレクトリチェック

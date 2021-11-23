@@ -5,9 +5,36 @@ using System.Text;
 
 
 
-string path = @"C:\Users\User\Downloads\aaaa";
+string path1 = @"C:\Users\User\Downloads\aaaa\aaaa.txt";
+string path2 = @"C:\Users\User\Downloads\aaaa\bbbb.jpg";
+string path3 = @"C:\Users\User\Downloads\aaaa\cccc.xlsx";
 
-ProcessDir02 p2 = new ProcessDir02()
+ProcessFile06 p6 = new ProcessFile06()
+{
+    _Serial = "FileWatch",
+    _Path = new string[] { path1, path2, path3 },
+    _IsLastWriteTime = true,
+    _IsSize = true,
+    _IsOwner = true,
+};
+p6.MainProcess();
+
+Console.ReadLine();
+
+ProcessFile06 p7 = new ProcessFile06()
+{
+    _Serial = "FileWatch",
+    _Path = new string[] { path1, path2, path3 },
+};
+p7.MainProcess();
+
+
+Console.ReadLine();
+
+
+
+/*
+ ProcessDir02 p2 = new ProcessDir02()
 {
     _Serial = "aaaa",
     _Path = new string[] { path },
@@ -22,11 +49,7 @@ ProcessDir02 p3 = new ProcessDir02()
     _Path = new string[] { path },
 };
 p3.MainProcess();
-
-
-Console.ReadLine();
-
-
+*/
 
 
 /*
