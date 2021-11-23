@@ -86,10 +86,34 @@ namespace WatchMonitorPlugin.Lib
             return ret;
         }
 
+        public static bool WatchRegistryValue(
+            WatchPath watch, Dictionary<string, string> dictionary, int serial, string path, string name)
+        {
+            bool ret = false;
+            if(watch.Exists == null)
+            {
+                ret =true;
+                watch.Exists = GetRegistryValueExists(path, name);
+            }
+            else
+            {
+                string pathType = "registry";
+                string checkTarget = "Exists";
+
+                bool ret_bool = GetRegistryValueExists(path, name);
+                ret = ret_bool != watch.Exists;
+                dictionary[$"{pathType}_{checkTarget}_{serial}"] = ret ?
+                    $"{watch.Exists} -> {ret_bool}" :
+                    ret_bool.ToString();
+                watch.Exists = ret_bool;
+            }
+            return ret;
+        }
+
         #endregion
         #region Get method
 
-        private static bool GetRegistryKeyExists(string path)
+        public static bool GetRegistryKeyExists(string path)
         {
             using (RegistryKey regKey = RegistryControl.GetRegistryKey(path, false, false))
             {
@@ -97,7 +121,7 @@ namespace WatchMonitorPlugin.Lib
             }
         }
 
-        private static bool GetRegistryValueExists(string path, string name)
+        public static bool GetRegistryValueExists(string path, string name)
         {
             using (RegistryKey regKey = RegistryControl.GetRegistryKey(path, false, false))
             {
