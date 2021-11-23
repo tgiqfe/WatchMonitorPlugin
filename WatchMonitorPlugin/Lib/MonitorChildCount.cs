@@ -29,7 +29,7 @@ namespace WatchMonitorPlugin.Lib
                 string checkTarget = "ChildCount";
 
                 int[] ret_integers = GetDirectoryChildCount(path);
-                ret = !ret_integers.SequenceEqual(watch.ChildCount);
+                ret = !ret_integers.SequenceEqual(watch.ChildCount ?? new int[0] { });
                 dictionary[$"{pathType}_{checkTarget}_{serial}"] = ret ?
                     string.Format("Directory:{0} / File:{1} -> Directory:{2} / File:{3}",
                         watch.ChildCount[0],
@@ -54,7 +54,7 @@ namespace WatchMonitorPlugin.Lib
                 if (Directory.Exists(path))
                 {
                     int[] ret_integers = GetDirectoryChildCount(path);
-                    ret = !ret_integers.SequenceEqual(watch.ChildCount);
+                    ret = !ret_integers.SequenceEqual(watch.ChildCount ?? new int[0] { });
                     if (watch.ChildCount != null)
                     {
                         string pathType = "directory";
@@ -96,7 +96,7 @@ namespace WatchMonitorPlugin.Lib
                 string checkTarget = "ChildCount";
 
                 int[] ret_integers = GetRegistryKeyChildCount(regKey);
-                ret = !ret_integers.SequenceEqual(watch.ChildCount);
+                ret = !ret_integers.SequenceEqual(watch.ChildCount ?? new int[0] { });
                 dictionary[$"{pathType}_{checkTarget}_{serial}"] = ret ?
                     string.Format("RegistryKey:{0} / Value:{1} -> RegistryKey:{2} / Value:{3}",
                         watch.ChildCount[0],
@@ -121,7 +121,7 @@ namespace WatchMonitorPlugin.Lib
                 if (regKey != null)
                 {
                     int[] ret_integers = GetRegistryKeyChildCount(regKey);
-                    ret = !ret_integers.SequenceEqual(watch.ChildCount);
+                    ret = !ret_integers.SequenceEqual(watch.ChildCount ?? new int[0] { });
                     if(watch.ChildCount != null)
                     {
                         string pathType = "registry";

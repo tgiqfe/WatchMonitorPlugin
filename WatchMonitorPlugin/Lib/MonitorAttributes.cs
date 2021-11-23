@@ -28,7 +28,7 @@ namespace WatchMonitorPlugin.Lib
                 string checkTarget = "Attributes";
 
                 bool[] ret_bools = GetAttributes(path);
-                ret = !ret_bools.SequenceEqual(watch.Attributes);
+                ret = !ret_bools.SequenceEqual(watch.Attributes ?? new bool[0] { });
 
                 dictionary[$"{pathType}_{checkTarget}_{serial}"] = ret ?
                     string.Format(
@@ -61,7 +61,7 @@ namespace WatchMonitorPlugin.Lib
                 if (File.Exists(path))
                 {
                     bool[] ret_bools = GetAttributes(path);
-                    ret = !ret_bools.SequenceEqual(watch.Attributes);
+                    ret = !ret_bools.SequenceEqual(watch.Attributes ?? new bool[0] { });
                     if (watch.Attributes != null)
                     {
                         string pathType = "file";
@@ -109,7 +109,7 @@ namespace WatchMonitorPlugin.Lib
                 string checkTarget = "Attributes";
 
                 bool[] ret_bools = GetAttributes(path);
-                ret = !ret_bools.SequenceEqual(watch.Attributes);
+                ret = !ret_bools.SequenceEqual(watch.Attributes ?? new bool[0] { });
 
                 dictionary[$"{pathType}_{checkTarget}_{serial}"] = ret ?
                     string.Format(
@@ -140,7 +140,7 @@ namespace WatchMonitorPlugin.Lib
                 if (Directory.Exists(path))
                 {
                     bool[] ret_bools = GetAttributes(path);
-                    ret = !ret_bools.SequenceEqual(watch.Attributes);
+                    ret = !ret_bools.SequenceEqual(watch.Attributes ?? new bool[0] { });
                     if (watch.Attributes != null)
                     {
                         string pathType = "directory";
