@@ -14,9 +14,9 @@ namespace WatchMonitorPlugin.Lib
         #region Check method
 
         public static bool WatchFileAccess(
-            WatchPath watch, Dictionary<string, string> dictionary, int serial, bool? isMonitorTarget, FileInfo info)
+            WatchPath watch, Dictionary<string, string> dictionary, int serial, bool? isMonitor, FileInfo info)
         {
-            if (!isMonitorTarget ?? true) { return false; }
+            if ((!isMonitor ?? true) && watch.Access == null) { return false; }
 
             bool ret = false;
             if (watch.Access == null)
@@ -41,9 +41,9 @@ namespace WatchMonitorPlugin.Lib
         }
 
         public static bool WatchDirectoryAccess(
-            WatchPath watch, Dictionary<string, string> dictionary, int serial, bool? isMonitorTarget, DirectoryInfo info)
+            WatchPath watch, Dictionary<string, string> dictionary, int serial, bool? isMonitor, DirectoryInfo info)
         {
-            if (!isMonitorTarget ?? true) { return false; }
+            if ((!isMonitor ?? true) && watch.Access == null) { return false; }
 
             bool ret = false;
             if (watch.Access == null)
@@ -68,9 +68,9 @@ namespace WatchMonitorPlugin.Lib
         }
 
         public static bool WatchFileOwner(
-            WatchPath watch, Dictionary<string, string> dictionary, int serial, bool? isMonitorTarget, FileInfo info)
+            WatchPath watch, Dictionary<string, string> dictionary, int serial, bool? isMonitor, FileInfo info)
         {
-            if (!isMonitorTarget ?? true) { return false; }
+            if ((!isMonitor ?? true) && watch.Owner == null) { return false; }
 
             bool ret = false;
             if (watch.Owner == null)
@@ -95,9 +95,9 @@ namespace WatchMonitorPlugin.Lib
         }
 
         public static bool WatchDirectoryOwner(
-            WatchPath watch, Dictionary<string, string> dictionary, int serial, bool? isMonitorTarget, DirectoryInfo info)
+            WatchPath watch, Dictionary<string, string> dictionary, int serial, bool? isMonitor, DirectoryInfo info)
         {
-            if (!isMonitorTarget ?? true) { return false; }
+            if ((!isMonitor ?? true) && watch.Owner == null) { return false; }
 
             bool ret = false;
             if (watch.Owner == null)
@@ -122,9 +122,9 @@ namespace WatchMonitorPlugin.Lib
         }
 
         public static bool WatchFileInherited(
-            WatchPath watch, Dictionary<string, string> dictionary, int serial, bool? isMonitorTarget, FileInfo info)
+            WatchPath watch, Dictionary<string, string> dictionary, int serial, bool? isMonitor, FileInfo info)
         {
-            if (!isMonitorTarget ?? true) { return false; }
+            if ((!isMonitor ?? true) && watch.Inherited == null) { return false; }
 
             bool ret = false;
             if (watch.Inherited == null)
@@ -149,9 +149,9 @@ namespace WatchMonitorPlugin.Lib
         }
 
         public static bool WatchDirectoryInherited(
-            WatchPath watch, Dictionary<string, string> dictionary, int serial, bool? isMonitorTarget, DirectoryInfo info)
+            WatchPath watch, Dictionary<string, string> dictionary, int serial, bool? isMonitor, DirectoryInfo info)
         {
-            if (!isMonitorTarget ?? true) { return false; }
+            if ((!isMonitor ?? true) && watch.Inherited == null) { return false; }
 
             bool ret = false;
             if (watch.Inherited == null)

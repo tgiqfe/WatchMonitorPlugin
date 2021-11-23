@@ -13,9 +13,9 @@ namespace WatchMonitorPlugin.Lib
         #region Check method
 
         public static bool WatchFileMD5Hash(
-            WatchPath watch, Dictionary<string, string> dictionary, int serial, bool? isMonitorTarget, string path)
+            WatchPath watch, Dictionary<string, string> dictionary, int serial, bool? isMonitor, string path)
         {
-            if (!isMonitorTarget ?? true) { return false; }
+            if ((!isMonitor ?? true) && watch.MD5Hash == null) { return false; }
 
             bool ret = false;
             if (watch.MD5Hash == null)
@@ -40,9 +40,9 @@ namespace WatchMonitorPlugin.Lib
         }
 
         public static bool WatchFileSHA256Hash(
-            WatchPath watch, Dictionary<string, string> dictionary, int serial, bool? isMonitorTarget, string path)
+            WatchPath watch, Dictionary<string, string> dictionary, int serial, bool? isMonitor, string path)
         {
-            if (!isMonitorTarget ?? true) { return false; }
+            if ((!isMonitor ?? true) && watch.SHA256Hash == null) { return false; }
 
             bool ret = false;
             if (watch.SHA256Hash == null)
@@ -67,9 +67,9 @@ namespace WatchMonitorPlugin.Lib
         }
 
         public static bool WatchFileSHA512Hash(
-            WatchPath watch, Dictionary<string, string> dictionary, int serial, bool? isMonitorTarget, string path)
+            WatchPath watch, Dictionary<string, string> dictionary, int serial, bool? isMonitor, string path)
         {
-            if (!isMonitorTarget ?? true) { return false; }
+            if ((!isMonitor ?? true) && watch.SHA512Hash == null) { return false; }
 
             bool ret = false;
             if (watch.SHA512Hash == null)

@@ -12,9 +12,9 @@ namespace WatchMonitorPlugin.Lib
         #region Check method
 
         public static bool WatchFileCreation(
-            WatchPath watch, Dictionary<string, string> dictionary, int serial, bool? isMonitorTarget, FileInfo info, bool? isDateOnly, bool? isTimeOnly)
+            WatchPath watch, Dictionary<string, string> dictionary, int serial, bool? isMonitor, FileInfo info, bool? isDateOnly, bool? isTimeOnly)
         {
-            if (!isMonitorTarget ?? true) { return false; }
+            if ((!isMonitor ?? true) && watch.CreationTime == null) { return false; }
 
             bool ret = false;
             if (watch.CreationTime == null)
@@ -44,9 +44,9 @@ namespace WatchMonitorPlugin.Lib
         }
 
         public static bool WatchDirectoryCreation(
-            WatchPath watch, Dictionary<string, string> dictionary, int serial, bool? isMonitorTarget, DirectoryInfo info, bool? isDateOnly, bool? isTimeOnly)
+            WatchPath watch, Dictionary<string, string> dictionary, int serial, bool? isMonitor, DirectoryInfo info, bool? isDateOnly, bool? isTimeOnly)
         {
-            if (!isMonitorTarget ?? true) { return false; }
+            if ((!isMonitor ?? true) && watch.CreationTime == null) { return false; }
 
             bool ret = false;
             if (watch.CreationTime == null)
@@ -76,9 +76,9 @@ namespace WatchMonitorPlugin.Lib
         }
 
         public static bool WatchFileLastWrite(
-            WatchPath watch, Dictionary<string, string> dictionary, int serial, bool? isMonitorTarget, FileInfo info, bool? isDateOnly, bool? isTimeOnly)
+            WatchPath watch, Dictionary<string, string> dictionary, int serial, bool? isMonitor, FileInfo info, bool? isDateOnly, bool? isTimeOnly)
         {
-            if (!isMonitorTarget ?? true) { return false; }
+            if ((!isMonitor ?? true) && watch.LastWriteTime == null) { return false; }
 
             bool ret = false;
             if (watch.LastWriteTime == null)
@@ -108,9 +108,9 @@ namespace WatchMonitorPlugin.Lib
         }
 
         public static bool WatchDirectoryLastWrite(
-            WatchPath watch, Dictionary<string, string> dictionary, int serial, bool? isMonitorTarget, DirectoryInfo info, bool? isDateOnly, bool? isTimeOnly)
+            WatchPath watch, Dictionary<string, string> dictionary, int serial, bool? isMonitor, DirectoryInfo info, bool? isDateOnly, bool? isTimeOnly)
         {
-            if (!isMonitorTarget ?? true) { return false; }
+            if ((!isMonitor ?? true) && watch.LastWriteTime == null) { return false; }
 
             bool ret = false;
             if (watch.LastWriteTime == null)
@@ -140,9 +140,9 @@ namespace WatchMonitorPlugin.Lib
         }
 
         public static bool WatchFileLastAccess(
-            WatchPath watch, Dictionary<string, string> dictionary, int serial, bool? isMonitorTarget, FileInfo info, bool? isDateOnly, bool? isTimeOnly)
+            WatchPath watch, Dictionary<string, string> dictionary, int serial, bool? isMonitor, FileInfo info, bool? isDateOnly, bool? isTimeOnly)
         {
-            if (!isMonitorTarget ?? true) { return false; }
+            if ((!isMonitor ?? true) && watch.LastAccessTime == null) { return false; }
 
             bool ret = false;
             if (watch.LastAccessTime == null)
@@ -172,9 +172,9 @@ namespace WatchMonitorPlugin.Lib
         }
 
         public static bool WatchDirectoryLastAccess(
-            WatchPath watch, Dictionary<string, string> dictionary, int serial, bool? isMonitorTarget, DirectoryInfo info, bool? isDateOnly, bool? isTimeOnly)
+            WatchPath watch, Dictionary<string, string> dictionary, int serial, bool? isMonitor, DirectoryInfo info, bool? isDateOnly, bool? isTimeOnly)
         {
-            if (!isMonitorTarget ?? true) { return false; }
+            if ((!isMonitor ?? true) && watch.LastAccessTime == null) { return false; }
 
             bool ret = false;
             if (watch.LastAccessTime == null)

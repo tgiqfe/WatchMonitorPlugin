@@ -5,8 +5,32 @@ using System.Text;
 
 
 
-string path = @"C:\Users\User\Downloads\aaaa";
+string path = @"C:\Users\User\Downloads\aaaa\sanko";
 
+ProcessDir02 p2 = new ProcessDir02()
+{
+    _Serial = "aaaa",
+    _Path = new string[] { path },
+    _Begin = true,
+    _IsLastWriteTime = true,
+    _IsAccess = true,
+};
+p2.MainProcess();
+
+ProcessDir02 p3 = new ProcessDir02()
+{
+    _Serial = "aaaa",
+    _Path = new string[] { path },
+};
+p3.MainProcess();
+
+
+Console.ReadLine();
+
+
+
+
+/*
 ProcessDir01 proc1 = new ProcessDir01()
 {
     _Serial = "aaaa",
@@ -26,14 +50,7 @@ ProcessDir01 proc2 = new ProcessDir01()
     _Path = new string[] { path },
 };
 proc2.MainProcess();
-
-
-Console.ReadLine();
-
-
-
-
-
+*/
 
 /*
 Process05 proc1 = new Process05()

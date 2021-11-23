@@ -116,6 +116,10 @@ namespace WatchMonitorPlugin
                     if (_IsSHA512Hash ?? false) { watch.SHA512Hash = MonitorHash.GetSHA512Hash(path); }
                     if (_IsSize ?? false) { watch.Size = info.Length; }
                 }
+                else
+                {
+                    ret |= MonitorExists.WatchFile(watch, dictionary, _serial, path);
+                }
             }
             else
             {
@@ -133,6 +137,10 @@ namespace WatchMonitorPlugin
                     ret |= MonitorHash.WatchFileSHA256Hash(watch, dictionary, _serial, _IsSHA256Hash, path);
                     ret |= MonitorHash.WatchFileSHA512Hash(watch, dictionary, _serial, _IsSHA512Hash, path);
                     ret |= MonitorSize.WatchFile(watch, dictionary, _serial, _IsSize, info);
+                }
+                else
+                {
+                    ret |= MonitorExists.WatchFile(watch, dictionary, _serial, path);
                 }
             }
 

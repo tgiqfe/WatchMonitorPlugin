@@ -50,8 +50,6 @@ namespace WatchMonitorPlugin
             foreach (string path in _Path)
             {
                 _checkingPath = path;
-
-
                 Success = RecursiveTree(collection, dictionary, path, 0);
             }
 

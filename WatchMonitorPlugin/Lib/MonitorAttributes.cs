@@ -12,9 +12,9 @@ namespace WatchMonitorPlugin.Lib
         #region Check method
 
         public static bool WatchFile(
-            WatchPath watch, Dictionary<string, string> dictionary, int serial, bool? isMonitorTarget, string path)
+            WatchPath watch, Dictionary<string, string> dictionary, int serial, bool? isMonitor, string path)
         {
-            if (!isMonitorTarget ?? true) { return false; }
+            if ((!isMonitor ?? true) && watch.Attributes == null) { return false; }
 
             bool ret = false;
             if (watch.Attributes == null)
@@ -53,9 +53,9 @@ namespace WatchMonitorPlugin.Lib
         }
 
         public static bool WatchDirectory(
-            WatchPath watch, Dictionary<string, string> dictionary, int serial, bool? isAttributes, string path)
+            WatchPath watch, Dictionary<string, string> dictionary, int serial, bool? isMonitor, string path)
         {
-            if (!isAttributes ?? true) { return false; }
+            if ((!isMonitor ?? true) && watch.Attributes == null) { return false; }
 
             bool ret = false;
             if (watch.Attributes == null)
