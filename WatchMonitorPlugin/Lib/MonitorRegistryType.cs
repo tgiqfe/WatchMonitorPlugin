@@ -11,7 +11,7 @@ namespace WatchMonitorPlugin.Lib
     {
         #region Check method
 
-        public static bool WatchRegistry(
+        public static bool WatchRegistryValue(
             WatchPath watch, Dictionary<string, string> dictionary, int serial, bool? isMonitor, RegistryKey regKey, string name)
         {
             if ((!isMonitor ?? true) && watch.RegistryType == null) { return false; }

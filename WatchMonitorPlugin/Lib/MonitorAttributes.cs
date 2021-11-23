@@ -94,6 +94,12 @@ namespace WatchMonitorPlugin.Lib
         #endregion
         #region Get method
 
+        /// <summary>
+        /// ファイルorディレクトリの属性を取得。
+        /// ファイルの場合もディレクトリの場合も、共通して使用
+        /// </summary>
+        /// <param name="path"></param>
+        /// <returns></returns>
         public static bool[] GetAttributes(string path)
         {
             FileAttributes attr = File.GetAttributes(path);

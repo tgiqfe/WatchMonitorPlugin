@@ -215,9 +215,9 @@ namespace WatchMonitorPlugin
             if (_IsOwner ?? false) { watch.Owner = MonitorSecurity.GetFileOwner(info); }
             if (_IsInherited ?? false) { watch.Inherited = MonitorSecurity.GetFileInherited(info); }
             if (_IsAttributes ?? false) { watch.Attributes = MonitorAttributes.GetAttributes(path); }
-            if (_IsMD5Hash ?? false) { watch.MD5Hash = MonitorHash.GetMD5Hash(path); }
-            if (_IsSHA256Hash ?? false) { watch.SHA256Hash = MonitorHash.GetSHA256Hash(path); }
-            if (_IsSHA512Hash ?? false) { watch.SHA512Hash = MonitorHash.GetSHA512Hash(path); }
+            if (_IsMD5Hash ?? false) { watch.MD5Hash = MonitorHash.GetFileMD5Hash(path); }
+            if (_IsSHA256Hash ?? false) { watch.SHA256Hash = MonitorHash.GetFileSHA256Hash(path); }
+            if (_IsSHA512Hash ?? false) { watch.SHA512Hash = MonitorHash.GetFileSHA512Hash(path); }
             if (_IsSize ?? false) { watch.Size = info.Length; }
         }
 
