@@ -30,7 +30,7 @@ namespace WatchMonitorPlugin.Lib
         public long? Size { get; set; }
         public int[] ChildCount { get; set; }
         public string RegistryType { get; set; }
-        public bool Exists { get; set; }
+        public bool? Exists { get; set; }
         public bool? IsDateOnly { get; set; }
         public bool? IsTimeOnly { get; set; }
 

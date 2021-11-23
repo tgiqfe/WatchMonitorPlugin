@@ -16,19 +16,23 @@ namespace WatchMonitorPlugin.Lib
             WatchPath watch, Dictionary<string, string> dictionary, int serial, string path)
         {
             bool ret = false;
-            string pathType = "file";
-            string checkTarget = "Exists";
-
-            bool ret_bool = File.Exists(path);
-            ret = ret_bool != watch.Exists;
-            if (!ret_bool && watch.Exists)
+            if (watch.Exists == null)
             {
-                watch = new WatchPath(PathType.File);
+                ret = true;
+                watch.Exists = File.Exists(path);
             }
-            dictionary[$"{pathType}_{checkTarget}_{serial}"] = ret ?
-                $"{watch.Exists} -> {ret_bool}" :
-                ret_bool.ToString();
-            watch.Exists = ret_bool;
+            else
+            {
+                string pathType = "file";
+                string checkTarget = "Exists";
+
+                bool ret_bool = File.Exists(path);
+                ret = ret_bool != watch.Exists;
+                dictionary[$"{pathType}_{checkTarget}_{serial}"] = ret ?
+                    $"{watch.Exists} -> {ret_bool}" :
+                    ret_bool.ToString();
+                watch.Exists = ret_bool;
+            }
 
             return ret;
         }
@@ -37,22 +41,26 @@ namespace WatchMonitorPlugin.Lib
             WatchPath watch, Dictionary<string, string> dictionary, int serial, string path)
         {
             bool ret = false;
-            string pathType = "directory";
-            string checkTarget = "Exists";
-
-            bool ret_bool = Directory.Exists(path);
-            ret = ret_bool != watch.Exists;
-            if (!ret_bool && watch.Exists)
+            if (watch.Exists == null)
             {
-                watch = new WatchPath(PathType.File);
+                ret = true;
+                watch.Exists = Directory.Exists(path);
             }
-            dictionary[$"{pathType}_{checkTarget}_{serial}"] = ret ?
-                $"{watch.Exists} -> {ret_bool}" :
-                ret_bool.ToString();
-            watch.Exists = ret_bool;
+            else
+            {
+                string pathType = "directory";
+                string checkTarget = "Exists";
+
+                bool ret_bool = Directory.Exists(path);
+                ret = ret_bool != watch.Exists;
+                dictionary[$"{pathType}_{checkTarget}_{serial}"] = ret ?
+                    $"{watch.Exists} -> {ret_bool}" :
+                    ret_bool.ToString();
+                watch.Exists = ret_bool;
+            }
 
             return ret;
-        }   
+        }
 
         #endregion
         #region Get method

@@ -88,7 +88,7 @@ namespace WatchMonitorPlugin
             bool ret = false;
 
             _serial++;
-            dictionary[$"directory_{_serial}"] = path.Replace(_checkingPath, "\\");
+            dictionary[$"directory_{_serial}"] = (path + "\\").Replace(_checkingPath, "");
 
             WatchPath watch = _Begin ? new WatchPath(PathType.Directory) : collection.GetWatchPath(path);
             watch ??= new WatchPath(PathType.Directory);
@@ -104,7 +104,7 @@ namespace WatchMonitorPlugin
                     foreach (string childPath in Directory.GetFiles(path))
                     {
                         _serial++;
-                        dictionary[$"file_{_serial}"] = childPath.Replace(_checkingPath, "\\");
+                        dictionary[$"file_{_serial}"] = childPath.Replace(_checkingPath, "");
                         WatchPath childWatch = _Begin ? new WatchPath(PathType.File) : collection.GetWatchPath(childPath);
                         childWatch ??= new WatchPath(PathType.File);
                         WatchFileCheck(childWatch, dictionary, childPath);

@@ -5,13 +5,12 @@ using System.Text;
 
 
 
-string path = @"C:\Users\User\Downloads\aaaa\sanko";
+string path = @"C:\Users\User\Downloads\aaaa";
 
 ProcessDir02 p2 = new ProcessDir02()
 {
     _Serial = "aaaa",
     _Path = new string[] { path },
-    _Begin = true,
     _IsLastWriteTime = true,
     _IsAccess = true,
 };
