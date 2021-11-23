@@ -20,9 +20,67 @@ namespace WatchMonitorPlugin.Lib
 
         public void SetWatchPath(string path, WatchPath watchPath)
         {
-            watchPath.FullPath = path;
-            this[path] = watchPath;
+            if(watchPath.PathType == PathType.Registry)
+            {
+                if (path.EndsWith("\\"))
+                {
+                    //  レジストリキーとしてセット
+                    watchPath.FullPath = path;
+                    watchPath.ContainerPath = path.TrimEnd('\\');
+                    watchPath.LeafName = null;
+                }
+                else
+                {
+                    //  レジストリ値としてセット
+                    watchPath.FullPath = path;
+                    watchPath.ContainerPath = Path.GetDirectoryName(path);
+                    watchPath.LeafName = Path.GetFileName(path);
+                }
+            }
+            else
+            {
+                watchPath.FullPath = path;
+                watchPath.ContainerPath = Path.GetDirectoryName(path);
+                watchPath.LeafName = Path.GetFileName(path);
+            }
+            this[watchPath.FullPath] = watchPath;
         }
+
+        public void setWatchPath(string containerPath, string leafName, WatchPath watchPath)
+        {
+            switch (watchPath.PathType)
+            {
+                case PathType.File:
+                    watchPath.FullPath = Path.Combine(containerPath, leafName);
+                    watchPath.ContainerPath = containerPath;
+                    watchPath.LeafName = leafName;
+                    break;
+                case PathType.Directory:
+                    watchPath.FullPath = Path.Combine(containerPath, leafName);
+                    watchPath.ContainerPath = containerPath;
+                    watchPath.LeafName = leafName;
+                    break;
+                case PathType.Registry:
+                    if (string.IsNullOrEmpty(leafName))
+                    {
+                        //  レジストリキーとしてセット
+                        watchPath.FullPath = containerPath + "\\";
+                        watchPath.ContainerPath = containerPath;
+                        watchPath.LeafName = null;
+                    }
+                    else
+                    {
+                        //  レジストリ値としてセット
+                        watchPath.FullPath = containerPath + "\\" + leafName;
+                        watchPath.ContainerPath = containerPath;
+                        watchPath.LeafName = leafName;
+                    }
+                    break;
+            }
+            this[watchPath.FullPath] = watchPath;
+        }
+
+        #region Load/Save
 
         public static WatchPathCollection Load(string dbDir, string serial)
         {
@@ -53,5 +111,7 @@ namespace WatchMonitorPlugin.Lib
                 sw.WriteLine(json);
             }
         }
+
+        #endregion
     }
 }

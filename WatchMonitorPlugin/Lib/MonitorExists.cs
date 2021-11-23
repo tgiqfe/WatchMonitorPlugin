@@ -90,9 +90,9 @@ namespace WatchMonitorPlugin.Lib
             WatchPath watch, Dictionary<string, string> dictionary, int serial, string path, string name)
         {
             bool ret = false;
-            if(watch.Exists == null)
+            if (watch.Exists == null)
             {
-                ret =true;
+                ret = true;
                 watch.Exists = GetRegistryValueExists(path, name);
             }
             else

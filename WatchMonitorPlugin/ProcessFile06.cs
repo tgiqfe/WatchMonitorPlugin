@@ -50,7 +50,14 @@ namespace WatchMonitorPlugin
                 dictionary[$"file_{_serial}"] = path;
                 WatchPath watch = _Begin ? new WatchPath(PathType.File) : collection.GetWatchPath(path);
                 watch ??= new WatchPath(PathType.File);
-                ret |= WatchFileCheck(watch, dictionary, path);
+                if (File.Exists(path))
+                {
+                    ret |= WatchFileCheck(watch, dictionary, path);
+                }
+                else
+                {
+                    ret |= MonitorExists.WatchFile(watch, dictionary, _serial, path);
+                }
                 collection.SetWatchPath(path, watch);
             }
             collection.Save(dbDir, _Serial);

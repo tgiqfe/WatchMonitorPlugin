@@ -56,6 +56,8 @@ namespace WatchMonitorPlugin
                 Success |= RecursiveTree(collection, dictionary, path, 0);
             }
 
+            
+
             //  ここに、前回Watch時に存在してい今回存在しないパスのチェックを
 
             collection.Save(dbDir, _Serial);
