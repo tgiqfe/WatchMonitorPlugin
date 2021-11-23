@@ -63,11 +63,11 @@ namespace WatchMonitorPlugin
 
         public void MainProcess()
         {
-            bool ret = false;
-
             string dbDir = @"C:\Users\User\Downloads\aaaa\dbdbdb";
             var dictionary = new Dictionary<string, string>();
             var collection = WatchPathCollection.Load(dbDir, _Serial);
+
+            _MaxDepth ??= 5;
 
             if (_Name?.Length > 0)
             {
@@ -83,7 +83,7 @@ namespace WatchMonitorPlugin
                         WatchPath watch = _Begin ?
                             CreateWatchRegistryValue() :
                             collection.GetWatchPath(regPath) ?? CreateWatchRegistryValue();
-                        ret |= WatchRegistryValueCheck(watch, dictionary, regKey, name);
+                        Success |= WatchRegistryValueCheck(watch, dictionary, regKey, name);
                         collection.SetWatchPath(regPath, watch);
                     }
                 }
@@ -93,22 +93,13 @@ namespace WatchMonitorPlugin
                 //  レジストリキーのWatch
                 foreach (string path in _Path)
                 {
-                    _serial++;
-                    dictionary[$"registry_{_serial}"] = path;
-                    WatchPath watch = _Begin ?
-                        CreateWatchRegistryKey() :
-                        collection.GetWatchPath(path) ?? CreateWatchRegistryKey();
                     using (RegistryKey regKey = RegistryControl.GetRegistryKey(path, false, false))
                     {
-                        ret |= WatchRegistryKeyCheck(watch, dictionary, regKey);
-                        collection.SetWatchPath(path, watch);
+                        Success |= RecursiveTree(collection, dictionary, regKey, 0);
                     }
                 }
             }
-
-            Success = ret;
-
-
+            collection.Save(dbDir, _Serial);
 
 
 
@@ -131,27 +122,59 @@ namespace WatchMonitorPlugin
             }
         }
 
+        private bool RecursiveTree(WatchPathCollection collection, Dictionary<string, string> dictionary, RegistryKey regKey, int depth)
+        {
+            bool ret = false;
+            string keyPath = regKey.Name;
+
+            _serial++;
+            dictionary[$"registry_{_serial}"] = keyPath;
+            WatchPath watch = _Begin ?
+                CreateWatchRegistryKey() :
+                collection.GetWatchPath(keyPath) ?? CreateWatchRegistryKey();
+            ret |= WatchRegistryKeyCheck(watch, dictionary, regKey);
+            collection.SetWatchPath(keyPath, watch);
+
+            if (depth < _MaxDepth)
+            {
+                foreach (string name in regKey.GetValueNames())
+                {
+                    _serial++;
+                    string regPath = REGPATH_PREFIX + keyPath + "\\" + name;
+                    dictionary[$"registry_{_serial}"] = regPath;
+                    WatchPath childWatch = _Begin ?
+                        CreateWatchRegistryValue() :
+                        collection.GetWatchPath(regPath) ?? CreateWatchRegistryValue();
+                    ret |= WatchRegistryValueCheck(childWatch, dictionary, regKey, name);
+                    collection.SetWatchPath(regPath, childWatch);
+                }
+                foreach (string key in regKey.GetSubKeyNames())
+                {
+                    ret |= RecursiveTree(collection, dictionary, regKey.OpenSubKey(key, false), depth + 1);
+                }
+            }
+
+            return ret;
+        }
+
         private bool WatchRegistryKeyCheck(WatchPath watch, Dictionary<string, string> dictionary, RegistryKey regKey)
         {
-            bool ret = MonitorExists.WatchRegistryKey(watch, dictionary, _serial, regKey.Name);
-            ret |= MonitorSecurity.WatchRegistryKeyAccess(watch, dictionary, _serial, _IsAccess, regKey);
-            ret |= MonitorSecurity.WatchRegistryKeyOwner(watch, dictionary, _serial, _IsOwner, regKey);
-            ret |= MonitorSecurity.WatchRegistryKeyInherited(watch, dictionary, _serial, _IsInherited, regKey);
-            ret |= MonitorChildCount.WatchRegistryKey(watch, dictionary, _serial, _IsChildCount, regKey);
+            bool ret = MonitorExists.WatchRegistryKey(watch, dictionary, _serial, regKey);
+            ret |= MonitorSecurity.WatchRegistryKeyAccess(watch, dictionary, _serial, regKey);
+            ret |= MonitorSecurity.WatchRegistryKeyOwner(watch, dictionary, _serial, regKey);
+            ret |= MonitorSecurity.WatchRegistryKeyInherited(watch, dictionary, _serial, regKey);
+            ret |= MonitorChildCount.WatchRegistryKey(watch, dictionary, _serial, regKey);
 
             return ret;
         }
 
         private bool WatchRegistryValueCheck(WatchPath watch, Dictionary<string, string> dictionary, RegistryKey regKey, string name)
         {
-            bool ret = MonitorExists.WatchRegistryValue(watch, dictionary, _serial, regKey.Name, name);
-            if (regKey != null || regKey.GetValueNames().Any(x => x.Equals(name, StringComparison.OrdinalIgnoreCase)))
-            {
-                ret |= MonitorHash.WatchRegistryValueMD5Hash(watch, dictionary, _serial, _IsMD5Hash, regKey, name);
-                ret |= MonitorHash.WatchRegistryValueSHA256Hash(watch, dictionary, _serial, _IsSHA256Hash, regKey, name);
-                ret |= MonitorHash.WatchRegistryValueSHA512Hash(watch, dictionary, _serial, _IsSHA512Hash, regKey, name);
-                ret |= MonitorRegistryType.WatchRegistryValue(watch, dictionary, _serial, _IsRegistryType, regKey, name);
-            }
+            bool ret = MonitorExists.WatchRegistryValue(watch, dictionary, _serial, regKey, name);
+            ret |= MonitorHash.WatchRegistryValueMD5Hash(watch, dictionary, _serial, regKey, name);
+            ret |= MonitorHash.WatchRegistryValueSHA256Hash(watch, dictionary, _serial, regKey, name);
+            ret |= MonitorHash.WatchRegistryValueSHA512Hash(watch, dictionary, _serial, regKey, name);
+            ret |= MonitorRegistryType.WatchRegistryValue(watch, dictionary, _serial, regKey, name);
 
             return ret;
         }

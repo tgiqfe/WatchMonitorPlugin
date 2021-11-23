@@ -37,6 +37,26 @@ namespace WatchMonitorPlugin.Lib
             return ret;
         }
 
+        public static bool WatchFile(
+            WatchPath watch, Dictionary<string, string> dictionary, int serial, FileInfo info)
+        {
+            bool ret = false;
+
+            bool ret_bool = info.Exists;
+            ret = ret_bool != watch.Exists;
+            if (watch.Exists != null)
+            {
+                string pathType = "file";
+                string checkTarget = "Exists";
+                dictionary[$"{pathType}_{checkTarget}_{serial}"] = ret ?
+                    $"{watch.Exists} -> {ret_bool}" :
+                    ret_bool.ToString();
+            }
+            watch.Exists = ret_bool;
+
+            return ret;
+        }
+
         public static bool WatchDirectory(
             WatchPath watch, Dictionary<string, string> dictionary, int serial, string path)
         {
@@ -58,6 +78,26 @@ namespace WatchMonitorPlugin.Lib
                     ret_bool.ToString();
                 watch.Exists = ret_bool;
             }
+
+            return ret;
+        }
+
+        public static bool WatchDirectory(
+            WatchPath watch, Dictionary<string, string> dictionary, int serial, DirectoryInfo info)
+        {
+            bool ret = false;
+
+            bool ret_bool = info.Exists;
+            ret = ret_bool != watch.Exists;
+            if (watch.Exists != null)
+            {
+                string pathType = "directory";
+                string checkTarget = "Exists";
+                dictionary[$"{pathType}_{checkTarget}_{serial}"] = ret ?
+                    $"{watch.Exists} -> {ret_bool}" :
+                    ret_bool.ToString();
+            }
+            watch.Exists = ret_bool;
 
             return ret;
         }
@@ -86,6 +126,26 @@ namespace WatchMonitorPlugin.Lib
             return ret;
         }
 
+        public static bool WatchRegistryKey(
+            WatchPath watch, Dictionary<string, string> dictionary, int serial, RegistryKey regKey)
+        {
+            bool ret = false;
+
+            bool ret_bool = regKey != null;
+            ret = ret_bool != watch.Exists;
+            if (watch.Exists != null)
+            {
+                string pathType = "registry";
+                string checkTarget = "Exists";
+                dictionary[$"{pathType}_{checkTarget}_{serial}"] = ret ?
+                    $"{watch.Exists} -> {ret_bool}" :
+                    ret_bool.ToString();
+            }
+            watch.Exists = ret_bool;
+
+            return ret;
+        }
+
         public static bool WatchRegistryValue(
             WatchPath watch, Dictionary<string, string> dictionary, int serial, string path, string name)
         {
@@ -107,6 +167,26 @@ namespace WatchMonitorPlugin.Lib
                     ret_bool.ToString();
                 watch.Exists = ret_bool;
             }
+            return ret;
+        }
+
+        public static bool WatchRegistryValue(
+            WatchPath watch, Dictionary<string, string> dictionary, int serial, RegistryKey regKey, string name)
+        {
+            bool ret = false;
+
+            bool ret_bool = (regKey != null && regKey.GetValueNames().Any(x => x.Equals(name, StringComparison.OrdinalIgnoreCase)));
+            ret = ret_bool != watch.Exists;
+            if (watch.Exists != null)
+            {
+                string pathType = "registry";
+                string checkTarget = "Exists";
+                dictionary[$"{pathType}_{checkTarget}_{serial}"] = ret ?
+                    $"{watch.Exists} -> {ret_bool}" :
+                    ret_bool.ToString();
+            }
+            watch.Exists = ret_bool;
+
             return ret;
         }
 
