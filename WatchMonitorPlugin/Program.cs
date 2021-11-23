@@ -5,7 +5,7 @@ using System.Text;
 
 
 
-string path = @"C:\Users\User\Downloads\aaaa\dbdbdb";
+string path = @"C:\Users\User\Downloads\aaaa";
 
 ProcessDir01 proc1 = new ProcessDir01()
 {
@@ -13,7 +13,7 @@ ProcessDir01 proc1 = new ProcessDir01()
     _Path = new string[]{ path },
     _IsAccess = true,
     _IsAttributes = true,
-    _IsLastAccessTime = true,
+    _IsLastWriteTime = true,
     _IsChildCount = true,
 };
 proc1.MainProcess();

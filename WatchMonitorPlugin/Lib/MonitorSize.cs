@@ -15,18 +15,27 @@ namespace WatchMonitorPlugin.Lib
             WatchPath watch, Dictionary<string, string> dictionary, int serial, bool? isSize, FileInfo info)
         {
             bool ret = false;
-            string pathType = "file";
-            string checkTarget = "Size";
-
-            if ((isSize ?? false) || watch.Size != null)
+            
+            if (isSize ?? false)
             {
-                long ret_long = info.Length;
-                ret = ret_long != watch.Size;
-                dictionary[$"{pathType}_{checkTarget}_{serial}"] = ret ?
-                    $"{watch.Size} -> {ret_long}" :
-                    ret_long.ToString();
+                if (watch.Size == null)
+                {
+                    ret = true;
+                    watch.Size = info.Length;
+                }
+                else
+                {
+                    string pathType = "file";
+                    string checkTarget = "Size";
 
-                watch.Size = ret_long;
+                    long ret_long = info.Length;
+                    ret = ret_long != watch.Size;
+                    dictionary[$"{pathType}_{checkTarget}_{serial}"] = ret ?
+                        $"{watch.Size} -> {ret_long}" :
+                        ret_long.ToString();
+
+                    watch.Size = ret_long;
+                }
             }
             return ret;
         }

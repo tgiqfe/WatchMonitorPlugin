@@ -17,18 +17,27 @@ namespace WatchMonitorPlugin.Lib
             WatchPath watch, Dictionary<string, string> dictionary, int serial, bool? isAccess, FileInfo info)
         {
             bool ret = false;
-            string pathType = "file";
-            string checkTarget = "Access";
-
-            if ((isAccess ?? false) || watch.Access != null)
+            
+            if (isAccess ?? false)
             {
-                string ret_string = AccessRuleSummary.FileToAccessString(info);
-                ret = ret_string != watch.Access;
-                dictionary[$"{pathType}_{checkTarget}_{serial}"] = ret ?
-                    $"{watch.Access} -> {ret_string}" :
-                    ret_string;
+                if (watch.Access == null)
+                {
+                    ret = true;
+                    watch.Access = AccessRuleSummary.FileToAccessString(info);
+                }
+                else
+                {
+                    string pathType = "file";
+                    string checkTarget = "Access";
 
-                watch.Access = ret_string;
+                    string ret_string = AccessRuleSummary.FileToAccessString(info);
+                    ret = ret_string != watch.Access;
+                    dictionary[$"{pathType}_{checkTarget}_{serial}"] = ret ?
+                        $"{watch.Access} -> {ret_string}" :
+                        ret_string;
+
+                    watch.Access = ret_string;
+                }
             }
             return ret;
         }
@@ -37,18 +46,27 @@ namespace WatchMonitorPlugin.Lib
             WatchPath watch, Dictionary<string, string> dictionary, int serial, bool? isAccess, DirectoryInfo info)
         {
             bool ret = false;
-            string pathType = "directory";
-            string checkTarget = "Access";
-
-            if ((isAccess ?? false) || watch.Access != null)
+            
+            if (isAccess ?? false) 
             {
-                string ret_string = AccessRuleSummary.DirectoryToAccessString(info);
-                ret = ret_string != watch.Access;
-                dictionary[$"{pathType}_{checkTarget}_{serial}"] = ret ?
-                    $"{watch.Access} -> {ret_string}" :
-                    ret_string;
+                if (watch.Access == null)
+                {
+                    ret = true;
+                    watch.Access = AccessRuleSummary.DirectoryToAccessString(info);
+                }
+                else
+                {
+                    string pathType = "directory";
+                    string checkTarget = "Access";
 
-                watch.Access = ret_string;
+                    string ret_string = AccessRuleSummary.DirectoryToAccessString(info);
+                    ret = ret_string != watch.Access;
+                    dictionary[$"{pathType}_{checkTarget}_{serial}"] = ret ?
+                        $"{watch.Access} -> {ret_string}" :
+                        ret_string;
+
+                    watch.Access = ret_string;
+                }
             }
             return ret;
         }
@@ -57,18 +75,27 @@ namespace WatchMonitorPlugin.Lib
             WatchPath watch, Dictionary<string, string> dictionary, int serial, bool? isOwner, FileInfo info)
         {
             bool ret = false;
-            string pathType = "file";
-            string checkTarget = "Owner";
-
-            if ((isOwner ?? false) || watch.Owner != null)
+            
+            if (isOwner ?? false) 
             {
-                string ret_string = GetFileOwner(info);
-                ret = ret_string != watch.Owner;
-                dictionary[$"{pathType}_{checkTarget}_{serial}"] = ret ?
-                    $"{watch.Owner} -> {ret_string}" :
-                    ret_string;
+                if (watch.Owner == null)
+                {
+                    ret = true;
+                    watch.Owner = GetFileOwner(info);
+                }
+                else
+                {
+                    string pathType = "file";
+                    string checkTarget = "Owner";
 
-                watch.Owner = ret_string;
+                    string ret_string = GetFileOwner(info);
+                    ret = ret_string != watch.Owner;
+                    dictionary[$"{pathType}_{checkTarget}_{serial}"] = ret ?
+                        $"{watch.Owner} -> {ret_string}" :
+                        ret_string;
+
+                    watch.Owner = ret_string;
+                }
             }
             return ret;
         }
@@ -77,18 +104,27 @@ namespace WatchMonitorPlugin.Lib
             WatchPath watch, Dictionary<string, string> dictionary, int serial, bool? isOwner, DirectoryInfo info)
         {
             bool ret = false;
-            string pathType = "directory";
-            string checkTarget = "Owner";
 
-            if ((isOwner ?? false) || watch.Owner != null)
+            if (isOwner ?? false)
             {
-                string ret_string = GetDirectoryOwner(info);
-                ret = ret_string != watch.Owner;
-                dictionary[$"{pathType}_{checkTarget}_{serial}"] = ret ?
-                    $"{watch.Owner} -> {ret_string}" :
-                    ret_string;
+                if (watch.Owner == null)
+                {
+                    ret = true;
+                    watch.Owner = GetDirectoryOwner(info);
+                }
+                else
+                {
+                    string pathType = "directory";
+                    string checkTarget = "Owner";
 
-                watch.Owner = ret_string;
+                    string ret_string = GetDirectoryOwner(info);
+                    ret = ret_string != watch.Owner;
+                    dictionary[$"{pathType}_{checkTarget}_{serial}"] = ret ?
+                        $"{watch.Owner} -> {ret_string}" :
+                        ret_string;
+
+                    watch.Owner = ret_string;
+                }
             }
             return ret;
         }
@@ -97,18 +133,27 @@ namespace WatchMonitorPlugin.Lib
             WatchPath watch, Dictionary<string, string> dictionary, int serial, bool? isInherited, FileInfo info)
         {
             bool ret = false;
-            string pathType = "file";
-            string checkTarget = "Inherited";
-
-            if ((isInherited ?? false) || watch.Inherited != null)
+            
+            if (isInherited ?? false)
             {
-                bool ret_bool = GetFileInherited(info);
-                ret = ret_bool != watch.Inherited;
-                dictionary[$"{pathType}_{checkTarget}_{serial}"] = ret ?
-                    $"{watch.Inherited} -> {ret_bool}" :
-                    ret_bool.ToString();
+                if (watch.Inherited == null)
+                {
+                    ret = true;
+                    watch.Inherited = GetFileInherited(info);
+                }
+                else
+                {
+                    string pathType = "file";
+                    string checkTarget = "Inherited";
 
-                watch.Inherited = ret_bool;
+                    bool ret_bool = GetFileInherited(info);
+                    ret = ret_bool != watch.Inherited;
+                    dictionary[$"{pathType}_{checkTarget}_{serial}"] = ret ?
+                        $"{watch.Inherited} -> {ret_bool}" :
+                        ret_bool.ToString();
+
+                    watch.Inherited = ret_bool;
+                }
             }
             return ret;
         }
@@ -117,18 +162,27 @@ namespace WatchMonitorPlugin.Lib
             WatchPath watch, Dictionary<string, string> dictionary, int serial, bool? isInherited, DirectoryInfo info)
         {
             bool ret = false;
-            string pathType = "directory";
-            string checkTarget = "Inherited";
-
-            if ((isInherited ?? false) || watch.Inherited != null)
+            
+            if (isInherited ?? false)
             {
-                bool ret_bool = GetDirectoryInherited(info);
-                ret = ret_bool != watch.Inherited;
-                dictionary[$"{pathType}_{checkTarget}_{serial}"] = ret ?
-                    $"{watch.Inherited} -> {ret_bool}" :
-                    ret_bool.ToString();
+                if (watch.Inherited == null)
+                {
+                    ret = true;
+                    watch.Inherited = GetDirectoryInherited(info);
+                }
+                else
+                {
+                    string pathType = "directory";
+                    string checkTarget = "Inherited";
 
-                watch.Inherited = ret_bool;
+                    bool ret_bool = GetDirectoryInherited(info);
+                    ret = ret_bool != watch.Inherited;
+                    dictionary[$"{pathType}_{checkTarget}_{serial}"] = ret ?
+                        $"{watch.Inherited} -> {ret_bool}" :
+                        ret_bool.ToString();
+
+                    watch.Inherited = ret_bool;
+                }
             }
             return ret;
         }

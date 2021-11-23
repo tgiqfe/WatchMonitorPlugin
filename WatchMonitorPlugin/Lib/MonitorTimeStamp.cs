@@ -15,19 +15,30 @@ namespace WatchMonitorPlugin.Lib
             WatchPath watch, Dictionary<string, string> dictionary, int serial, bool? isCreationTime, FileInfo info, bool? isDateOnly, bool? isTimeOnly)
         {
             bool ret = false;
-            string pathType = "file";
-            string checkTarget = "CreationTime";
-
-            if ((isCreationTime ?? false) || watch.CreationTime != null)
+            
+            if (isCreationTime ?? false)
             {
-                string ret_string = GetFileCreationTime(info,
-                    isDateOnly ?? watch.IsDateOnly ?? false,
-                    isTimeOnly ?? watch.IsTimeOnly ?? false);
-                ret = ret_string != watch.CreationTime;
-                dictionary[$"{pathType}_{checkTarget}_{serial}"] = ret ?
-                    $"{watch.CreationTime} -> {ret_string}" :
-                    ret_string;
-                watch.CreationTime = ret_string;
+                if (watch.CreationTime == null)
+                {
+                    ret = true;
+                    watch.CreationTime = GetFileCreationTime(info,
+                        isDateOnly ?? watch.IsDateOnly ?? false,
+                        isTimeOnly ?? watch.IsTimeOnly ?? false);
+                }
+                else
+                {
+                    string pathType = "file";
+                    string checkTarget = "CreationTime";
+
+                    string ret_string = GetFileCreationTime(info,
+                        isDateOnly ?? watch.IsDateOnly ?? false,
+                        isTimeOnly ?? watch.IsTimeOnly ?? false);
+                    ret = ret_string != watch.CreationTime;
+                    dictionary[$"{pathType}_{checkTarget}_{serial}"] = ret ?
+                        $"{watch.CreationTime} -> {ret_string}" :
+                        ret_string;
+                    watch.CreationTime = ret_string;
+                }
                 watch.IsDateOnly ??= isDateOnly;
                 watch.IsTimeOnly ??= isTimeOnly;
             }
@@ -38,19 +49,30 @@ namespace WatchMonitorPlugin.Lib
             WatchPath watch, Dictionary<string, string> dictionary, int serial, bool? isCreationTime, DirectoryInfo info, bool? isDateOnly, bool? isTimeOnly)
         {
             bool ret = false;
-            string pathType = "directory";
-            string checkTarget = "CreationTime";
-
-            if ((isCreationTime ?? false) || watch.CreationTime != null)
+            
+            if (isCreationTime ?? false)
             {
-                string ret_string = GetDirectoryCreationTime(info,
-                    isDateOnly ?? watch.IsDateOnly ?? false,
-                    isTimeOnly ?? watch.IsTimeOnly ?? false);
-                ret = ret_string != watch.CreationTime;
-                dictionary[$"{pathType}_{checkTarget}_{serial}"] = ret ?
-                    $"{watch.CreationTime} -> {ret_string}" :
-                    ret_string;
-                watch.CreationTime = ret_string;
+                if (watch.CreationTime == null)
+                {
+                    ret = true;
+                    watch.CreationTime = GetDirectoryCreationTime(info,
+                        isDateOnly ?? watch.IsDateOnly ?? false,
+                        isTimeOnly ?? watch.IsTimeOnly ?? false);
+                }
+                else
+                {
+                    string pathType = "directory";
+                    string checkTarget = "CreationTime";
+
+                    string ret_string = GetDirectoryCreationTime(info,
+                        isDateOnly ?? watch.IsDateOnly ?? false,
+                        isTimeOnly ?? watch.IsTimeOnly ?? false);
+                    ret = ret_string != watch.CreationTime;
+                    dictionary[$"{pathType}_{checkTarget}_{serial}"] = ret ?
+                        $"{watch.CreationTime} -> {ret_string}" :
+                        ret_string;
+                    watch.CreationTime = ret_string;
+                }
                 watch.IsDateOnly ??= isDateOnly;
                 watch.IsTimeOnly ??= isTimeOnly;
             }
@@ -61,19 +83,30 @@ namespace WatchMonitorPlugin.Lib
             WatchPath watch, Dictionary<string, string> dictionary, int serial, bool? isLastWriteTime, FileInfo info, bool? isDateOnly, bool? isTimeOnly)
         {
             bool ret = false;
-            string pathType = "file";
-            string checkTarget = "LastWriteTime";
-
-            if ((isLastWriteTime ?? false) || watch.LastWriteTime != null)
+            
+            if (isLastWriteTime ?? false) 
             {
-                string ret_string = GetFileLastWriteTime(info,
-                    isDateOnly ?? watch.IsDateOnly ?? false,
-                    isTimeOnly ?? watch.IsTimeOnly ?? false);
-                ret = ret_string != watch.LastWriteTime;
-                dictionary[$"{pathType}_{checkTarget}_{serial}"] = ret ?
-                    $"{watch.LastWriteTime} -> {ret_string}" :
-                    ret_string;
-                watch.LastWriteTime = ret_string;
+                if (watch.LastWriteTime == null)
+                {
+                    ret = true;
+                    watch.LastWriteTime = GetFileLastWriteTime(info,
+                        isDateOnly ?? watch.IsDateOnly ?? false,
+                        isTimeOnly ?? watch.IsTimeOnly ?? false);
+                }
+                else
+                {
+                    string pathType = "file";
+                    string checkTarget = "LastWriteTime";
+
+                    string ret_string = GetFileLastWriteTime(info,
+                        isDateOnly ?? watch.IsDateOnly ?? false,
+                        isTimeOnly ?? watch.IsTimeOnly ?? false);
+                    ret = ret_string != watch.LastWriteTime;
+                    dictionary[$"{pathType}_{checkTarget}_{serial}"] = ret ?
+                        $"{watch.LastWriteTime} -> {ret_string}" :
+                        ret_string;
+                    watch.LastWriteTime = ret_string;
+                }
                 watch.IsDateOnly ??= isDateOnly;
                 watch.IsTimeOnly ??= isTimeOnly;
             }
@@ -84,19 +117,30 @@ namespace WatchMonitorPlugin.Lib
             WatchPath watch, Dictionary<string, string> dictionary, int serial, bool? isLastWriteTime, DirectoryInfo info, bool? isDateOnly, bool? isTimeOnly)
         {
             bool ret = false;
-            string pathType = "directory";
-            string checkTarget = "LastWriteTime";
-
-            if ((isLastWriteTime ?? false) || watch.LastWriteTime != null)
+            
+            if (isLastWriteTime ?? false)
             {
-                string ret_string = GetDirectoryLastWriteTime(info,
-                    isDateOnly ?? watch.IsDateOnly ?? false,
-                    isTimeOnly ?? watch.IsTimeOnly ?? false);
-                ret = ret_string != watch.LastWriteTime;
-                dictionary[$"{pathType}_{checkTarget}_{serial}"] = ret ?
-                    $"{watch.LastWriteTime} -> {ret_string}" :
-                    ret_string;
-                watch.LastWriteTime = ret_string;
+                if (watch.LastWriteTime == null)
+                {
+                    ret = true;
+                    watch.LastWriteTime = GetDirectoryLastWriteTime(info,
+                        isDateOnly ?? watch.IsDateOnly ?? false,
+                        isTimeOnly ?? watch.IsTimeOnly ?? false);
+                }
+                else
+                {
+                    string pathType = "directory";
+                    string checkTarget = "LastWriteTime";
+
+                    string ret_string = GetDirectoryLastWriteTime(info,
+                        isDateOnly ?? watch.IsDateOnly ?? false,
+                        isTimeOnly ?? watch.IsTimeOnly ?? false);
+                    ret = ret_string != watch.LastWriteTime;
+                    dictionary[$"{pathType}_{checkTarget}_{serial}"] = ret ?
+                        $"{watch.LastWriteTime} -> {ret_string}" :
+                        ret_string;
+                    watch.LastWriteTime = ret_string;
+                }
                 watch.IsDateOnly ??= isDateOnly;
                 watch.IsTimeOnly ??= isTimeOnly;
             }
@@ -107,19 +151,30 @@ namespace WatchMonitorPlugin.Lib
             WatchPath watch, Dictionary<string, string> dictionary, int serial, bool? isLastAccessTime, FileInfo info, bool? isDateOnly, bool? isTimeOnly)
         {
             bool ret = false;
-            string pathType = "file";
-            string checkTarget = "LastAccessTime";
-
-            if ((isLastAccessTime ?? false) || watch.LastAccessTime != null)
+            
+            if (isLastAccessTime ?? false)
             {
-                string ret_string = GetFileLastAccessTime(info,
-                    isDateOnly ?? watch.IsDateOnly ?? false,
-                    isTimeOnly ?? watch.IsTimeOnly ?? false);
-                ret = ret_string != watch.LastAccessTime;
-                dictionary[$"{pathType}_{checkTarget}_{serial}"] = ret ?
-                    $"{watch.LastAccessTime} -> {ret_string}" :
-                    ret_string;
-                watch.LastAccessTime = ret_string;
+                if (watch.LastAccessTime == null)
+                {
+                    ret = true;
+                    watch.LastAccessTime = GetFileLastAccessTime(info,
+                        isDateOnly ?? watch.IsDateOnly ?? false,
+                        isTimeOnly ?? watch.IsTimeOnly ?? false);
+                }
+                else
+                {
+                    string pathType = "file";
+                    string checkTarget = "LastAccessTime";
+
+                    string ret_string = GetFileLastAccessTime(info,
+                        isDateOnly ?? watch.IsDateOnly ?? false,
+                        isTimeOnly ?? watch.IsTimeOnly ?? false);
+                    ret = ret_string != watch.LastAccessTime;
+                    dictionary[$"{pathType}_{checkTarget}_{serial}"] = ret ?
+                        $"{watch.LastAccessTime} -> {ret_string}" :
+                        ret_string;
+                    watch.LastAccessTime = ret_string;
+                }
                 watch.IsDateOnly ??= isDateOnly;
                 watch.IsTimeOnly ??= isTimeOnly;
             }
@@ -130,19 +185,30 @@ namespace WatchMonitorPlugin.Lib
             WatchPath watch, Dictionary<string, string> dictionary, int serial, bool? isLastAccessTime, DirectoryInfo info, bool? isDateOnly, bool? isTimeOnly)
         {
             bool ret = false;
-            string pathType = "directory";
-            string checkTarget = "LastAccessTime";
-
-            if ((isLastAccessTime ?? false) || watch.LastAccessTime != null)
+            
+            if (isLastAccessTime ?? false) 
             {
-                string ret_string = GetDirectoryLastAccessTime(info,
-                    isDateOnly ?? watch.IsDateOnly ?? false,
-                    isTimeOnly ?? watch.IsTimeOnly ?? false);
-                ret = ret_string != watch.LastAccessTime;
-                dictionary[$"{pathType}_{checkTarget}_{serial}"] = ret ?
-                    $"{watch.LastAccessTime} -> {ret_string}" :
-                    ret_string;
-                watch.LastAccessTime = ret_string;
+                if (watch.LastAccessTime == null)
+                {
+                    ret = true;
+                    watch.LastAccessTime = GetDirectoryLastAccessTime(info,
+                        isDateOnly ?? watch.IsDateOnly ?? false,
+                        isTimeOnly ?? watch.IsTimeOnly ?? false);
+                }
+                else
+                {
+                    string pathType = "directory";
+                    string checkTarget = "LastAccessTime";
+
+                    string ret_string = GetDirectoryLastAccessTime(info,
+                        isDateOnly ?? watch.IsDateOnly ?? false,
+                        isTimeOnly ?? watch.IsTimeOnly ?? false);
+                    ret = ret_string != watch.LastAccessTime;
+                    dictionary[$"{pathType}_{checkTarget}_{serial}"] = ret ?
+                        $"{watch.LastAccessTime} -> {ret_string}" :
+                        ret_string;
+                    watch.LastAccessTime = ret_string;
+                }
                 watch.IsDateOnly ??= isDateOnly;
                 watch.IsTimeOnly ??= isTimeOnly;
             }

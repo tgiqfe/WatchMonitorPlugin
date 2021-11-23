@@ -14,12 +14,19 @@ namespace WatchMonitorPlugin.Lib
         public static bool WatchFile(
             WatchPath watch, Dictionary<string, string> dictionary, int serial, bool? isAttributes, string path)
         {
-            bool ret = false;
-            string pathType = "file";
-            string checkTarget = "Attributes";
+            if (!isAttributes ?? true) { return false; }
 
-            if ((isAttributes ?? false) || watch.Attributes != null)
+            bool ret = false;
+            if (watch.Attributes == null)
             {
+                ret = true;
+                watch.Attributes = GetAttributes(path);
+            }
+            else
+            {
+                string pathType = "file";
+                string checkTarget = "Attributes";
+
                 bool[] ret_bools = GetAttributes(path);
                 ret = !ret_bools.SequenceEqual(watch.Attributes);
 
@@ -39,21 +46,28 @@ namespace WatchMonitorPlugin.Lib
                         ret_bools[0] ? "x" : " ",
                         ret_bools[1] ? "x" : " ",
                         ret_bools[2] ? "x" : " ");
-
                 watch.Attributes = ret_bools;
             }
+
             return ret;
         }
 
         public static bool WatchDirectory(
             WatchPath watch, Dictionary<string, string> dictionary, int serial, bool? isAttributes, string path)
         {
-            bool ret = false;
-            string pathType = "directory";
-            string checkTarget = "Attributes";
+            if (!isAttributes ?? true) { return false; }
 
-            if ((isAttributes ?? false) || watch.Attributes != null)
+            bool ret = false;
+            if (watch.Attributes == null)
             {
+                ret = true;
+                watch.Attributes = GetAttributes(path);
+            }
+            else
+            {
+                string pathType = "directory";
+                string checkTarget = "Attributes";
+
                 bool[] ret_bools = GetAttributes(path);
                 ret = !ret_bools.SequenceEqual(watch.Attributes);
 

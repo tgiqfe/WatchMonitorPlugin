@@ -96,7 +96,6 @@ namespace WatchMonitorPlugin
                     {
                         watch.ChildCount = MonitorChildCount.GetDirectoryChildCount(path);
                     }
-
                     collection.SetWatchPath(path, watch);
 
                     if (depth < _MaxDepth)
@@ -105,6 +104,7 @@ namespace WatchMonitorPlugin
                         foreach (string childPath in Directory.GetFiles(path))
                         {
                             _serial++;
+                            dictionary[$"file_{_serial}"] = childPath.Replace(_checkingPath, "\\");
                             WatchPath childWatch = new WatchPath(PathType.File);
                             WatchFileCheck_Start(childWatch, childPath);
                             collection.SetWatchPath(childPath, childWatch);
@@ -134,6 +134,7 @@ namespace WatchMonitorPlugin
                         foreach (string childPath in Directory.GetFiles(path))
                         {
                             _serial++;
+                            dictionary[$"file_{_serial}"] = childPath.Replace(_checkingPath, "\\");
                             WatchPath childWatch = collection.GetWatchPath(childPath);
                             if (childWatch == null)
                             {

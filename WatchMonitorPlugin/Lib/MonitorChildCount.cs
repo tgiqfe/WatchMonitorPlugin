@@ -15,24 +15,33 @@ namespace WatchMonitorPlugin.Lib
             WatchPath watch, Dictionary<string, string> dictionary, int serial, bool? isChildCount, string path)
         {
             bool ret = false;
-            string pathType = "directory";
-            string checkTarget = "ChildCount";
-
-            if ((isChildCount ?? false) || watch.ChildCount != null)
+            
+            if (isChildCount ?? false)
             {
-                int[] ret_integers = GetDirectoryChildCount(path);
-                ret = !ret_integers.SequenceEqual(watch.ChildCount);
-                dictionary[$"{pathType}_{checkTarget}_{serial}"] = ret ?
-                    string.Format("File:{0} / Directory:{1} -> File:{2} / Directory:{3}",
-                        watch.ChildCount[0],
-                        watch.ChildCount[1],
-                        ret_integers[0],
-                        ret_integers[1]) :
-                    string.Format("File:{0} / Directory:{1}",
-                        ret_integers[0],
-                        ret_integers[1]);
-                
-                watch.ChildCount = ret_integers;
+                if(watch.ChildCount == null)
+                {
+                    ret = true;
+                    watch.ChildCount = GetDirectoryChildCount(path);
+                }
+                else
+                {
+                    string pathType = "directory";
+                    string checkTarget = "ChildCount";
+
+                    int[] ret_integers = GetDirectoryChildCount(path);
+                    ret = !ret_integers.SequenceEqual(watch.ChildCount);
+                    dictionary[$"{pathType}_{checkTarget}_{serial}"] = ret ?
+                        string.Format("File:{0} / Directory:{1} -> File:{2} / Directory:{3}",
+                            watch.ChildCount[0],
+                            watch.ChildCount[1],
+                            ret_integers[0],
+                            ret_integers[1]) :
+                        string.Format("File:{0} / Directory:{1}",
+                            ret_integers[0],
+                            ret_integers[1]);
+
+                    watch.ChildCount = ret_integers;
+                }
             }
             return ret;
         }
