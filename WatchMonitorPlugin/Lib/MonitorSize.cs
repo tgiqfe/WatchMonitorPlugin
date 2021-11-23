@@ -12,30 +12,28 @@ namespace WatchMonitorPlugin.Lib
         #region Check method
 
         public static bool WatchFile(
-            WatchPath watch, Dictionary<string, string> dictionary, int serial, bool? isSize, FileInfo info)
+            WatchPath watch, Dictionary<string, string> dictionary, int serial, bool? isMonitorTarget, FileInfo info)
         {
+            if (!isMonitorTarget ?? true) { return false; }
+
             bool ret = false;
-            
-            if (isSize ?? false)
+            if (watch.Size == null)
             {
-                if (watch.Size == null)
-                {
-                    ret = true;
-                    watch.Size = info.Length;
-                }
-                else
-                {
-                    string pathType = "file";
-                    string checkTarget = "Size";
+                ret = true;
+                watch.Size = info.Length;
+            }
+            else
+            {
+                string pathType = "file";
+                string checkTarget = "Size";
 
-                    long ret_long = info.Length;
-                    ret = ret_long != watch.Size;
-                    dictionary[$"{pathType}_{checkTarget}_{serial}"] = ret ?
-                        $"{watch.Size} -> {ret_long}" :
-                        ret_long.ToString();
+                long ret_long = info.Length;
+                ret = ret_long != watch.Size;
+                dictionary[$"{pathType}_{checkTarget}_{serial}"] = ret ?
+                    $"{watch.Size} -> {ret_long}" :
+                    ret_long.ToString();
 
-                    watch.Size = ret_long;
-                }
+                watch.Size = ret_long;
             }
             return ret;
         }
