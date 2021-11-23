@@ -177,7 +177,7 @@ namespace WatchMonitorPlugin.Lib
         public static int[] GetRegistryKeyChildCount(RegistryKey regKey)
         {
             string[] childKeys = regKey.GetSubKeyNames();
-            int[] children = new int[]
+            int[] ret_childCounts = new int[]
             {
                 childKeys.Length,
                 regKey.GetValueNames().Length
@@ -188,12 +188,12 @@ namespace WatchMonitorPlugin.Lib
                 using (RegistryKey regChildKey = regKey.OpenSubKey(childKey, false))
                 {
                     int[] childCounts = GetRegistryKeyChildCount(regChildKey);
-                    children[0] = childCounts[0];
-                    children[1] = childCounts[1];
+                    ret_childCounts[0] += childCounts[0];
+                    ret_childCounts[1] += childCounts[1];
                 }
             }
 
-            return children;
+            return ret_childCounts;
         }
 
         #endregion
