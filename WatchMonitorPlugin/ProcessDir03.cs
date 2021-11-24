@@ -35,6 +35,7 @@ namespace WatchMonitorPlugin
         private int _serial;
         public int? _MaxDepth { get; set; }
         private string _checkingPath;
+        private List<string> _checkedList = null;
 
         private WatchPath CreateForDirectory()
         {
@@ -74,6 +75,8 @@ namespace WatchMonitorPlugin
             var dictionary = new Dictionary<string, string>();
             var collection = WatchPathCollection.Load(dbDir, _Serial);
 
+            _checkedList = new List<string>();
+
             _MaxDepth ??= 5;
 
             foreach (string path in _Path)
@@ -81,6 +84,14 @@ namespace WatchMonitorPlugin
                 _checkingPath = path;
                 Success |= RecursiveTree(collection, dictionary, path, 0);
             }
+            foreach (string uncheckedPath in
+                collection.Keys.Where(x => !_checkedList.Any(y => y.Equals(x, StringComparison.OrdinalIgnoreCase))))
+            {
+                _serial++;
+                dictionary[$"remove_{_serial}"] = uncheckedPath;
+                collection.Remove(uncheckedPath);
+            }
+
             collection.Save(dbDir, _Serial);
 
 
@@ -116,6 +127,7 @@ namespace WatchMonitorPlugin
                 collection.GetWatchPath(path) ?? CreateForDirectory();
             ret |= WatchDirectoryCheck(watch, dictionary, path);
             collection.SetWatchPath(path, watch);
+            _checkedList.Add(path);
 
             if (depth < _MaxDepth)
             {
@@ -128,6 +140,7 @@ namespace WatchMonitorPlugin
                         collection.GetWatchPath(filePath) ?? CreateForFile();
                     ret |= WatchFileCheck(childWatch, dictionary, filePath);
                     collection.SetWatchPath(filePath, childWatch);
+                    _checkedList.Add(path);
                 }
                 foreach (string dir in Directory.GetDirectories(path))
                 {

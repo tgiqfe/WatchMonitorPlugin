@@ -50,40 +50,6 @@ namespace WatchMonitorPlugin.Lib
             */
         }
 
-        public void setWatchPath(string containerPath, string leafName, WatchPath watchPath)
-        {
-            switch (watchPath.PathType)
-            {
-                case PathType.File:
-                    watchPath.FullPath = Path.Combine(containerPath, leafName);
-                    watchPath.ContainerPath = containerPath;
-                    watchPath.LeafName = leafName;
-                    break;
-                case PathType.Directory:
-                    watchPath.FullPath = Path.Combine(containerPath, leafName);
-                    watchPath.ContainerPath = containerPath;
-                    watchPath.LeafName = leafName;
-                    break;
-                case PathType.Registry:
-                    if (string.IsNullOrEmpty(leafName))
-                    {
-                        //  レジストリキーとしてセット
-                        watchPath.FullPath = containerPath + "\\";
-                        watchPath.ContainerPath = containerPath;
-                        watchPath.LeafName = null;
-                    }
-                    else
-                    {
-                        //  レジストリ値としてセット
-                        watchPath.FullPath = containerPath + "\\" + leafName;
-                        watchPath.ContainerPath = containerPath;
-                        watchPath.LeafName = leafName;
-                    }
-                    break;
-            }
-            this[watchPath.FullPath] = watchPath;
-        }
-
         #region Load/Save
 
         public static WatchPathCollection Load(string dbDir, string serial)

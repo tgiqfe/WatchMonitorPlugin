@@ -17,9 +17,7 @@ namespace WatchMonitorPlugin.Lib
         public PathType PathType { get; set; }
 
         public string FullPath { get; set; }
-        public string ContainerPath { get; set; }
-        public string LeafName { get; set; }
-
+        
         public string CreationTime { get; set; }
         public string LastWriteTime { get; set; }
         public string LastAccessTime { get; set; }
