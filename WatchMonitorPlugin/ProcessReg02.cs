@@ -78,7 +78,7 @@ namespace WatchMonitorPlugin
                     {
                         _serial++;
                         string regPath = REGPATH_PREFIX + keyPath + "\\" + name;
-                        dictionary[$"registry_{_serial}"] = (regPath + "\\").Replace(_checkingPath, "");
+                        dictionary[$"registry_{_serial}"] = regPath.Replace(_checkingPath, "");
                         WatchPath watch = _Begin ?
                             CreateForRegistryValue() :
                             collection.GetWatchPath(regPath) ?? CreateForRegistryValue();
@@ -92,9 +92,26 @@ namespace WatchMonitorPlugin
                 //  レジストリキーのWatch
                 foreach (string path in _Path)
                 {
+                    _checkingPath = path;
+
                     using (RegistryKey regKey = RegistryControl.GetRegistryKey(path, false, false))
                     {
-                        _checkingPath = path;
+                        //  指定したレジストリキーが存在しない場合
+                        if (regKey == null)
+                        {
+                            string keyPath = path;
+
+                            _serial++;
+                            dictionary[$"registry_{_serial}"] = (path == _checkingPath) ?
+                                path :
+                                keyPath.Replace(_checkingPath, "");
+                            WatchPath watch = _Begin ?
+                                CreateForRegistryKey() :
+                                collection.GetWatchPath(keyPath) ?? CreateForRegistryKey();
+                            Success |= WatchRegistryKeyCheck(watch, dictionary, regKey);
+                            collection.SetWatchPath(keyPath, watch);
+                            continue;
+                        }
                         Success |= RecursiveTree(collection, dictionary, regKey, 0);
                     }
                 }
@@ -136,7 +153,9 @@ namespace WatchMonitorPlugin
             string keyPath = regKey.Name;
 
             _serial++;
-            dictionary[$"registry_{_serial}"] = (keyPath + "\\").Replace(_checkingPath, "");
+            dictionary[$"registry_{_serial}"] = (regKey.Name == _checkingPath) ?
+                regKey.Name :
+                keyPath.Replace(_checkingPath, "");
             WatchPath watch = _Begin ?
                 CreateForRegistryKey() :
                 collection.GetWatchPath(keyPath) ?? CreateForRegistryKey();
@@ -149,7 +168,7 @@ namespace WatchMonitorPlugin
                 {
                     _serial++;
                     string regPath = REGPATH_PREFIX + keyPath + "\\" + name;
-                    dictionary[$"registry_{_serial}"] = (regPath + "\\").Replace(_checkingPath, "");
+                    dictionary[$"registry_{_serial}"] = regPath.Replace(_checkingPath, "");
                     WatchPath childWatch = _Begin ?
                         CreateForRegistryValue() :
                         collection.GetWatchPath(regPath) ?? CreateForRegistryValue();

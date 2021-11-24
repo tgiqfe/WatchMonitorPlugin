@@ -12,7 +12,30 @@ string dir1 = @"C:\Users\User\Downloads\aaaa\bbbb";
 string dir2 = @"C:\Users\User\Downloads\aaaa\cccc";
 string dir3 = @"C:\Users\User\Downloads\aaaa\ssss";
 
+string reg1 = @"HKEY_CURRENT_USER\SOFTWARE\Test\Example01";
+string reg2 = @"HKEY_CURRENT_USER\SOFTWARE\Test\Example02";
 
+ProcessReg02 r1 = new ProcessReg02()
+{
+    _Serial = "TestRegistry01",
+    _Path = new string[] { reg1, reg2 },
+    _IsAccess = true,
+    _IsMD5Hash = true,
+};
+r1.MainProcess();
+
+ProcessReg02 r2 = new ProcessReg02()
+{
+    _Serial = "TestRegistry01",
+    _Path = new string[] { reg1, reg2 },
+};
+r2.MainProcess();
+
+Console.ReadLine();
+
+
+
+/*
 
 ProcessDir03 d1 = new ProcessDir03()
 {
@@ -32,11 +55,7 @@ ProcessDir03 d2 = new ProcessDir03()
 };
 d2.MainProcess();
 
-
-Console.ReadLine();
-
-
-
+*/
 
 /*
 ProcessFile07 file1 = new ProcessFile07()
