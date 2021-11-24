@@ -15,7 +15,7 @@ string dir3 = @"C:\Users\User\Downloads\aaaa\ssss";
 string reg1 = @"HKEY_CURRENT_USER\SOFTWARE\Test\Example01";
 string reg2 = @"HKEY_CURRENT_USER\SOFTWARE\Test\Example02";
 
-ProcessReg02 r1 = new ProcessReg02()
+ProcessReg r1 = new ProcessReg()
 {
     _Serial = "TestRegistry01",
     _Path = new string[] { reg1, reg2 },
@@ -24,7 +24,7 @@ ProcessReg02 r1 = new ProcessReg02()
 };
 r1.MainProcess();
 
-ProcessReg02 r2 = new ProcessReg02()
+ProcessReg r2 = new ProcessReg()
 {
     _Serial = "TestRegistry01",
     _Path = new string[] { reg1, reg2 },

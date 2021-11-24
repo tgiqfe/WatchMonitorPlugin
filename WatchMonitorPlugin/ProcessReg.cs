@@ -8,7 +8,7 @@ using Microsoft.Win32;
 
 namespace WatchMonitorPlugin
 {
-    internal class ProcessReg02
+    internal class ProcessReg
     {
         public string _Serial { get; set; }
         public string[] _Path { get; set; }
