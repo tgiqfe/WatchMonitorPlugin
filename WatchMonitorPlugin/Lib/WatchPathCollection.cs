@@ -12,6 +12,8 @@ namespace WatchMonitorPlugin.Lib
     [System.Runtime.Versioning.SupportedOSPlatform("windows")]
     public class WatchPathCollection : Dictionary<string, WatchPath>
     {
+        private List<string> _CheckedKeys = new List<string>();
+
         public WatchPath GetWatchPath(string path)
         {
             string matchKey = this.Keys.FirstOrDefault(x => x.Equals(path, StringComparison.OrdinalIgnoreCase));
@@ -22,6 +24,8 @@ namespace WatchMonitorPlugin.Lib
         {
             watchPath.FullPath = path;
             this[path] = watchPath;
+            this._CheckedKeys.Add(path);
+
             /*
             if(watchPath.PathType == PathType.Registry)
             {
@@ -49,6 +53,13 @@ namespace WatchMonitorPlugin.Lib
             this[watchPath.FullPath] = watchPath;
             */
         }
+
+        public IEnumerable<string> GetUncheckedKeys()
+        {
+            return this.Keys.Where(x => !_CheckedKeys.Any(y => y.Equals(x, StringComparison.OrdinalIgnoreCase)));
+        }
+
+
 
         #region Load/Save
 

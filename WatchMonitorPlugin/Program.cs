@@ -22,7 +22,6 @@ ProcessDir03 d1 = new ProcessDir03()
     _IsLastWriteTime = true,
     _IsMD5Hash = true,
     _IsInherited = true,
-    _Begin = true
 };
 d1.MainProcess();
 

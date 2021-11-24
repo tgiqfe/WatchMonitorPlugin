@@ -37,7 +37,6 @@ namespace WatchMonitorPlugin
         private int _serial;
         public int? _MaxDepth { get; set; }
         private string _checkingPath;
-        private List<string> _checkedList = null;
         const string REGPATH_PREFIX = "[registry]";
 
         private WatchPath CreateForRegistryKey()
@@ -66,7 +65,6 @@ namespace WatchMonitorPlugin
             string dbDir = @"C:\Users\User\Downloads\aaaa\dbdbdb";
             var dictionary = new Dictionary<string, string>();
             var collection = WatchPathCollection.Load(dbDir, _Serial);
-            _checkedList = new List<string>();
 
             _MaxDepth ??= 5;
 
@@ -86,7 +84,6 @@ namespace WatchMonitorPlugin
                             collection.GetWatchPath(regPath) ?? CreateForRegistryValue();
                         Success |= WatchRegistryValueCheck(watch, dictionary, regKey, name);
                         collection.SetWatchPath(regPath, watch);
-                        _checkedList.Add(regPath);
                     }
                 }
             }
@@ -101,14 +98,14 @@ namespace WatchMonitorPlugin
                         Success |= RecursiveTree(collection, dictionary, regKey, 0);
                     }
                 }
+                foreach (string uncheckedPath in collection.GetUncheckedKeys())
+                {
+                    _serial++;
+                    dictionary[$"remove_{_serial}"] = uncheckedPath;
+                    collection.Remove(uncheckedPath);
+                }
             }
-            foreach (string uncheckedPath in
-                collection.Keys.Where(x => !_checkedList.Any(y => y.Equals(x, StringComparison.OrdinalIgnoreCase))))
-            {
-                _serial++;
-                dictionary[$"remove_{_serial}"] = uncheckedPath;
-                collection.Remove(uncheckedPath);
-            }
+
 
             collection.Save(dbDir, _Serial);
 
@@ -145,7 +142,6 @@ namespace WatchMonitorPlugin
                 collection.GetWatchPath(keyPath) ?? CreateForRegistryKey();
             ret |= WatchRegistryKeyCheck(watch, dictionary, regKey);
             collection.SetWatchPath(keyPath, watch);
-            _checkedList.Add(keyPath);
 
             if (depth < _MaxDepth)
             {
@@ -159,7 +155,6 @@ namespace WatchMonitorPlugin
                         collection.GetWatchPath(regPath) ?? CreateForRegistryValue();
                     ret |= WatchRegistryValueCheck(childWatch, dictionary, regKey, name);
                     collection.SetWatchPath(regPath, childWatch);
-                    _checkedList.Add(regPath);
                 }
                 foreach (string key in regKey.GetSubKeyNames())
                 {
