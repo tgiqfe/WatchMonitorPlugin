@@ -8,7 +8,7 @@ using System.Security.AccessControl;
 using Microsoft.Win32;
 using System.IO;
 
-namespace WatchMonitorPlugin.Lib
+namespace IO.Lib
 {
     [System.Runtime.Versioning.SupportedOSPlatform("windows")]
     internal class AccessRuleSummary

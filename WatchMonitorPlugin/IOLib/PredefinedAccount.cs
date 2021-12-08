@@ -4,9 +4,8 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace WatchMonitorPlugin.Lib
+namespace IO.Lib
 {
-    [System.Runtime.Versioning.SupportedOSPlatform("windows")]
     class PredefinedAccount
     {
         /// <summary>

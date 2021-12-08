@@ -7,67 +7,61 @@ using System.Text.Json;
 using System.Text.Json.Serialization;
 using System.IO;
 
-namespace WatchMonitorPlugin.Lib
+namespace Audit.Lib
 {
-    [System.Runtime.Versioning.SupportedOSPlatform("windows")]
     public class WatchPathCollection : Dictionary<string, WatchPath>
     {
+        /// <summary>
+        /// SetWatchPath()時に格納。
+        /// 未チェックパスの確認要に使用。
+        /// </summary>
         private List<string> _CheckedKeys = new List<string>();
 
+        /// <summary>
+        /// Targetのパス(文字列)から、WatchPathを取得
+        /// </summary>
+        /// <param name="path"></param>
+        /// <returns></returns>
         public WatchPath GetWatchPath(string path)
         {
             string matchKey = this.Keys.FirstOrDefault(x => x.Equals(path, StringComparison.OrdinalIgnoreCase));
             return matchKey == null ? null : this[matchKey];
         }
 
+        /// <summary>
+        /// Targetに対して、WatchPathを格納
+        /// </summary>
+        /// <param name="path"></param>
+        /// <param name="watchPath"></param>
         public void SetWatchPath(string path, WatchPath watchPath)
         {
             watchPath.FullPath = path;
             this[path] = watchPath;
             this._CheckedKeys.Add(path);
-
-            /*
-            if(watchPath.PathType == PathType.Registry)
-            {
-                if (path.EndsWith("\\"))
-                {
-                    //  レジストリキーとしてセット
-                    watchPath.FullPath = path;
-                    watchPath.ContainerPath = path.TrimEnd('\\');
-                    watchPath.LeafName = null;
-                }
-                else
-                {
-                    //  レジストリ値としてセット
-                    watchPath.FullPath = path;
-                    watchPath.ContainerPath = Path.GetDirectoryName(path);
-                    watchPath.LeafName = Path.GetFileName(path);
-                }
-            }
-            else
-            {
-                watchPath.FullPath = path;
-                watchPath.ContainerPath = Path.GetDirectoryName(path);
-                watchPath.LeafName = Path.GetFileName(path);
-            }
-            this[watchPath.FullPath] = watchPath;
-            */
         }
 
+        /// <summary>
+        /// SetWatchPath()でまだ更新していないパスを返す。
+        /// </summary>
+        /// <returns></returns>
         public IEnumerable<string> GetUncheckedKeys()
         {
             return this.Keys.Where(x => !_CheckedKeys.Any(y => y.Equals(x, StringComparison.OrdinalIgnoreCase)));
         }
 
-
-
         #region Load/Save
 
-        public static WatchPathCollection Load(string dbDir, string serial)
+        /// <summary>
+        /// 指定したIDからWatchDBを読み込み
+        /// </summary>
+        /// <param name="dbDir"></param>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        public static WatchPathCollection Load(string dbDir, string id)
         {
             try
             {
-                using (var sr = new StreamReader(Path.Combine(dbDir, serial), Encoding.UTF8))
+                using (var sr = new StreamReader(Path.Combine(dbDir, id), Encoding.UTF8))
                 {
                     return JsonSerializer.Deserialize<WatchPathCollection>(sr.ReadToEnd());
                 }
@@ -76,13 +70,18 @@ namespace WatchMonitorPlugin.Lib
             return new WatchPathCollection();
         }
 
-        public void Save(string dbDir, string serial)
+        /// <summary>
+        /// 指定したIDでWatchDBを保存
+        /// </summary>
+        /// <param name="dbDir"></param>
+        /// <param name="id"></param>
+        public void Save(string dbDir, string id)
         {
             if (!Directory.Exists(dbDir))
             {
                 Directory.CreateDirectory(dbDir);
             }
-            using (var sw = new StreamWriter(Path.Combine(dbDir, serial), false, Encoding.UTF8))
+            using (var sw = new StreamWriter(Path.Combine(dbDir, id), false, Encoding.UTF8))
             {
                 string json = JsonSerializer.Serialize(this, new JsonSerializerOptions()
                 {

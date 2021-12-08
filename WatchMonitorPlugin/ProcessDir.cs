@@ -3,10 +3,12 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using WatchMonitorPlugin.Lib;
+using Audit.Lib;
+using IO.Lib;
 
 namespace WatchMonitorPlugin
 {
+    [System.Runtime.Versioning.SupportedOSPlatform("windows")]
     internal class ProcessDir
     {
         public string _Serial { get; set; }

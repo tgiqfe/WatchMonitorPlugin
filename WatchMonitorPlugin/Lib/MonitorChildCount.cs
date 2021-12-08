@@ -6,44 +6,17 @@ using System.Threading.Tasks;
 using System.IO;
 using Microsoft.Win32;
 
-namespace WatchMonitorPlugin.Lib
+namespace Audit.Lib
 {
+    [System.Runtime.Versioning.SupportedOSPlatform("windows")]
     internal class MonitorChildCount
     {
-        #region Check method
+        #region Compare method
 
-        public static bool WatchDirectory(
-            WatchPath watch, Dictionary<string, string> dictionary, int serial, bool? isMonitor, string path)
-        {
-            if ((!isMonitor ?? true) && watch.ChildCount == null) { return false; }
 
-            bool ret = false;
-            if (watch.ChildCount == null)
-            {
-                ret = true;
-                watch.ChildCount = GetDirectoryChildCount(path);
-            }
-            else
-            {
-                string pathType = "directory";
-                string checkTarget = "ChildCount";
 
-                int[] ret_integers = GetDirectoryChildCount(path);
-                ret = !ret_integers.SequenceEqual(watch.ChildCount ?? new int[0] { });
-                dictionary[$"{pathType}_{checkTarget}_{serial}"] = ret ?
-                    string.Format("Directory:{0} / File:{1} -> Directory:{2} / File:{3}",
-                        watch.ChildCount[0],
-                        watch.ChildCount[1],
-                        ret_integers[0],
-                        ret_integers[1]) :
-                    string.Format("Directory:{0} / File:{1}",
-                        ret_integers[0],
-                        ret_integers[1]);
-
-                watch.ChildCount = ret_integers;
-            }
-            return ret;
-        }
+        #endregion
+        #region Watch method
 
         public static bool WatchDirectory(
             WatchPath watch, Dictionary<string, string> dictionary, int serial, string path)
@@ -75,39 +48,6 @@ namespace WatchMonitorPlugin.Lib
                 {
                     watch.ChildCount = null;
                 }
-            }
-            return ret;
-        }
-
-        public static bool WatchRegistryKey(
-            WatchPath watch, Dictionary<string, string> dictionary, int serial, bool? isMonitor, RegistryKey regKey)
-        {
-            if ((!isMonitor ?? true) && watch.ChildCount == null) { return false; }
-
-            bool ret = false;
-            if (watch.ChildCount == null)
-            {
-                ret = true;
-                watch.ChildCount = GetRegistryKeyChildCount(regKey);
-            }
-            else
-            {
-                string pathType = "registry";
-                string checkTarget = "ChildCount";
-
-                int[] ret_integers = GetRegistryKeyChildCount(regKey);
-                ret = !ret_integers.SequenceEqual(watch.ChildCount ?? new int[0] { });
-                dictionary[$"{pathType}_{checkTarget}_{serial}"] = ret ?
-                    string.Format("RegistryKey:{0} / Value:{1} -> RegistryKey:{2} / Value:{3}",
-                        watch.ChildCount[0],
-                        watch.ChildCount[1],
-                        ret_integers[0],
-                        ret_integers[1]) :
-                    string.Format("RegistryKey:{0} / Value:{1}",
-                        ret_integers[0],
-                        ret_integers[1]);
-
-                watch.ChildCount = ret_integers;
             }
             return ret;
         }

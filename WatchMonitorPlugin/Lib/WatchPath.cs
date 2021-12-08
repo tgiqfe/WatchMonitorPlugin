@@ -8,16 +8,26 @@ using System.Security.Principal;
 using System.Security.AccessControl;
 using Microsoft.Win32;
 using System.Security.Cryptography;
+using IO.Lib;
 
-namespace WatchMonitorPlugin.Lib
+namespace Audit.Lib
 {
-    [System.Runtime.Versioning.SupportedOSPlatform("windows")]
     public class WatchPath
     {
+        /// <summary>
+        /// ファイル/ディレクトリ/レジストリいずれか
+        /// </summary>
         public PathType PathType { get; set; }
 
+        /// <summary>
+        /// ファイル/ディレクトリ/レジストリキーの場合は、Targetへのパス
+        /// レジストリ値の場合は、パスの頭に[registry]を付けて管理
+        /// </summary>
         public string FullPath { get; set; }
         
+        /// <summary>
+        /// 監視中Targetの各情報。
+        /// </summary>
         public string CreationTime { get; set; }
         public string LastWriteTime { get; set; }
         public string LastAccessTime { get; set; }
@@ -33,6 +43,9 @@ namespace WatchMonitorPlugin.Lib
         public string RegistryType { get; set; }
         public bool? Exists { get; set; }
 
+        /// <summary>
+        /// 各情報について、監視対象であるかどうか
+        /// </summary>
         public bool? IsCreationTime { get; set; }
         public bool? IsLastWriteTime { get; set; }
         public bool? IsLastAccessTime { get; set; }
@@ -49,11 +62,11 @@ namespace WatchMonitorPlugin.Lib
         public bool? IsDateOnly { get; set; }
         public bool? IsTimeOnly { get; set; }
 
+        public const string REGPATH_PREFIX = "[registry]";
+
         public WatchPath(PathType pathType)
         {
             PathType = pathType;
         }
-
-        public WatchPath() { }
     }
 }

@@ -5,38 +5,32 @@ using System.Text;
 using System.Threading.Tasks;
 using System.IO;
 
-namespace WatchMonitorPlugin.Lib
+namespace Audit.Lib
 {
+    [System.Runtime.Versioning.SupportedOSPlatform("windows")]
     internal class MonitorSize
     {
-        #region Check method
+        #region Compare method
 
-        public static bool WatchFile(
-            WatchPath watch, Dictionary<string, string> dictionary, int serial, bool? isMonitor, FileInfo info)
+        public static bool CompareFile(ComparePath compare, Dictionary<string, string> dictionary, int serial, string fileA, string fileB)
         {
-            if ((!isMonitor ?? true) && watch.Size == null) { return false; }
-
-            bool ret = false;
-            if (watch.Size == null)
-            {
-                ret = true;
-                watch.Size = info.Length;
-            }
-            else
+            if (compare.IsSize ?? false)
             {
                 string pathType = "file";
                 string checkTarget = "Size";
 
-                long ret_long = info.Length;
-                ret = ret_long != watch.Size;
-                dictionary[$"{pathType}_{checkTarget}_{serial}"] = ret ?
-                    $"{watch.Size} -> {ret_long}" :
-                    ret_long.ToString();
+                long ret_fileA = new System.IO.FileInfo(fileA).Length;
+                long ret_fileB = new System.IO.FileInfo(fileB).Length;
 
-                watch.Size = ret_long;
+                dictionary[$"{pathType}A_{checkTarget}_{serial}"] = string.Format("{0} ({1})", ret_fileA, ToReadable(ret_fileA));
+                dictionary[$"{pathType}B_{checkTarget}_{serial}"] = string.Format("{0} ({1})", ret_fileB, ToReadable(ret_fileB));
+                return ret_fileA == ret_fileB;
             }
-            return ret;
+            return true;
         }
+
+        #endregion
+        #region Watch method
 
         public static bool WatchFile(
             WatchPath watch, Dictionary<string, string> dictionary, int serial, FileInfo info)
@@ -48,13 +42,13 @@ namespace WatchMonitorPlugin.Lib
                 {
                     long ret_long = info.Length;
                     ret = ret_long != watch.Size;
-                    if(watch.Size != null)
+                    if (watch.Size != null)
                     {
                         string pathType = "file";
                         string checkTarget = "Size";
                         dictionary[$"{pathType}_{checkTarget}_{serial}"] = ret ?
-                            $"{watch.Size} -> {ret_long}" :
-                            ret_long.ToString();
+                            string.Format("{0} -> {1} ({2})", watch.Size, ret_long, ToReadable(ret_long)) :
+                            string.Format("{0} ({1})", ret_long, ToReadable(ret_long));
                     }
                     watch.Size = ret_long;
                 }

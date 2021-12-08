@@ -9,7 +9,7 @@ using System.Security.Principal;
 using System.Security.AccessControl;
 using Microsoft.Win32;
 
-namespace WatchMonitorPlugin.Lib
+namespace IO.Lib
 {
     [System.Runtime.Versioning.SupportedOSPlatform("windows")]
     class RegistryControl
@@ -80,10 +80,12 @@ namespace WatchMonitorPlugin.Lib
         /// <param name="excludeKey"></param>
         public static void CopyRegistryKey(RegistryKey sourceKey, RegistryKey destinationKey, string[] excludeKey)
         {
-            if (excludeKey?.Any(x => x.Equals(sourceKey.Name, StringComparison.OrdinalIgnoreCase)) ?? false)
-            {
-                return;
-            }
+            //  ↓の除外キーの為の処理の位置を変更
+            //if (excludeKey?.Any(x => x.Equals(sourceKey.Name, StringComparison.OrdinalIgnoreCase)) ?? false)
+            //{
+            //    return;
+            //}
+
             foreach (string paramName in sourceKey.GetValueNames())
             {
                 RegistryValueKind valueKind = sourceKey.GetValueKind(paramName);
@@ -94,10 +96,17 @@ namespace WatchMonitorPlugin.Lib
                         sourceKey.GetValue(paramName),
                     valueKind);
             }
-            foreach (string keyName in sourceKey.GetSubKeyNames())
+            foreach (string childKeyName in sourceKey.GetSubKeyNames())
             {
-                using (RegistryKey subSrcKey = sourceKey.OpenSubKey(keyName, false))
-                using (RegistryKey subDstKey = destinationKey.CreateSubKey(keyName, true))
+                //  除外キー
+                string childKeyPath = sourceKey.Name + "\\" + childKeyName;
+                if (excludeKey?.Any(x => childKeyPath.StartsWith(x, StringComparison.OrdinalIgnoreCase)) ?? false)
+                {
+                    continue;
+                }
+
+                using (RegistryKey subSrcKey = sourceKey.OpenSubKey(childKeyName, false))
+                using (RegistryKey subDstKey = destinationKey.CreateSubKey(childKeyName, true))
                 {
                     try
                     {
@@ -295,6 +304,35 @@ namespace WatchMonitorPlugin.Lib
                 case RegistryValueKind.None:
                 default:
                     return new byte[0] { };
+            }
+        }
+
+        /// <summary>
+        /// 対象のレジストリキーの有無チェック。
+        /// </summary>
+        /// <param name="path"></param>
+        /// <returns></returns>
+        public static bool Exists(string path)
+        {
+            using (RegistryKey regKey = GetRegistryKey(path, false, false))
+            {
+                return regKey != null;
+            }
+        }
+
+        /// <summary>
+        /// 対象のレジストリ値の有無チェック
+        /// </summary>
+        /// <param name="path"></param>
+        /// <param name="name"></param>
+        /// <returns></returns>
+        public static bool Exists(string path, string name)
+        {
+            using (RegistryKey regKey = GetRegistryKey(path, false, false))
+            {
+                if (regKey == null) { return false; }
+
+                return regKey.GetValueNames().Any(x => x.Equals(name, StringComparison.OrdinalIgnoreCase));
             }
         }
     }
