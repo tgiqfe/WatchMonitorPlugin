@@ -12,7 +12,43 @@ namespace Audit.Lib
     {
         #region Compare method
 
+        public static bool CompareFile(ComparePath compare, Dictionary<string, string> dictionary, int serial)
+        {
+            if (compare.IsAttributes ?? false)
+            {
+                if (!File.Exists(compare.PathA) || !File.Exists(compare.PathB)) { return false; }
 
+                string pathType = "file";
+                string checkTarget = "Size";
+
+                bool[] retA = GetAttributes(compare.PathA);
+                bool[] retB = GetAttributes(compare.PathB);
+
+                dictionary[$"{pathType}A_{checkTarget}_{serial}"] = ToReadable(retA);
+                dictionary[$"{pathType}B_{checkTarget}_{serial}"] = ToReadable(retB);
+                return retA.SequenceEqual(retB);
+            }
+            return true;
+        }
+
+        public static bool CompareDirectory(ComparePath compare, Dictionary<string, string> dictionary, int serial)
+        {
+            if (compare.IsAttributes ?? false)
+            {
+                if (!Directory.Exists(compare.PathA) || !Directory.Exists(compare.PathB)) { return false; }
+
+                string pathType = "directory";
+                string checkTarget = "Size";
+
+                bool[] retA = GetAttributes(compare.PathA);
+                bool[] retB = GetAttributes(compare.PathB);
+
+                dictionary[$"{pathType}A_{checkTarget}_{serial}"] = ToReadable(retA);
+                dictionary[$"{pathType}B_{checkTarget}_{serial}"] = ToReadable(retB);
+                return retA.SequenceEqual(retB);
+            }
+            return true;
+        }
 
         #endregion
         #region Watch method
@@ -31,6 +67,7 @@ namespace Audit.Lib
                     {
                         string pathType = "file";
                         string checkTarget = "Attributes";
+                        /*
                         dictionary[$"{pathType}_{checkTarget}_{serial}"] = ret ?
                             string.Format(
                                 "[{0}]Readonly [{1}]Hidden [{2}]System -> [{3}]Readonly [{4}]Hidden [{5}]System",
@@ -45,6 +82,10 @@ namespace Audit.Lib
                                 ret_bools[0] ? "x" : " ",
                                 ret_bools[1] ? "x" : " ",
                                 ret_bools[2] ? "x" : " ");
+                        */
+                        dictionary[$"{pathType}_{checkTarget}_{serial}"] = ret ?
+                            ToReadable(watch.Attributes) + " -> " + ToReadable(ret_bools) :
+                            ToReadable(ret_bools);
                     }
                     watch.Attributes = ret_bools;
                 }
@@ -70,6 +111,7 @@ namespace Audit.Lib
                     {
                         string pathType = "directory";
                         string checkTarget = "Attributes";
+                        /*
                         dictionary[$"{pathType}_{checkTarget}_{serial}"] = ret ?
                             string.Format(
                                 "[{0}]Readonly [{1}]Hidden [{2}]System -> [{3}]Readonly [{4}]Hidden [{5}]System",
@@ -84,6 +126,10 @@ namespace Audit.Lib
                                 ret_bools[0] ? "x" : " ",
                                 ret_bools[1] ? "x" : " ",
                                 ret_bools[2] ? "x" : " ");
+                        */
+                        dictionary[$"{pathType}_{checkTarget}_{serial}"] = ret ?
+                            ToReadable(watch.Attributes) + " -> " + ToReadable(ret_bools) :
+                            ToReadable(ret_bools);
                     }
                     watch.Attributes = ret_bools;
                 }
@@ -113,6 +159,15 @@ namespace Audit.Lib
                 (attr & FileAttributes.Hidden) == FileAttributes.Hidden,
                 (attr & FileAttributes.System) == FileAttributes.System
             };
+        }
+
+        public static string ToReadable(bool[] ret_bools)
+        {
+            return string.Format(
+                "[{0}]Readonly [{1}]Hidden [{2}]System",
+                ret_bools[0] ? "x" : " ",
+                ret_bools[1] ? "x" : " ",
+                ret_bools[2] ? "x" : " ");
         }
 
         #endregion

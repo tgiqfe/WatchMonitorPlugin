@@ -10,7 +10,7 @@ using IO.Lib;
 namespace WatchMonitorPlugin
 {
     [System.Runtime.Versioning.SupportedOSPlatform("windows")]
-    internal class ProcessReg
+    internal class WatchReg
     {
         public string _Serial { get; set; }
         public string[] _Path { get; set; }

@@ -12,7 +12,7 @@ using IO.Lib;
 
 namespace Audit.Lib
 {
-    public class WatchPath
+    public class WatchPath : Monitoring
     {
         /// <summary>
         /// ファイル/ディレクトリ/レジストリいずれか
@@ -43,6 +43,7 @@ namespace Audit.Lib
         public string RegistryType { get; set; }
         public bool? Exists { get; set; }
 
+        /*
         /// <summary>
         /// 各情報について、監視対象であるかどうか
         /// </summary>
@@ -61,6 +62,7 @@ namespace Audit.Lib
         public bool? IsRegistryType { get; set; }
         public bool? IsDateOnly { get; set; }
         public bool? IsTimeOnly { get; set; }
+        */
 
         public const string REGPATH_PREFIX = "[registry]";
 

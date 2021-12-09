@@ -12,19 +12,21 @@ namespace Audit.Lib
     {
         #region Compare method
 
-        public static bool CompareFile(ComparePath compare, Dictionary<string, string> dictionary, int serial, string fileA, string fileB)
+        public static bool CompareFile(ComparePath compare, Dictionary<string, string> dictionary, int serial)
         {
             if (compare.IsSize ?? false)
             {
+                if (!File.Exists(compare.PathA) || !File.Exists(compare.PathB)) { return false; }
+
                 string pathType = "file";
                 string checkTarget = "Size";
 
-                long ret_fileA = new System.IO.FileInfo(fileA).Length;
-                long ret_fileB = new System.IO.FileInfo(fileB).Length;
+                long retA = new System.IO.FileInfo(compare.PathA).Length;
+                long retB = new System.IO.FileInfo(compare.PathB).Length;
 
-                dictionary[$"{pathType}A_{checkTarget}_{serial}"] = string.Format("{0} ({1})", ret_fileA, ToReadable(ret_fileA));
-                dictionary[$"{pathType}B_{checkTarget}_{serial}"] = string.Format("{0} ({1})", ret_fileB, ToReadable(ret_fileB));
-                return ret_fileA == ret_fileB;
+                dictionary[$"{pathType}A_{checkTarget}_{serial}"] = string.Format("{0} ({1})", retA, ToReadable(retA));
+                dictionary[$"{pathType}B_{checkTarget}_{serial}"] = string.Format("{0} ({1})", retB, ToReadable(retB));
+                return retA == retB;
             }
             return true;
         }

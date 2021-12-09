@@ -13,7 +13,43 @@ namespace Audit.Lib
     {
         #region Compare method
 
+        public static bool CompareDirectory(ComparePath compare, Dictionary<string, string> dictionary, int serial)
+        {
+            if (compare.IsChildCount ?? false)
+            {
+                if (!Directory.Exists(compare.PathA) || !Directory.Exists(compare.PathB)) { return false; }
 
+                string pathType = "directory";
+                string checkTarget = "childCount";
+
+                int[] retA = GetDirectoryChildCount(compare.PathA);
+                int[] retB = GetDirectoryChildCount(compare.PathB);
+
+                dictionary[$"{pathType}A_{checkTarget}_{serial}"] = ToReadableForDirectory(retA);
+                dictionary[$"{pathType}B_{checkTarget}_{serial}"] = ToReadableForDirectory(retB);
+                return retA.SequenceEqual(retB);
+            }
+            return true;
+        }
+
+        public static bool CompareRegistryKey(ComparePath compare, Dictionary<string, string> dictionary, int serial)
+        {
+            if(compare.IsChildCount ?? false)
+            {
+                if(compare.KeyA == null || compare.KeyB == null) { return false; }
+
+                string pathType = "registry";
+                string checkTarget = "childCount";
+
+                int[] retA = GetRegistryKeyChildCount(compare.KeyA);
+                int[] retB = GetRegistryKeyChildCount(compare.KeyB);
+
+                dictionary[$"{pathType}A_{checkTarget}_{serial}"] = ToReadableForRegistryKey(retA);
+                dictionary[$"{pathType}B_{checkTarget}_{serial}"] = ToReadableForRegistryKey(retB);
+                return retA.SequenceEqual(retB);
+            }
+            return false;
+        }
 
         #endregion
         #region Watch method
@@ -62,7 +98,7 @@ namespace Audit.Lib
                 {
                     int[] ret_integers = GetRegistryKeyChildCount(regKey);
                     ret = !ret_integers.SequenceEqual(watch.ChildCount ?? new int[0] { });
-                    if(watch.ChildCount != null)
+                    if (watch.ChildCount != null)
                     {
                         string pathType = "registry";
                         string checkTarget = "ChildCount";
@@ -134,6 +170,20 @@ namespace Audit.Lib
             }
 
             return ret_childCounts;
+        }
+
+        public static string ToReadableForDirectory(int[] ret_bools)
+        {
+            return string.Format("Directory:{0} / File:{1}",
+                ret_bools[0],
+                ret_bools[1]);
+        }
+
+        public static string ToReadableForRegistryKey(int[] ret_bools)
+        {
+            return string.Format("RegistryKey:{0} / Value:{1}",
+                ret_bools[0],
+                ret_bools[1]);
         }
 
         #endregion
