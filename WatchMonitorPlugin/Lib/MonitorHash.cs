@@ -13,6 +13,10 @@ namespace Audit.Lib
     [System.Runtime.Versioning.SupportedOSPlatform("windows")]
     internal class MonitorHash
     {
+        const string CHECK_TARGET_dm5 = "MD5Hash";
+        const string CHECK_TARGET_sha256 = "SHA256Hash";
+        const string CHECK_TARGET_sha512 = "SHA512Hash";
+
         #region Compare method
 
 

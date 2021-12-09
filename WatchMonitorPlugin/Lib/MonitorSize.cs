@@ -10,22 +10,21 @@ namespace Audit.Lib
     [System.Runtime.Versioning.SupportedOSPlatform("windows")]
     internal class MonitorSize
     {
+        const string CHECK_TARGET = "size";
+
         #region Compare method
 
         public static bool CompareFile(ComparePath compare, Dictionary<string, string> dictionary, int serial)
         {
             if (compare.IsSize ?? false)
             {
-                if (!File.Exists(compare.PathA) || !File.Exists(compare.PathB)) { return false; }
+                if (!compare.InfoA.Exists || !compare.InfoB.Exists) { return false; }
 
-                string pathType = "file";
-                string checkTarget = "Size";
+                long retA = ((FileInfo)compare.InfoA).Length;
+                long retB = ((FileInfo)compare.InfoB).Length;
 
-                long retA = new System.IO.FileInfo(compare.PathA).Length;
-                long retB = new System.IO.FileInfo(compare.PathB).Length;
-
-                dictionary[$"{pathType}A_{checkTarget}_{serial}"] = string.Format("{0} ({1})", retA, ToReadable(retA));
-                dictionary[$"{pathType}B_{checkTarget}_{serial}"] = string.Format("{0} ({1})", retB, ToReadable(retB));
+                dictionary[$"{compare.PathTypeName}A_{CHECK_TARGET}_{serial}"] = string.Format("{0} ({1})", retA, ToReadable(retA));
+                dictionary[$"{compare.PathTypeName}B_{CHECK_TARGET}_{serial}"] = string.Format("{0} ({1})", retB, ToReadable(retB));
                 return retA == retB;
             }
             return true;
@@ -46,9 +45,7 @@ namespace Audit.Lib
                     ret = ret_long != watch.Size;
                     if (watch.Size != null)
                     {
-                        string pathType = "file";
-                        string checkTarget = "Size";
-                        dictionary[$"{pathType}_{checkTarget}_{serial}"] = ret ?
+                        dictionary[$"{watch.PathTypeName}_{CHECK_TARGET}_{serial}"] = ret ?
                             string.Format("{0} -> {1} ({2})", watch.Size, ret_long, ToReadable(ret_long)) :
                             string.Format("{0} ({1})", ret_long, ToReadable(ret_long));
                     }

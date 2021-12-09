@@ -12,7 +12,25 @@ namespace Audit.Lib
     [System.Runtime.Versioning.SupportedOSPlatform("windows")]
     internal class MonitorExists
     {
+        const string CHECK_TARGET = "Exists";
+
         #region Compare method
+
+        public static bool CompareFile(ComparePath compare, Dictionary<string, string> dictionary, int serial)
+        {
+            string pathType = "file";
+            string checkTarget = "Exists";
+
+            bool retA = File.Exists(compare.PathA);
+            bool retB = File.Exists(compare.PathB);
+
+            dictionary[$"{pathType}A_{checkTarget}_{serial}"] = retA.ToString();
+            dictionary[$"{pathType}B_{checkTarget}_{serial}"] = retB.ToString();
+
+            return retA && retB;
+        }
+
+
 
 
 

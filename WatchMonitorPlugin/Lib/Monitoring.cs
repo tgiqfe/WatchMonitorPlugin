@@ -11,6 +11,9 @@ namespace Audit.Lib
     {
         public PathType PathType { get; set; }
 
+        private string _PathTypeName = null;
+        public string PathTypeName { get { _PathTypeName ??= PathType.ToString().ToLower();  return _PathTypeName; } }
+
         public bool? IsCreationTime { get; set; }
         public bool? IsLastWriteTime { get; set; }
         public bool? IsLastAccessTime { get; set; }

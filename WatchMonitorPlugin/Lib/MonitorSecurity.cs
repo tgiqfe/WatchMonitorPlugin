@@ -14,6 +14,8 @@ namespace Audit.Lib
     [System.Runtime.Versioning.SupportedOSPlatform("windows")]
     internal class MonitorSecurity
     {
+        const string CHECK_TARGET = "RegistryType";
+
         #region Compare method
 
 

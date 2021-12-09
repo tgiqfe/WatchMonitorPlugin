@@ -11,13 +11,15 @@ namespace Audit.Lib
     [System.Runtime.Versioning.SupportedOSPlatform("windows")]
     internal class MonitorChildCount
     {
+        const string CHECK_TARGET = "ChildCount";
+
         #region Compare method
 
         public static bool CompareDirectory(ComparePath compare, Dictionary<string, string> dictionary, int serial)
         {
             if (compare.IsChildCount ?? false)
             {
-                if (!Directory.Exists(compare.PathA) || !Directory.Exists(compare.PathB)) { return false; }
+                if (!compare.InfoA.Exists || !compare.InfoB.Exists) { return false; }
 
                 string pathType = "directory";
                 string checkTarget = "childCount";

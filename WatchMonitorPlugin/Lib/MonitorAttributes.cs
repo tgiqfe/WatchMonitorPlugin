@@ -10,22 +10,21 @@ namespace Audit.Lib
     [System.Runtime.Versioning.SupportedOSPlatform("windows")]
     internal class MonitorAttributes
     {
+        const string CHECK_TARGET = "Attribute";
+
         #region Compare method
 
         public static bool CompareFile(ComparePath compare, Dictionary<string, string> dictionary, int serial)
         {
             if (compare.IsAttributes ?? false)
             {
-                if (!File.Exists(compare.PathA) || !File.Exists(compare.PathB)) { return false; }
-
-                string pathType = "file";
-                string checkTarget = "Size";
-
+                if(!compare.InfoA.Exists || !compare.InfoB.Exists) { return false; }
+                
                 bool[] retA = GetAttributes(compare.PathA);
                 bool[] retB = GetAttributes(compare.PathB);
 
-                dictionary[$"{pathType}A_{checkTarget}_{serial}"] = ToReadable(retA);
-                dictionary[$"{pathType}B_{checkTarget}_{serial}"] = ToReadable(retB);
+                dictionary[$"{compare.PathTypeName}A_{CHECK_TARGET}_{serial}"] = ToReadable(retA);
+                dictionary[$"{compare.PathTypeName}B_{CHECK_TARGET}_{serial}"] = ToReadable(retB);
                 return retA.SequenceEqual(retB);
             }
             return true;
@@ -35,16 +34,13 @@ namespace Audit.Lib
         {
             if (compare.IsAttributes ?? false)
             {
-                if (!Directory.Exists(compare.PathA) || !Directory.Exists(compare.PathB)) { return false; }
-
-                string pathType = "directory";
-                string checkTarget = "Size";
+                if (!compare.InfoA.Exists || !compare.InfoB.Exists) { return false; }
 
                 bool[] retA = GetAttributes(compare.PathA);
                 bool[] retB = GetAttributes(compare.PathB);
 
-                dictionary[$"{pathType}A_{checkTarget}_{serial}"] = ToReadable(retA);
-                dictionary[$"{pathType}B_{checkTarget}_{serial}"] = ToReadable(retB);
+                dictionary[$"{compare.PathTypeName}A_{CHECK_TARGET}_{serial}"] = ToReadable(retA);
+                dictionary[$"{compare.PathTypeName}B_{CHECK_TARGET}_{serial}"] = ToReadable(retB);
                 return retA.SequenceEqual(retB);
             }
             return true;
@@ -65,8 +61,6 @@ namespace Audit.Lib
                     ret = !ret_bools.SequenceEqual(watch.Attributes ?? new bool[0] { });
                     if (watch.Attributes != null)
                     {
-                        string pathType = "file";
-                        string checkTarget = "Attributes";
                         /*
                         dictionary[$"{pathType}_{checkTarget}_{serial}"] = ret ?
                             string.Format(
@@ -83,7 +77,7 @@ namespace Audit.Lib
                                 ret_bools[1] ? "x" : " ",
                                 ret_bools[2] ? "x" : " ");
                         */
-                        dictionary[$"{pathType}_{checkTarget}_{serial}"] = ret ?
+                        dictionary[$"{watch.PathTypeName}_{CHECK_TARGET}_{serial}"] = ret ?
                             ToReadable(watch.Attributes) + " -> " + ToReadable(ret_bools) :
                             ToReadable(ret_bools);
                     }
@@ -109,8 +103,6 @@ namespace Audit.Lib
                     ret = !ret_bools.SequenceEqual(watch.Attributes ?? new bool[0] { });
                     if (watch.Attributes != null)
                     {
-                        string pathType = "directory";
-                        string checkTarget = "Attributes";
                         /*
                         dictionary[$"{pathType}_{checkTarget}_{serial}"] = ret ?
                             string.Format(
@@ -127,7 +119,7 @@ namespace Audit.Lib
                                 ret_bools[1] ? "x" : " ",
                                 ret_bools[2] ? "x" : " ");
                         */
-                        dictionary[$"{pathType}_{checkTarget}_{serial}"] = ret ?
+                        dictionary[$"{watch.PathTypeName}_{CHECK_TARGET}_{serial}"] = ret ?
                             ToReadable(watch.Attributes) + " -> " + ToReadable(ret_bools) :
                             ToReadable(ret_bools);
                     }
