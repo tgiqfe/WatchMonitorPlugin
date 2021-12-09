@@ -14,7 +14,7 @@ namespace Audit.Lib
 
         #region Compare method
 
-        public override bool CompareFile(CompareMonitoring monitoring, Dictionary<string, string> dictionary, int serial)
+        public override bool CompareFile(MonitoringCompare monitoring, Dictionary<string, string> dictionary, int serial)
         {
             if (monitoring.IsSize ?? false)
             {

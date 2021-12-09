@@ -18,11 +18,6 @@ namespace Audit.Lib
     public class MonitoringWatch : Monitoring
     {
         /// <summary>
-        /// ファイル/ディレクトリ/レジストリいずれか
-        /// </summary>
-        //public PathType PathType { get; set; }
-
-        /// <summary>
         /// ファイル/ディレクトリ/レジストリキーの場合は、Targetへのパス
         /// レジストリ値の場合は、パスの頭に[registry]を付けて管理
         /// </summary>
@@ -45,27 +40,6 @@ namespace Audit.Lib
         public int[] ChildCount { get; set; }
         public string RegistryType { get; set; }
         public bool? Exists { get; set; }
-
-        /*
-        /// <summary>
-        /// 各情報について、監視対象であるかどうか
-        /// </summary>
-        public bool? IsCreationTime { get; set; }
-        public bool? IsLastWriteTime { get; set; }
-        public bool? IsLastAccessTime { get; set; }
-        public bool? IsAccess { get; set; }
-        public bool? IsOwner { get; set; }
-        public bool? IsInherited { get; set; }
-        public bool? IsAttributes { get; set; }
-        public bool? IsMD5Hash { get; set; }
-        public bool? IsSHA256Hash { get; set; }
-        public bool? IsSHA512Hash { get; set; }
-        public bool? IsSize { get; set; }
-        public bool? IsChildCount { get; set; }
-        public bool? IsRegistryType { get; set; }
-        public bool? IsDateOnly { get; set; }
-        public bool? IsTimeOnly { get; set; }
-        */
 
         [JsonIgnore]
         public string Path { get; set; }

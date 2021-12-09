@@ -12,13 +12,13 @@ namespace Audit.Lib
     {
         public virtual string CheckTarget { get; }
 
-        public virtual bool CompareFile(CompareMonitoring monitoring, Dictionary<string, string> dictionary, int serial) { return true; }
+        public virtual bool CompareFile(MonitoringCompare monitoring, Dictionary<string, string> dictionary, int serial) { return true; }
 
-        public virtual bool CompareDirectory(CompareMonitoring monitoring, Dictionary<string, string> dictionary, int serial) { return true; }
+        public virtual bool CompareDirectory(MonitoringCompare monitoring, Dictionary<string, string> dictionary, int serial) { return true; }
 
-        public virtual bool CompareRegistryKey(CompareMonitoring monitoring, Dictionary<string, string> dictionary, int serial) { return true; }
+        public virtual bool CompareRegistryKey(MonitoringCompare monitoring, Dictionary<string, string> dictionary, int serial) { return true; }
 
-        public virtual bool CompareRegistryValue(CompareMonitoring monitoring, Dictionary<string, string> dictionary, int serial) { return true; }
+        public virtual bool CompareRegistryValue(MonitoringCompare monitoring, Dictionary<string, string> dictionary, int serial) { return true; }
 
         public virtual bool WatchFile(MonitoringWatch monitoring, Dictionary<string, string> dictionary, int serial) { return false; }
 

@@ -15,7 +15,7 @@ namespace Audit.Lib
 
         #region Compare method
 
-        public override bool CompareDirectory(CompareMonitoring monitoring, Dictionary<string, string> dictionary, int serial)
+        public override bool CompareDirectory(MonitoringCompare monitoring, Dictionary<string, string> dictionary, int serial)
         {
             if (monitoring.IsChildCount ?? false)
             {
@@ -31,7 +31,7 @@ namespace Audit.Lib
             return true;
         }
 
-        public override bool CompareRegistryKey(CompareMonitoring monitoring, Dictionary<string, string> dictionary, int serial)
+        public override bool CompareRegistryKey(MonitoringCompare monitoring, Dictionary<string, string> dictionary, int serial)
         {
             if (monitoring.IsChildCount ?? false)
             {
@@ -62,8 +62,8 @@ namespace Audit.Lib
                     if (monitoring.ChildCount != null)
                     {
                         dictionary[$"{monitoring.PathTypeName}_{this.CheckTarget}_{serial}"] = ret ?
-                            ToReadable(monitoring.ChildCount, isDirectory: true) + " -> " + ToReadable(result, isDirectory: false) :
-                            ToReadable(result, isDirectory: false);
+                            ToReadable(monitoring.ChildCount, isDirectory: true) + " -> " + ToReadable(result, isDirectory: true) :
+                            ToReadable(result, isDirectory: true);
                     }
                     monitoring.ChildCount = result;
                 }
@@ -77,7 +77,27 @@ namespace Audit.Lib
 
         public override bool WatchRegistryKey(MonitoringWatch monitoring, Dictionary<string, string> dictionary, int serial)
         {
-            return false;
+            bool ret = false;
+            if (monitoring.IsChildCount ?? false)
+            {
+                if (monitoring.Key != null)
+                {
+                    int[] result = GetRegistryKeyChildCount(monitoring.Key);
+                    ret = !result.SequenceEqual(monitoring.ChildCount ?? new int[0] { });
+                    if (monitoring.ChildCount != null)
+                    {
+                        dictionary[$"{monitoring.PathTypeName}_{this.CheckTarget}_{serial}"] = ret ?
+                            ToReadable(monitoring.ChildCount, isDirectory: false) + " -> " + ToReadable(result, isDirectory: false) :
+                            ToReadable(result, isDirectory: false);
+                    }
+                    monitoring.ChildCount = result;
+                }
+                else
+                {
+                    monitoring.ChildCount = null;
+                }
+            }
+            return ret;
         }
 
         #endregion

@@ -103,7 +103,7 @@ namespace WatchMonitorPlugin
             ret |= MonitorSecurity.WatchFileAccess(watch, dictionary, _serial, info);
             ret |= MonitorSecurity.WatchFileOwner(watch, dictionary, _serial, info);
             ret |= MonitorSecurity.WatchFileInherited(watch, dictionary, _serial, info);
-            ret |= MonitorAttributes.WatchFile(watch, dictionary, _serial, path);
+            //ret |= MonitorAttributes.WatchFile(watch, dictionary, _serial, path);
             ret |= MonitorHash.WatchFileMD5Hash(watch, dictionary, _serial, path);
             ret |= MonitorHash.WatchFileSHA256Hash(watch, dictionary, _serial, path);
             ret |= MonitorHash.WatchFileSHA512Hash(watch, dictionary, _serial, path);

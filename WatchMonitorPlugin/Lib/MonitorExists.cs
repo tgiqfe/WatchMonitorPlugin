@@ -16,7 +16,7 @@ namespace Audit.Lib
 
         #region Compare method
 
-        public static bool CompareFile(CompareMonitoring compare, Dictionary<string, string> dictionary, int serial)
+        public static bool CompareFile(MonitoringCompare compare, Dictionary<string, string> dictionary, int serial)
         {
             string pathType = "file";
             string checkTarget = "Exists";

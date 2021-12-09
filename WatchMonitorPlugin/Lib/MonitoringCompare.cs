@@ -11,7 +11,7 @@ using System.Text.Json;
 
 namespace Audit.Lib
 {
-    internal class CompareMonitoring : Monitoring
+    internal class MonitoringCompare : Monitoring
     {
         /// <summary>
         /// 比較する対象のパス(レジストリ値の場合はNameも)
@@ -64,7 +64,7 @@ namespace Audit.Lib
 
         #endregion
 
-        public CompareMonitoring(PathType pathType)
+        public MonitoringCompare(PathType pathType)
         {
             PathType = pathType;
         }

@@ -11,7 +11,7 @@ using IO.Lib;
 namespace Audit.Lib
 {
     [System.Runtime.Versioning.SupportedOSPlatform("windows")]
-    internal class MonitorHash
+    internal class MonitorHash : MonitorBase
     {
         const string CHECK_TARGET_dm5 = "MD5Hash";
         const string CHECK_TARGET_sha256 = "SHA256Hash";
@@ -22,6 +22,7 @@ namespace Audit.Lib
 
 
         #endregion
+
         #region Watch method
 
         public static bool WatchFileMD5Hash(
@@ -118,7 +119,7 @@ namespace Audit.Lib
                 {
                     string ret_string = GetRegistryValueMD5Hash(regKey, name);
                     ret = ret_string != watch.MD5Hash;
-                    if(watch.MD5Hash != null)
+                    if (watch.MD5Hash != null)
                     {
                         string pathType = "registry";
                         string checkTarget = "MD5Hash";
@@ -193,6 +194,7 @@ namespace Audit.Lib
         }
 
         #endregion
+
         #region Get method
 
         public static string GetFileMD5Hash(string filePath)
@@ -256,6 +258,38 @@ namespace Audit.Lib
             string text = BitConverter.ToString(hashAlg.ComputeHash(bytes)).Replace("-", "");
             hashAlg.Clear();
             return text;
+        }
+
+        #endregion
+    }
+
+    internal class MonitorMD5Hash : MonitorHash
+    {
+        public override string CheckTarget { get { return "MD5Hash"; } }
+
+        #region Compare method
+
+        public override bool CompareFile(MonitoringCompare monitoring, Dictionary<string, string> dictionary, int serial)
+        {
+            return base.CompareFile(monitoring, dictionary, serial);
+        }
+
+        public override bool CompareRegistryValue(MonitoringCompare monitoring, Dictionary<string, string> dictionary, int serial)
+        {
+            return base.CompareRegistryValue(monitoring, dictionary, serial);
+        }
+
+        #endregion
+        #region Watch method
+
+        public override bool WatchFile(MonitoringWatch monitoring, Dictionary<string, string> dictionary, int serial)
+        {
+            return base.WatchFile(monitoring, dictionary, serial);
+        }
+
+        public override bool WatchRegistryValue(MonitoringWatch monitoring, Dictionary<string, string> dictionary, int serial)
+        {
+            return base.WatchRegistryValue(monitoring, dictionary, serial);
         }
 
         #endregion
