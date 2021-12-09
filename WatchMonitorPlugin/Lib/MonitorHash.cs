@@ -25,7 +25,7 @@ namespace Audit.Lib
         #region Watch method
 
         public static bool WatchFileMD5Hash(
-            WatchMonitoring watch, Dictionary<string, string> dictionary, int serial, string path)
+            MonitoringWatch watch, Dictionary<string, string> dictionary, int serial, string path)
         {
             bool ret = false;
             if (watch.IsMD5Hash ?? false)
@@ -53,7 +53,7 @@ namespace Audit.Lib
         }
 
         public static bool WatchFileSHA256Hash(
-            WatchMonitoring watch, Dictionary<string, string> dictionary, int serial, string path)
+            MonitoringWatch watch, Dictionary<string, string> dictionary, int serial, string path)
         {
             bool ret = false;
             if (watch.IsSHA256Hash ?? false)
@@ -81,7 +81,7 @@ namespace Audit.Lib
         }
 
         public static bool WatchFileSHA512Hash(
-            WatchMonitoring watch, Dictionary<string, string> dictionary, int serial, string path)
+            MonitoringWatch watch, Dictionary<string, string> dictionary, int serial, string path)
         {
             bool ret = false;
             if (watch.IsSHA512Hash ?? false)
@@ -109,7 +109,7 @@ namespace Audit.Lib
         }
 
         public static bool WatchRegistryValueMD5Hash(
-            WatchMonitoring watch, Dictionary<string, string> dictionary, int serial, RegistryKey regKey, string name)
+            MonitoringWatch watch, Dictionary<string, string> dictionary, int serial, RegistryKey regKey, string name)
         {
             bool ret = false;
             if (watch.IsMD5Hash ?? false)
@@ -137,7 +137,7 @@ namespace Audit.Lib
         }
 
         public static bool WatchRegistryValueSHA256Hash(
-            WatchMonitoring watch, Dictionary<string, string> dictionary, int serial, RegistryKey regKey, string name)
+            MonitoringWatch watch, Dictionary<string, string> dictionary, int serial, RegistryKey regKey, string name)
         {
             bool ret = false;
             if (watch.IsSHA256Hash ?? false)
@@ -165,7 +165,7 @@ namespace Audit.Lib
         }
 
         public static bool WatchRegistryValueSHA512Hash(
-            WatchMonitoring watch, Dictionary<string, string> dictionary, int serial, RegistryKey regKey, string name)
+            MonitoringWatch watch, Dictionary<string, string> dictionary, int serial, RegistryKey regKey, string name)
         {
             bool ret = false;
             if (watch.IsSHA512Hash ?? false)

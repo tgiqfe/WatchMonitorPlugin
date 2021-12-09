@@ -15,7 +15,7 @@ using System.IO;
 
 namespace Audit.Lib
 {
-    public class WatchMonitoring : Monitoring
+    public class MonitoringWatch : Monitoring
     {
         /// <summary>
         /// ファイル/ディレクトリ/レジストリいずれか
@@ -96,7 +96,7 @@ namespace Audit.Lib
 
         public const string REGPATH_PREFIX = "[registry]";
 
-        public WatchMonitoring(PathType pathType)
+        public MonitoringWatch(PathType pathType)
         {
             PathType = pathType;
         }

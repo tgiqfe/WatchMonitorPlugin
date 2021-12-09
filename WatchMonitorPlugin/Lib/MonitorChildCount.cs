@@ -50,7 +50,7 @@ namespace Audit.Lib
         #endregion
         #region Watch method
 
-        public override bool WatchDirectory(WatchMonitoring monitoring, Dictionary<string, string> dictionary, int serial)
+        public override bool WatchDirectory(MonitoringWatch monitoring, Dictionary<string, string> dictionary, int serial)
         {
             bool ret = false;
             if (monitoring.IsChildCount ?? false)
@@ -75,7 +75,7 @@ namespace Audit.Lib
             return ret;
         }
 
-        public override bool WatchRegistryKey(WatchMonitoring monitoring, Dictionary<string, string> dictionary, int serial)
+        public override bool WatchRegistryKey(MonitoringWatch monitoring, Dictionary<string, string> dictionary, int serial)
         {
             return false;
         }

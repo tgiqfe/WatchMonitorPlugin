@@ -41,9 +41,9 @@ namespace WatchMonitorPlugin
         private string _checkingPath;
         const string REGPATH_PREFIX = "[registry]";
 
-        private WatchMonitoring CreateForRegistryKey()
+        private MonitoringWatch CreateForRegistryKey()
         {
-            return new WatchMonitoring(PathType.Registry)
+            return new MonitoringWatch(PathType.Registry)
             {
                 IsAccess = _IsAccess,
                 IsOwner = _IsOwner,
@@ -51,9 +51,9 @@ namespace WatchMonitorPlugin
                 IsChildCount = _IsChildCount,
             };
         }
-        private WatchMonitoring CreateForRegistryValue()
+        private MonitoringWatch CreateForRegistryValue()
         {
-            return new WatchMonitoring(PathType.Registry)
+            return new MonitoringWatch(PathType.Registry)
             {
                 IsMD5Hash = _IsMD5Hash,
                 IsSHA256Hash = _IsSHA256Hash,
@@ -66,7 +66,7 @@ namespace WatchMonitorPlugin
         {
             string dbDir = @"C:\Users\User\Downloads\aaaa\dbdbdb";
             var dictionary = new Dictionary<string, string>();
-            var collection = WatchMonitoringCollection.Load(dbDir, _Serial);
+            var collection = MonitoringWatchCollection.Load(dbDir, _Serial);
 
             _MaxDepth ??= 5;
 
@@ -81,7 +81,7 @@ namespace WatchMonitorPlugin
                         _serial++;
                         string regPath = REGPATH_PREFIX + keyPath + "\\" + name;
                         dictionary[$"registry_{_serial}"] = regPath.Replace(_checkingPath, "");
-                        WatchMonitoring watch = _Begin ?
+                        MonitoringWatch watch = _Begin ?
                             CreateForRegistryValue() :
                             collection.GetWatchPath(regPath) ?? CreateForRegistryValue();
                         Success |= WatchRegistryValueCheck(watch, dictionary, regKey, name);
@@ -107,7 +107,7 @@ namespace WatchMonitorPlugin
                             dictionary[$"registry_{_serial}"] = (path == _checkingPath) ?
                                 path :
                                 keyPath.Replace(_checkingPath, "");
-                            WatchMonitoring watch = _Begin ?
+                            MonitoringWatch watch = _Begin ?
                                 CreateForRegistryKey() :
                                 collection.GetWatchPath(keyPath) ?? CreateForRegistryKey();
                             Success |= WatchRegistryKeyCheck(watch, dictionary, regKey);
@@ -149,7 +149,7 @@ namespace WatchMonitorPlugin
             }
         }
 
-        private bool RecursiveTree(WatchMonitoringCollection collection, Dictionary<string, string> dictionary, RegistryKey regKey, int depth)
+        private bool RecursiveTree(MonitoringWatchCollection collection, Dictionary<string, string> dictionary, RegistryKey regKey, int depth)
         {
             bool ret = false;
             string keyPath = regKey.Name;
@@ -158,7 +158,7 @@ namespace WatchMonitorPlugin
             dictionary[$"registry_{_serial}"] = (regKey.Name == _checkingPath) ?
                 regKey.Name :
                 keyPath.Replace(_checkingPath, "");
-            WatchMonitoring watch = _Begin ?
+            MonitoringWatch watch = _Begin ?
                 CreateForRegistryKey() :
                 collection.GetWatchPath(keyPath) ?? CreateForRegistryKey();
             ret |= WatchRegistryKeyCheck(watch, dictionary, regKey);
@@ -171,7 +171,7 @@ namespace WatchMonitorPlugin
                     _serial++;
                     string regPath = REGPATH_PREFIX + keyPath + "\\" + name;
                     dictionary[$"registry_{_serial}"] = regPath.Replace(_checkingPath, "");
-                    WatchMonitoring childWatch = _Begin ?
+                    MonitoringWatch childWatch = _Begin ?
                         CreateForRegistryValue() :
                         collection.GetWatchPath(regPath) ?? CreateForRegistryValue();
                     ret |= WatchRegistryValueCheck(childWatch, dictionary, regKey, name);
@@ -186,7 +186,7 @@ namespace WatchMonitorPlugin
             return ret;
         }
 
-        private bool WatchRegistryKeyCheck(WatchMonitoring watch, Dictionary<string, string> dictionary, RegistryKey regKey)
+        private bool WatchRegistryKeyCheck(MonitoringWatch watch, Dictionary<string, string> dictionary, RegistryKey regKey)
         {
             bool ret = MonitorExists.WatchRegistryKey(watch, dictionary, _serial, regKey);
             ret |= MonitorSecurity.WatchRegistryKeyAccess(watch, dictionary, _serial, regKey);
@@ -197,7 +197,7 @@ namespace WatchMonitorPlugin
             return ret;
         }
 
-        private bool WatchRegistryValueCheck(WatchMonitoring watch, Dictionary<string, string> dictionary, RegistryKey regKey, string name)
+        private bool WatchRegistryValueCheck(MonitoringWatch watch, Dictionary<string, string> dictionary, RegistryKey regKey, string name)
         {
             bool ret = MonitorExists.WatchRegistryValue(watch, dictionary, _serial, regKey, name);
             ret |= MonitorHash.WatchRegistryValueMD5Hash(watch, dictionary, _serial, regKey, name);

@@ -38,7 +38,7 @@ namespace Audit.Lib
         #region Watch method
 
         public static bool WatchFile(
-            WatchMonitoring watch, Dictionary<string, string> dictionary, int serial, FileInfo info)
+            MonitoringWatch watch, Dictionary<string, string> dictionary, int serial, FileInfo info)
         {
             bool ret = false;
 
@@ -58,7 +58,7 @@ namespace Audit.Lib
         }
 
         public static bool WatchDirectory(
-            WatchMonitoring watch, Dictionary<string, string> dictionary, int serial, DirectoryInfo info)
+            MonitoringWatch watch, Dictionary<string, string> dictionary, int serial, DirectoryInfo info)
         {
             bool ret = false;
 
@@ -78,7 +78,7 @@ namespace Audit.Lib
         }
 
         public static bool WatchRegistryKey(
-            WatchMonitoring watch, Dictionary<string, string> dictionary, int serial, RegistryKey regKey)
+            MonitoringWatch watch, Dictionary<string, string> dictionary, int serial, RegistryKey regKey)
         {
             bool ret = false;
 
@@ -98,7 +98,7 @@ namespace Audit.Lib
         }
 
         public static bool WatchRegistryValue(
-            WatchMonitoring watch, Dictionary<string, string> dictionary, int serial, RegistryKey regKey, string name)
+            MonitoringWatch watch, Dictionary<string, string> dictionary, int serial, RegistryKey regKey, string name)
         {
             bool ret = false;
 

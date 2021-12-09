@@ -21,7 +21,7 @@ namespace Audit.Lib
         #region Watch method
 
         public static bool WatchRegistryValue(
-            WatchMonitoring watch, Dictionary<string, string> dictionary, int serial, RegistryKey regKey, string name)
+            MonitoringWatch watch, Dictionary<string, string> dictionary, int serial, RegistryKey regKey, string name)
         {
             bool ret = false;
             if (watch.IsRegistryType ?? false)

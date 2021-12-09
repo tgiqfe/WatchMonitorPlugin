@@ -24,7 +24,7 @@ namespace Audit.Lib
         #region Watch method
 
         public static bool WatchFileAccess(
-            WatchMonitoring watch, Dictionary<string, string> dictionary, int serial, FileInfo info)
+            MonitoringWatch watch, Dictionary<string, string> dictionary, int serial, FileInfo info)
         {
             bool ret = false;
             if (watch.IsAccess ?? false)
@@ -52,7 +52,7 @@ namespace Audit.Lib
         }
 
         public static bool WatchFileOwner(
-            WatchMonitoring watch, Dictionary<string, string> dictionary, int serial, FileInfo info)
+            MonitoringWatch watch, Dictionary<string, string> dictionary, int serial, FileInfo info)
         {
             bool ret = false;
             if (watch.IsOwner ?? false)
@@ -80,7 +80,7 @@ namespace Audit.Lib
         }
 
         public static bool WatchFileInherited(
-            WatchMonitoring watch, Dictionary<string, string> dictionary, int serial, FileInfo info)
+            MonitoringWatch watch, Dictionary<string, string> dictionary, int serial, FileInfo info)
         {
             bool ret = false;
             if (watch.Inherited ?? false)
@@ -108,7 +108,7 @@ namespace Audit.Lib
         }
 
         public static bool WatchDirectoryAccess(
-            WatchMonitoring watch, Dictionary<string, string> dictionary, int serial, DirectoryInfo info)
+            MonitoringWatch watch, Dictionary<string, string> dictionary, int serial, DirectoryInfo info)
         {
             bool ret = false;
             if (watch.IsAccess ?? false)
@@ -136,7 +136,7 @@ namespace Audit.Lib
         }
 
         public static bool WatchDirectoryOwner(
-            WatchMonitoring watch, Dictionary<string, string> dictionary, int serial, DirectoryInfo info)
+            MonitoringWatch watch, Dictionary<string, string> dictionary, int serial, DirectoryInfo info)
         {
             bool ret = false;
             if (watch.IsOwner ?? false)
@@ -164,7 +164,7 @@ namespace Audit.Lib
         }
 
         public static bool WatchDirectoryInherited(
-            WatchMonitoring watch, Dictionary<string, string> dictionary, int serial, DirectoryInfo info)
+            MonitoringWatch watch, Dictionary<string, string> dictionary, int serial, DirectoryInfo info)
         {
             bool ret = false;
             if (watch.Inherited ?? false)
@@ -192,7 +192,7 @@ namespace Audit.Lib
         }
 
         public static bool WatchRegistryKeyAccess(
-            WatchMonitoring watch, Dictionary<string, string> dictionary, int serial, RegistryKey regKey)
+            MonitoringWatch watch, Dictionary<string, string> dictionary, int serial, RegistryKey regKey)
         {
             bool ret = false;
             if (watch.IsAccess ?? false)
@@ -220,7 +220,7 @@ namespace Audit.Lib
         }
 
         public static bool WatchRegistryKeyOwner(
-            WatchMonitoring watch, Dictionary<string, string> dictionary, int serial, RegistryKey regKey)
+            MonitoringWatch watch, Dictionary<string, string> dictionary, int serial, RegistryKey regKey)
         {
             bool ret = false;
             if (watch.IsOwner ?? false)
@@ -248,7 +248,7 @@ namespace Audit.Lib
         }
 
         public static bool WatchRegistryKeyInherited(
-            WatchMonitoring watch, Dictionary<string, string> dictionary, int serial, RegistryKey regKey)
+            MonitoringWatch watch, Dictionary<string, string> dictionary, int serial, RegistryKey regKey)
         {
             bool ret = false;
             if (watch.IsInherited ?? false)

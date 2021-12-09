@@ -50,7 +50,7 @@ namespace Audit.Lib
         #region Watch method
 
         public static bool WatchFile(
-            WatchMonitoring watch, Dictionary<string, string> dictionary, int serial, string path)
+            MonitoringWatch watch, Dictionary<string, string> dictionary, int serial, string path)
         {
             bool ret = false;
             if (watch.IsAttributes ?? false)
@@ -92,7 +92,7 @@ namespace Audit.Lib
         }
 
         public static bool WatchDirectory(
-            WatchMonitoring watch, Dictionary<string, string> dictionary, int serial, string path)
+            MonitoringWatch watch, Dictionary<string, string> dictionary, int serial, string path)
         {
             bool ret = false;
             if (watch.IsAttributes ?? false)

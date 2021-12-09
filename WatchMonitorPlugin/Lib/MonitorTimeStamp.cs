@@ -18,7 +18,7 @@ namespace Audit.Lib
         #region Watch method
 
         public static bool WatchFileCreationTime(
-            WatchMonitoring watch, Dictionary<string, string> dictionary, int serial, FileInfo info)
+            MonitoringWatch watch, Dictionary<string, string> dictionary, int serial, FileInfo info)
         {
             bool ret = false;
             if (watch.IsCreationTime ?? false)
@@ -48,7 +48,7 @@ namespace Audit.Lib
         }
 
         public static bool WatchDirectoryCreationTime(
-            WatchMonitoring watch, Dictionary<string, string> dictionary, int serial, DirectoryInfo info)
+            MonitoringWatch watch, Dictionary<string, string> dictionary, int serial, DirectoryInfo info)
         {
             bool ret = false;
             if (watch.IsCreationTime ?? false)
@@ -78,7 +78,7 @@ namespace Audit.Lib
         }
 
         public static bool WatchFileLastWriteTime(
-            WatchMonitoring watch, Dictionary<string, string> dictionary, int serial, FileInfo info)
+            MonitoringWatch watch, Dictionary<string, string> dictionary, int serial, FileInfo info)
         {
             bool ret = false;
             if (watch.IsLastWriteTime ?? false)
@@ -108,7 +108,7 @@ namespace Audit.Lib
         }
 
         public static bool WatchDirectoryLastWriteTime(
-            WatchMonitoring watch, Dictionary<string, string> dictionary, int serial, DirectoryInfo info)
+            MonitoringWatch watch, Dictionary<string, string> dictionary, int serial, DirectoryInfo info)
         {
             bool ret = false;
             if (watch.IsLastWriteTime ?? false)
@@ -138,7 +138,7 @@ namespace Audit.Lib
         }
 
         public static bool WatchFileLastAccessTime(
-            WatchMonitoring watch, Dictionary<string, string> dictionary, int serial, FileInfo info)
+            MonitoringWatch watch, Dictionary<string, string> dictionary, int serial, FileInfo info)
         {
             bool ret = false;
             if (watch.IsLastAccessTime ?? false)
@@ -168,7 +168,7 @@ namespace Audit.Lib
         }
 
         public static bool WatchDirectoryLastAccessTime(
-            WatchMonitoring watch, Dictionary<string, string> dictionary, int serial, DirectoryInfo info)
+            MonitoringWatch watch, Dictionary<string, string> dictionary, int serial, DirectoryInfo info)
         {
             bool ret = false;
             if (watch.IsLastAccessTime ?? false)

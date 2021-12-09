@@ -38,9 +38,9 @@ namespace WatchMonitorPlugin
         public int? _MaxDepth { get; set; }
         private string _checkingPath;
 
-        private WatchMonitoring CreateForDirectory()
+        private MonitoringWatch CreateForDirectory()
         {
-            return new WatchMonitoring(PathType.Directory)
+            return new MonitoringWatch(PathType.Directory)
             {
                 IsCreationTime = _IsCreationTime,
                 IsLastWriteTime = _IsLastWriteTime,
@@ -52,9 +52,9 @@ namespace WatchMonitorPlugin
                 IsChildCount = _IsChildCount,
             };
         }
-        private WatchMonitoring CreateForFile()
+        private MonitoringWatch CreateForFile()
         {
-            return new WatchMonitoring(PathType.File)
+            return new MonitoringWatch(PathType.File)
             {
                 IsCreationTime = _IsCreationTime,
                 IsLastWriteTime = _IsLastWriteTime,
@@ -74,7 +74,7 @@ namespace WatchMonitorPlugin
         {
             string dbDir = @"C:\Users\User\Downloads\aaaa\dbdbdb";
             var dictionary = new Dictionary<string, string>();
-            var collection = WatchMonitoringCollection.Load(dbDir, _Serial);
+            var collection = MonitoringWatchCollection.Load(dbDir, _Serial);
 
             _MaxDepth ??= 5;
 
@@ -114,7 +114,7 @@ namespace WatchMonitorPlugin
             }
         }
 
-        private bool RecursiveTree(WatchMonitoringCollection collection, Dictionary<string, string> dictionary, string path, int depth)
+        private bool RecursiveTree(MonitoringWatchCollection collection, Dictionary<string, string> dictionary, string path, int depth)
         {
             bool ret = false;
 
@@ -122,7 +122,7 @@ namespace WatchMonitorPlugin
             dictionary[$"directory_{_serial}"] = (path == _checkingPath) ?
                 path :
                 path.Replace(_checkingPath, "");
-            WatchMonitoring watch = _Begin ?
+            MonitoringWatch watch = _Begin ?
                 CreateForDirectory() :
                 collection.GetWatchPath(path) ?? CreateForDirectory();
             ret |= WatchDirectoryCheck(watch, dictionary, path);
@@ -134,7 +134,7 @@ namespace WatchMonitorPlugin
                 {
                     _serial++;
                     dictionary[$"file_{_serial}"] = filePath.Replace(_checkingPath, "");
-                    WatchMonitoring childWatch = _Begin ?
+                    MonitoringWatch childWatch = _Begin ?
                         CreateForFile() :
                         collection.GetWatchPath(filePath) ?? CreateForFile();
                     ret |= WatchFileCheck(childWatch, dictionary, filePath);
@@ -149,7 +149,7 @@ namespace WatchMonitorPlugin
             return ret;
         }
 
-        private bool WatchDirectoryCheck(WatchMonitoring watch, Dictionary<string, string> dictionary, string path)
+        private bool WatchDirectoryCheck(MonitoringWatch watch, Dictionary<string, string> dictionary, string path)
         {
             var info = new DirectoryInfo(path);
             bool ret = MonitorExists.WatchDirectory(watch, dictionary, _serial, info);
@@ -164,7 +164,7 @@ namespace WatchMonitorPlugin
             return ret;
         }
 
-        private bool WatchFileCheck(WatchMonitoring watch, Dictionary<string, string> dictionary, string path)
+        private bool WatchFileCheck(MonitoringWatch watch, Dictionary<string, string> dictionary, string path)
         {
             var info = new FileInfo(path);
             bool ret = MonitorExists.WatchFile(watch, dictionary, _serial, info);

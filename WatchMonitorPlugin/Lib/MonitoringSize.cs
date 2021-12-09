@@ -35,7 +35,7 @@ namespace Audit.Lib
         #endregion
         #region Watch method
 
-        public override bool WatchFile(WatchMonitoring watch, Dictionary<string, string> dictionary, int serial)
+        public override bool WatchFile(MonitoringWatch watch, Dictionary<string, string> dictionary, int serial)
         {
             bool ret = false;
             if (watch.IsAccess ?? false)

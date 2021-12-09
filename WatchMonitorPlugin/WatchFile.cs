@@ -36,9 +36,9 @@ namespace WatchMonitorPlugin
 
         private int _serial;
 
-        private WatchMonitoring CreateForFile()
+        private MonitoringWatch CreateForFile()
         {
-            return new WatchMonitoring(PathType.File)
+            return new MonitoringWatch(PathType.File)
             {
                 IsCreationTime = _IsCreationTime,
                 IsLastWriteTime = _IsLastWriteTime,
@@ -58,13 +58,13 @@ namespace WatchMonitorPlugin
         {
             string dbDir = @"C:\Users\User\Downloads\aaaa\dbdbdb";
             var dictionary = new Dictionary<string, string>();
-            var collection = WatchMonitoringCollection.Load(dbDir, _Serial);
+            var collection = MonitoringWatchCollection.Load(dbDir, _Serial);
 
             foreach (string path in _Path)
             {
                 _serial++;
                 dictionary[$"file_{_serial}"] = path;
-                WatchMonitoring watch = _Begin ?
+                MonitoringWatch watch = _Begin ?
                     CreateForFile() :
                     collection.GetWatchPath(path) ?? CreateForFile();
                 Success |= WatchFileCheck(watch, dictionary, path);
@@ -93,7 +93,7 @@ namespace WatchMonitorPlugin
             }
         }
 
-        private bool WatchFileCheck(WatchMonitoring watch, Dictionary<string, string> dictionary, string path)
+        private bool WatchFileCheck(MonitoringWatch watch, Dictionary<string, string> dictionary, string path)
         {
             var info = new FileInfo(path);
             bool ret = MonitorExists.WatchFile(watch, dictionary, _serial, info);
