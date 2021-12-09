@@ -6,10 +6,12 @@ using System.Threading.Tasks;
 using IO.Lib;
 using Microsoft.Win32;
 using System.IO;
+using System.Text.Json.Serialization;
+using System.Text.Json;
 
 namespace Audit.Lib
 {
-    internal class ComparePath : Monitoring
+    internal class CompareMonitoring : Monitoring
     {
         /// <summary>
         /// 比較する対象のパス(レジストリ値の場合はNameも)
@@ -21,8 +23,11 @@ namespace Audit.Lib
         public string NameA { get; set; }
         public string NameB { get; set; }
 
+        #region Target path
+
         private FileSystemInfo _FSInfoA = null;
         private FileSystemInfo _FSInfoB = null;
+
         public FileSystemInfo InfoA
         {
             get
@@ -39,6 +44,7 @@ namespace Audit.Lib
                 return _FSInfoA;
             }
         }
+
         public FileSystemInfo InfoB
         {
             get
@@ -56,7 +62,9 @@ namespace Audit.Lib
             }
         }
 
-        public ComparePath(PathType pathType)
+        #endregion
+
+        public CompareMonitoring(PathType pathType)
         {
             PathType = pathType;
         }

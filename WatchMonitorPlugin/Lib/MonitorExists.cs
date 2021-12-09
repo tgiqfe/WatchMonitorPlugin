@@ -16,7 +16,7 @@ namespace Audit.Lib
 
         #region Compare method
 
-        public static bool CompareFile(ComparePath compare, Dictionary<string, string> dictionary, int serial)
+        public static bool CompareFile(CompareMonitoring compare, Dictionary<string, string> dictionary, int serial)
         {
             string pathType = "file";
             string checkTarget = "Exists";
@@ -38,7 +38,7 @@ namespace Audit.Lib
         #region Watch method
 
         public static bool WatchFile(
-            WatchPath watch, Dictionary<string, string> dictionary, int serial, FileInfo info)
+            WatchMonitoring watch, Dictionary<string, string> dictionary, int serial, FileInfo info)
         {
             bool ret = false;
 
@@ -58,7 +58,7 @@ namespace Audit.Lib
         }
 
         public static bool WatchDirectory(
-            WatchPath watch, Dictionary<string, string> dictionary, int serial, DirectoryInfo info)
+            WatchMonitoring watch, Dictionary<string, string> dictionary, int serial, DirectoryInfo info)
         {
             bool ret = false;
 
@@ -78,7 +78,7 @@ namespace Audit.Lib
         }
 
         public static bool WatchRegistryKey(
-            WatchPath watch, Dictionary<string, string> dictionary, int serial, RegistryKey regKey)
+            WatchMonitoring watch, Dictionary<string, string> dictionary, int serial, RegistryKey regKey)
         {
             bool ret = false;
 
@@ -98,7 +98,7 @@ namespace Audit.Lib
         }
 
         public static bool WatchRegistryValue(
-            WatchPath watch, Dictionary<string, string> dictionary, int serial, RegistryKey regKey, string name)
+            WatchMonitoring watch, Dictionary<string, string> dictionary, int serial, RegistryKey regKey, string name)
         {
             bool ret = false;
 

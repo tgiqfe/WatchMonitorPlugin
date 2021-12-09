@@ -36,9 +36,9 @@ namespace WatchMonitorPlugin
 
         private int _serial;
 
-        private WatchPath CreateForFile()
+        private WatchMonitoring CreateForFile()
         {
-            return new WatchPath(PathType.File)
+            return new WatchMonitoring(PathType.File)
             {
                 IsCreationTime = _IsCreationTime,
                 IsLastWriteTime = _IsLastWriteTime,
@@ -58,13 +58,13 @@ namespace WatchMonitorPlugin
         {
             string dbDir = @"C:\Users\User\Downloads\aaaa\dbdbdb";
             var dictionary = new Dictionary<string, string>();
-            var collection = WatchPathCollection.Load(dbDir, _Serial);
+            var collection = WatchMonitoringCollection.Load(dbDir, _Serial);
 
             foreach (string path in _Path)
             {
                 _serial++;
                 dictionary[$"file_{_serial}"] = path;
-                WatchPath watch = _Begin ?
+                WatchMonitoring watch = _Begin ?
                     CreateForFile() :
                     collection.GetWatchPath(path) ?? CreateForFile();
                 Success |= WatchFileCheck(watch, dictionary, path);
@@ -93,7 +93,7 @@ namespace WatchMonitorPlugin
             }
         }
 
-        private bool WatchFileCheck(WatchPath watch, Dictionary<string, string> dictionary, string path)
+        private bool WatchFileCheck(WatchMonitoring watch, Dictionary<string, string> dictionary, string path)
         {
             var info = new FileInfo(path);
             bool ret = MonitorExists.WatchFile(watch, dictionary, _serial, info);
@@ -107,7 +107,7 @@ namespace WatchMonitorPlugin
             ret |= MonitorHash.WatchFileMD5Hash(watch, dictionary, _serial, path);
             ret |= MonitorHash.WatchFileSHA256Hash(watch, dictionary, _serial, path);
             ret |= MonitorHash.WatchFileSHA512Hash(watch, dictionary, _serial, path);
-            ret |= MonitorSize.WatchFile(watch, dictionary, _serial, info);
+            //ret |= MonitorSize.WatchFile(watch, dictionary, _serial, info);
             return ret;
         }
     }

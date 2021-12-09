@@ -14,7 +14,7 @@ namespace Audit.Lib
 
         #region Compare method
 
-        public static bool CompareFile(ComparePath compare, Dictionary<string, string> dictionary, int serial)
+        public static bool CompareFile(CompareMonitoring compare, Dictionary<string, string> dictionary, int serial)
         {
             if (compare.IsAttributes ?? false)
             {
@@ -30,7 +30,7 @@ namespace Audit.Lib
             return true;
         }
 
-        public static bool CompareDirectory(ComparePath compare, Dictionary<string, string> dictionary, int serial)
+        public static bool CompareDirectory(CompareMonitoring compare, Dictionary<string, string> dictionary, int serial)
         {
             if (compare.IsAttributes ?? false)
             {
@@ -50,7 +50,7 @@ namespace Audit.Lib
         #region Watch method
 
         public static bool WatchFile(
-            WatchPath watch, Dictionary<string, string> dictionary, int serial, string path)
+            WatchMonitoring watch, Dictionary<string, string> dictionary, int serial, string path)
         {
             bool ret = false;
             if (watch.IsAttributes ?? false)
@@ -92,7 +92,7 @@ namespace Audit.Lib
         }
 
         public static bool WatchDirectory(
-            WatchPath watch, Dictionary<string, string> dictionary, int serial, string path)
+            WatchMonitoring watch, Dictionary<string, string> dictionary, int serial, string path)
         {
             bool ret = false;
             if (watch.IsAttributes ?? false)

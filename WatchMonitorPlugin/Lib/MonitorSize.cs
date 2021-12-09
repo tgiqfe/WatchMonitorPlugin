@@ -8,8 +8,59 @@ using System.IO;
 namespace Audit.Lib
 {
     [System.Runtime.Versioning.SupportedOSPlatform("windows")]
-    internal class MonitorSize
+    internal class MonitorSize : MonitorBase
     {
+        public override string CheckTarget { get { return "Size"; } }
+
+        #region Compare method
+
+        public override bool CompareFile(CompareMonitoring monitoring, Dictionary<string, string> dictionary, int serial)
+        {
+            if (monitoring.IsSize ?? false)
+            {
+                if (!monitoring.InfoA.Exists || !monitoring.InfoB.Exists) { return false; }
+
+                long retA = ((FileInfo)monitoring.InfoA).Length;
+                long retB = ((FileInfo)monitoring.InfoB).Length;
+
+                dictionary[$"{monitoring.PathTypeName}A_{this.CheckTarget}_{serial}"] = string.Format("{0} ({1})", retA, ToReadable(retA));
+                dictionary[$"{monitoring.PathTypeName}B_{this.CheckTarget}_{serial}"] = string.Format("{0} ({1})", retB, ToReadable(retB));
+                return retA == retB;
+            }
+            return true;
+        }
+
+        #endregion
+        #region Watch method
+
+        public override bool WatchFile(WatchMonitoring monitoring, Dictionary<string, string> dictionary, int serial)
+        {
+            bool ret = false;
+            if (monitoring.IsAccess ?? false)
+            {
+                if (monitoring.Info.Exists)
+                {
+                    long result = ((FileInfo)monitoring.Info).Length;
+                    ret = result != monitoring.Size;
+                    if (monitoring.Size != null)
+                    {
+                        dictionary[$"{monitoring.PathTypeName}_{this.CheckTarget}_{serial}"] = ret ?
+                            string.Format("{0} -> {1} ({2})", monitoring.Size, result, ToReadable(result)) :
+                            string.Format("{0} ({1})", result, ToReadable(result));
+                    }
+                    monitoring.Size = result;
+                }
+                else
+                {
+                    monitoring.Size = null;
+                }
+            }
+            return ret;
+        }
+
+
+        /*
+
         const string CHECK_TARGET = "size";
 
         #region Compare method
@@ -58,6 +109,8 @@ namespace Audit.Lib
             }
             return ret;
         }
+
+        */
 
         #endregion
         #region Get method

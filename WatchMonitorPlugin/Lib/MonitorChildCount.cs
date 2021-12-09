@@ -9,8 +9,80 @@ using Microsoft.Win32;
 namespace Audit.Lib
 {
     [System.Runtime.Versioning.SupportedOSPlatform("windows")]
-    internal class MonitorChildCount
+    internal class MonitorChildCount : MonitorBase
     {
+        public override string CheckTarget { get { return "ChildCount"; } }
+
+        #region Compare method
+
+        public override bool CompareDirectory(CompareMonitoring monitoring, Dictionary<string, string> dictionary, int serial)
+        {
+            if (monitoring.IsChildCount ?? false)
+            {
+                if (!monitoring.InfoA.Exists || !monitoring.InfoB.Exists) { return false; }
+
+                int[] retA = GetDirectoryChildCount(monitoring.PathA);
+                int[] retB = GetDirectoryChildCount(monitoring.PathB);
+
+                dictionary[$"{monitoring.PathTypeName}A_{this.CheckTarget}_{serial}"] = ToReadable(retA, isDirectory: true);
+                dictionary[$"{monitoring.PathTypeName}B_{this.CheckTarget}_{serial}"] = ToReadable(retB, isDirectory: true);
+                return retA.SequenceEqual(retB);
+            }
+            return true;
+        }
+
+        public override bool CompareRegistryKey(CompareMonitoring monitoring, Dictionary<string, string> dictionary, int serial)
+        {
+            if (monitoring.IsChildCount ?? false)
+            {
+                if (monitoring.KeyA == null || monitoring.KeyB == null) { return false; }
+
+                int[] retA = GetRegistryKeyChildCount(monitoring.KeyA);
+                int[] retB = GetRegistryKeyChildCount(monitoring.KeyB);
+
+                dictionary[$"{monitoring.PathTypeName}A_{this.CheckTarget}_{serial}"] = ToReadable(retA, isDirectory: false);
+                dictionary[$"{monitoring.PathTypeName}B_{this.CheckTarget}_{serial}"] = ToReadable(retB, isDirectory: false);
+                return retA.SequenceEqual(retB);
+            }
+            return true;
+        }
+
+        #endregion
+        #region Watch method
+
+        public override bool WatchDirectory(WatchMonitoring monitoring, Dictionary<string, string> dictionary, int serial)
+        {
+            bool ret = false;
+            if (monitoring.IsChildCount ?? false)
+            {
+                if (monitoring.Info.Exists)
+                {
+                    int[] result = GetDirectoryChildCount(monitoring.Path);
+                    ret = !result.SequenceEqual(monitoring.ChildCount ?? new int[0] { });
+                    if (monitoring.ChildCount != null)
+                    {
+                        dictionary[$"{monitoring.PathTypeName}_{this.CheckTarget}_{serial}"] = ret ?
+                            ToReadable(monitoring.ChildCount, isDirectory: true) + " -> " + ToReadable(result, isDirectory: false) :
+                            ToReadable(result, isDirectory: false);
+                    }
+                    monitoring.ChildCount = result;
+                }
+                else
+                {
+                    monitoring.ChildCount = null;
+                }
+            }
+            return ret;
+        }
+
+        public override bool WatchRegistryKey(WatchMonitoring monitoring, Dictionary<string, string> dictionary, int serial)
+        {
+            return false;
+        }
+
+        #endregion
+
+        /*
         const string CHECK_TARGET = "ChildCount";
 
         #region Compare method
@@ -125,6 +197,9 @@ namespace Audit.Lib
         }
 
         #endregion
+
+        */
+
         #region Get method
 
         /// <summary>
@@ -174,18 +249,18 @@ namespace Audit.Lib
             return ret_childCounts;
         }
 
-        public static string ToReadableForDirectory(int[] ret_bools)
+        /// <summary>
+        /// 配下のフォルダー/ファイル/キー/値の数を、Directory/RegistryKey別に返す。
+        /// </summary>
+        /// <param name="ret_bools"></param>
+        /// <param name="isDirectory"></param>
+        /// <returns></returns>
+        public static string ToReadable(int[] ret_bools, bool isDirectory)
         {
-            return string.Format("Directory:{0} / File:{1}",
-                ret_bools[0],
-                ret_bools[1]);
-        }
+            return isDirectory ?
+                string.Format("Directory:{0} / File:{1}", ret_bools[0], ret_bools[1]) :
+                string.Format("RegistryKey:{0} / Value:{1}", ret_bools[0], ret_bools[1]);
 
-        public static string ToReadableForRegistryKey(int[] ret_bools)
-        {
-            return string.Format("RegistryKey:{0} / Value:{1}",
-                ret_bools[0],
-                ret_bools[1]);
         }
 
         #endregion

@@ -9,22 +9,25 @@ using System.Security.AccessControl;
 using Microsoft.Win32;
 using System.Security.Cryptography;
 using IO.Lib;
+using System.Text.Json;
+using System.Text.Json.Serialization;
+using System.IO;
 
 namespace Audit.Lib
 {
-    public class WatchPath : Monitoring
+    public class WatchMonitoring : Monitoring
     {
         /// <summary>
         /// ファイル/ディレクトリ/レジストリいずれか
         /// </summary>
-        public PathType PathType { get; set; }
+        //public PathType PathType { get; set; }
 
         /// <summary>
         /// ファイル/ディレクトリ/レジストリキーの場合は、Targetへのパス
         /// レジストリ値の場合は、パスの頭に[registry]を付けて管理
         /// </summary>
         public string FullPath { get; set; }
-        
+
         /// <summary>
         /// 監視中Targetの各情報。
         /// </summary>
@@ -64,9 +67,36 @@ namespace Audit.Lib
         public bool? IsTimeOnly { get; set; }
         */
 
+        [JsonIgnore]
+        public string Path { get; set; }
+        [JsonIgnore]
+        public RegistryKey Key { get; set; }
+        [JsonIgnore]
+        public string Name { get; set; }
+
+        private FileSystemInfo _FSInfo = null;
+
+        [JsonIgnore]
+        public FileSystemInfo Info
+        {
+            get
+            {
+                if (_FSInfo == null)
+                {
+                    return PathType switch
+                    {
+                        PathType.File => new FileInfo(Path),
+                        PathType.Directory => new DirectoryInfo(Path),
+                        _ => null
+                    };
+                }
+                return _FSInfo;
+            }
+        }
+
         public const string REGPATH_PREFIX = "[registry]";
 
-        public WatchPath(PathType pathType)
+        public WatchMonitoring(PathType pathType)
         {
             PathType = pathType;
         }

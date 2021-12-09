@@ -9,7 +9,7 @@ using System.IO;
 
 namespace Audit.Lib
 {
-    public class WatchPathCollection : Dictionary<string, WatchPath>
+    public class WatchMonitoringCollection : Dictionary<string, WatchMonitoring>
     {
         /// <summary>
         /// SetWatchPath()時に格納。
@@ -22,7 +22,7 @@ namespace Audit.Lib
         /// </summary>
         /// <param name="path"></param>
         /// <returns></returns>
-        public WatchPath GetWatchPath(string path)
+        public WatchMonitoring GetWatchPath(string path)
         {
             string matchKey = this.Keys.FirstOrDefault(x => x.Equals(path, StringComparison.OrdinalIgnoreCase));
             return matchKey == null ? null : this[matchKey];
@@ -33,7 +33,7 @@ namespace Audit.Lib
         /// </summary>
         /// <param name="path"></param>
         /// <param name="watchPath"></param>
-        public void SetWatchPath(string path, WatchPath watchPath)
+        public void SetWatchPath(string path, WatchMonitoring watchPath)
         {
             watchPath.FullPath = path;
             this[path] = watchPath;
@@ -57,17 +57,17 @@ namespace Audit.Lib
         /// <param name="dbDir"></param>
         /// <param name="id"></param>
         /// <returns></returns>
-        public static WatchPathCollection Load(string dbDir, string id)
+        public static WatchMonitoringCollection Load(string dbDir, string id)
         {
             try
             {
                 using (var sr = new StreamReader(Path.Combine(dbDir, id), Encoding.UTF8))
                 {
-                    return JsonSerializer.Deserialize<WatchPathCollection>(sr.ReadToEnd());
+                    return JsonSerializer.Deserialize<WatchMonitoringCollection>(sr.ReadToEnd());
                 }
             }
             catch { }
-            return new WatchPathCollection();
+            return new WatchMonitoringCollection();
         }
 
         /// <summary>

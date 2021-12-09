@@ -32,9 +32,9 @@ namespace WatchMonitorPlugin
 
         protected bool Success { get; set; }
 
-        private ComparePath CreateForFile()
+        private CompareMonitoring CreateForFile()
         {
-            return new ComparePath(IO.Lib.PathType.File)
+            return new CompareMonitoring(IO.Lib.PathType.File)
             {
                 IsCreationTime = _IsCreationTime,
                 IsLastWriteTime = _IsLastWriteTime,
