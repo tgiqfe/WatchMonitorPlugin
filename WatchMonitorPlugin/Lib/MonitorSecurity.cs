@@ -308,8 +308,45 @@ namespace Audit.Lib
         #endregion
 
 
+        #region Get method
+
+        protected string GetAccessString(MonitoringWatch monitoring)
+        {
+            return monitoring.PathType switch
+            {
+                PathType.File => AccessRuleSummary.FileToAccessString((FileInfo)monitoring.Info),
+                PathType.Directory => AccessRuleSummary.DirectoryToAccessString((DirectoryInfo)monitoring.Info),
+                PathType.Registry => AccessRuleSummary.RegistryKeyToAccessString(monitoring.Key),
+                _ => null,
+            };
+        }
+
+        protected string GetAccessStringA(MonitoringCompare monitoring)
+        {
+            return monitoring.PathType switch
+            {
+                PathType.File => AccessRuleSummary.FileToAccessString((FileInfo)monitoring.InfoA),
+                PathType.Directory => AccessRuleSummary.DirectoryToAccessString((DirectoryInfo)monitoring.InfoA),
+                PathType.Registry => AccessRuleSummary.RegistryKeyToAccessString(monitoring.KeyA),
+                _ => null,
+            };
+        }
+
+        protected string GetAccessStringB(MonitoringCompare monitoring)
+        {
+            return monitoring.PathType switch
+            {
+                PathType.File => AccessRuleSummary.FileToAccessString((FileInfo)monitoring.InfoB),
+                PathType.Directory => AccessRuleSummary.DirectoryToAccessString((DirectoryInfo)monitoring.InfoB),
+                PathType.Registry => AccessRuleSummary.RegistryKeyToAccessString(monitoring.KeyB),
+                _ => null,
+            };
+        }
+
+        #endregion
     }
 
+    [System.Runtime.Versioning.SupportedOSPlatform("windows")]
     internal class MonitorAccess : MonitorSecurity
     {
         public override string CheckTarget { get { return "Access"; } }
@@ -320,7 +357,14 @@ namespace Audit.Lib
         {
             if (monitoring.IsAccess ?? false)
             {
+                if (!monitoring.TestExists()) { return false; }
 
+                string retA = GetAccessStringA(monitoring);
+                string retB = GetAccessStringB(monitoring);
+
+                dictionary[$"{monitoring.PathTypeName}A_{this.CheckTarget}_{serial}"] = retA;
+                dictionary[$"{monitoring.PathTypeName}B_{this.CheckTarget}_{serial}"] = retB;
+                return retA == retB;
             }
             return true;
         }
@@ -329,7 +373,14 @@ namespace Audit.Lib
         {
             if (monitoring.IsAccess ?? false)
             {
+                if (!monitoring.TestExists()) { return false; }
 
+                string retA = GetAccessStringA(monitoring);
+                string retB = GetAccessStringB(monitoring);
+
+                dictionary[$"{monitoring.PathTypeName}A_{this.CheckTarget}_{serial}"] = retA;
+                dictionary[$"{monitoring.PathTypeName}B_{this.CheckTarget}_{serial}"] = retB;
+                return retA == retB;
             }
             return true;
         }
@@ -338,7 +389,14 @@ namespace Audit.Lib
         {
             if (monitoring.IsAccess ?? false)
             {
+                if (!monitoring.TestExists()) { return false; }
 
+                string retA = GetAccessStringA(monitoring);
+                string retB = GetAccessStringB(monitoring);
+
+                dictionary[$"{monitoring.PathTypeName}A_{this.CheckTarget}_{serial}"] = retA;
+                dictionary[$"{monitoring.PathTypeName}B_{this.CheckTarget}_{serial}"] = retB;
+                return retA == retB;
             }
             return true;
         }
@@ -349,9 +407,24 @@ namespace Audit.Lib
         public override bool WatchFile(MonitoringWatch monitoring, Dictionary<string, string> dictionary, int serial)
         {
             bool ret = false;
-            if(monitoring.IsAccess ?? false)
+            if (monitoring.IsAccess ?? false)
             {
-                
+                if (monitoring.TestExists())
+                {
+                    string result = GetAccessString(monitoring);
+                    ret = result != monitoring.Access;
+                    if (monitoring.Access != null)
+                    {
+                        dictionary[$"{monitoring.PathTypeName}_{this.CheckTarget}_{serial}"] = ret ?
+                            $"{monitoring.Access} -> {result}" :
+                            result;
+                    }
+                    monitoring.Access = result;
+                }
+                else
+                {
+                    monitoring.Access = null;
+                }
             }
             return ret;
         }
@@ -361,7 +434,22 @@ namespace Audit.Lib
             bool ret = false;
             if (monitoring.IsAccess ?? false)
             {
-
+                if (monitoring.TestExists())
+                {
+                    string result = GetAccessString(monitoring);
+                    ret = result != monitoring.Access;
+                    if (monitoring.Access != null)
+                    {
+                        dictionary[$"{monitoring.PathTypeName}_{this.CheckTarget}_{serial}"] = ret ?
+                            $"{monitoring.Access} -> {result}" :
+                            result;
+                    }
+                    monitoring.Access = result;
+                }
+                else
+                {
+                    monitoring.Access = null;
+                }
             }
             return ret;
         }
@@ -371,7 +459,22 @@ namespace Audit.Lib
             bool ret = false;
             if (monitoring.IsAccess ?? false)
             {
-
+                if (monitoring.TestExists())
+                {
+                    string result = GetAccessString(monitoring);
+                    ret = result != monitoring.Access;
+                    if (monitoring.Access != null)
+                    {
+                        dictionary[$"{monitoring.PathTypeName}_{this.CheckTarget}_{serial}"] = ret ?
+                            $"{monitoring.Access} -> {result}" :
+                            result;
+                    }
+                    monitoring.Access = result;
+                }
+                else
+                {
+                    monitoring.Access = null;
+                }
             }
             return ret;
         }
@@ -379,6 +482,7 @@ namespace Audit.Lib
         #endregion
     }
 
+    [System.Runtime.Versioning.SupportedOSPlatform("windows")]
     internal class MonitorOwner : MonitorSecurity
     {
         public override string CheckTarget { get { return "Owner"; } }
@@ -387,17 +491,38 @@ namespace Audit.Lib
 
         public override bool CompareFile(MonitoringCompare monitoring, Dictionary<string, string> dictionary, int serial)
         {
-            return base.CompareFile(monitoring, dictionary, serial);
+            if (monitoring.IsOwner ?? false)
+            {
+                if (monitoring.TestExists()) { return false; }
+
+
+
+            }
+            return true;
         }
 
         public override bool CompareDirectory(MonitoringCompare monitoring, Dictionary<string, string> dictionary, int serial)
         {
-            return base.CompareDirectory(monitoring, dictionary, serial);
+            if (monitoring.IsOwner ?? false)
+            {
+                if (monitoring.TestExists()) { return false; }
+
+
+
+            }
+            return true;
         }
 
         public override bool CompareRegistryKey(MonitoringCompare monitoring, Dictionary<string, string> dictionary, int serial)
         {
-            return base.CompareRegistryKey(monitoring, dictionary, serial);
+            if (monitoring.IsOwner ?? false)
+            {
+                if (monitoring.TestExists()) { return false; }
+
+
+
+            }
+            return true;
         }
 
         #endregion
@@ -405,22 +530,59 @@ namespace Audit.Lib
 
         public override bool WatchFile(MonitoringWatch monitoring, Dictionary<string, string> dictionary, int serial)
         {
-            return base.WatchFile(monitoring, dictionary, serial);
+            bool ret = false;
+            if (monitoring.IsOwner ?? false)
+            {
+                if (monitoring.TestExists())
+                {
+
+                }
+                else
+                {
+
+                }
+            }
+            return ret;
         }
 
         public override bool WatchDirectory(MonitoringWatch monitoring, Dictionary<string, string> dictionary, int serial)
         {
-            return base.WatchDirectory(monitoring, dictionary, serial);
+            bool ret = false;
+            if (monitoring.IsOwner ?? false)
+            {
+                if (monitoring.TestExists())
+                {
+
+                }
+                else
+                {
+
+                }
+            }
+            return ret;
         }
 
         public override bool WatchRegistryKey(MonitoringWatch monitoring, Dictionary<string, string> dictionary, int serial)
         {
-            return base.WatchRegistryKey(monitoring, dictionary, serial);
+            bool ret = false;
+            if (monitoring.IsOwner ?? false)
+            {
+                if (monitoring.TestExists())
+                {
+
+                }
+                else
+                {
+
+                }
+            }
+            return ret;
         }
 
         #endregion
     }
 
+    [System.Runtime.Versioning.SupportedOSPlatform("windows")]
     internal class MonitorInherited : MonitorSecurity
     {
         public override string CheckTarget { get { return "Inherited"; } }
@@ -429,17 +591,38 @@ namespace Audit.Lib
 
         public override bool CompareFile(MonitoringCompare monitoring, Dictionary<string, string> dictionary, int serial)
         {
-            return base.CompareFile(monitoring, dictionary, serial);
+            if (monitoring.IsInherited ?? false)
+            {
+                if (monitoring.TestExists()) { return false; }
+
+
+
+            }
+            return true;
         }
 
         public override bool CompareDirectory(MonitoringCompare monitoring, Dictionary<string, string> dictionary, int serial)
         {
-            return base.CompareDirectory(monitoring, dictionary, serial);
+            if (monitoring.IsInherited ?? false)
+            {
+                if (monitoring.TestExists()) { return false; }
+
+
+
+            }
+            return true;
         }
 
         public override bool CompareRegistryKey(MonitoringCompare monitoring, Dictionary<string, string> dictionary, int serial)
         {
-            return base.CompareRegistryKey(monitoring, dictionary, serial);
+            if (monitoring.IsInherited ?? false)
+            {
+                if (monitoring.TestExists()) { return false; }
+
+
+
+            }
+            return true;
         }
 
         #endregion
@@ -447,17 +630,53 @@ namespace Audit.Lib
 
         public override bool WatchFile(MonitoringWatch monitoring, Dictionary<string, string> dictionary, int serial)
         {
-            return base.WatchFile(monitoring, dictionary, serial);
+            bool ret = false;
+            if (monitoring.IsInherited ?? false)
+            {
+                if (monitoring.TestExists())
+                {
+
+                }
+                else
+                {
+
+                }
+            }
+            return ret;
         }
 
         public override bool WatchDirectory(MonitoringWatch monitoring, Dictionary<string, string> dictionary, int serial)
         {
-            return base.WatchDirectory(monitoring, dictionary, serial);
+            bool ret = false;
+            if (monitoring.IsInherited ?? false)
+            {
+                if (monitoring.TestExists())
+                {
+
+                }
+                else
+                {
+
+                }
+            }
+            return ret;
         }
 
         public override bool WatchRegistryKey(MonitoringWatch monitoring, Dictionary<string, string> dictionary, int serial)
         {
-            return base.WatchRegistryKey(monitoring, dictionary, serial);
+            bool ret = false;
+            if (monitoring.IsInherited ?? false)
+            {
+                if (monitoring.TestExists())
+                {
+
+                }
+                else
+                {
+
+                }
+            }
+            return ret;
         }
 
         #endregion
