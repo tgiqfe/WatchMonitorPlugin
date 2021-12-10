@@ -9,8 +9,40 @@ using IO.Lib;
 namespace Audit.Lib
 {
     [System.Runtime.Versioning.SupportedOSPlatform("windows")]
-    internal class MonitorRegistryType
+    internal class MonitorRegistryType : MonitorBase
     {
+        public override string CheckTarget { get { return "RegistryType"; } }
+
+        #region Compare method
+
+        public override bool CompareRegistryValue(MonitoringCompare monitoring, Dictionary<string, string> dictionary, int serial)
+        {
+            if (monitoring.IsRegistryType ?? false)
+            {
+                if (!(monitoring.KeyA?.GetValueNames().Any(x => x.Equals(monitoring.NameA, StringComparison.OrdinalIgnoreCase)) ?? false) ||
+                    !(monitoring.KeyB?.GetValueNames().Any(x => x.Equals(monitoring.NameB, StringComparison.OrdinalIgnoreCase)) ?? false))
+                {
+                    return false;
+                }
+
+                string retA = RegistryControl.ValueKindToString(monitoring.KeyA.GetValueKind(monitoring.NameA));
+                string retB = RegistryControl.ValueKindToString(monitoring.KeyB.GetValueKind(monitoring.NameB));
+
+                dictionary[$"{monitoring.PathTypeName}A_{this.CheckTarget}_{serial}"] = retA;
+                dictionary[$"{monitoring.PathTypeName}B_{this.CheckTarget}_{serial}"] = retB;
+                return retA == retB;
+            }
+            return true;
+        }
+
+        #endregion
+        #region Watch method
+
+
+
+        #endregion
+
+
         const string CHECK_TARGET = "RegistryType";
 
         #region Compare method

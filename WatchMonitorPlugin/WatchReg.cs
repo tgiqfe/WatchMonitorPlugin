@@ -188,24 +188,26 @@ namespace WatchMonitorPlugin
 
         private bool WatchRegistryKeyCheck(MonitoringWatch watch, Dictionary<string, string> dictionary, RegistryKey regKey)
         {
-            bool ret = MonitorExists.WatchRegistryKey(watch, dictionary, _serial, regKey);
-            ret |= MonitorSecurity.WatchRegistryKeyAccess(watch, dictionary, _serial, regKey);
-            ret |= MonitorSecurity.WatchRegistryKeyOwner(watch, dictionary, _serial, regKey);
-            ret |= MonitorSecurity.WatchRegistryKeyInherited(watch, dictionary, _serial, regKey);
+            //bool ret = MonitorExists.WatchRegistryKey(watch, dictionary, _serial, regKey);
+            //ret |= MonitorSecurity.WatchRegistryKeyAccess(watch, dictionary, _serial, regKey);
+            //ret |= MonitorSecurity.WatchRegistryKeyOwner(watch, dictionary, _serial, regKey);
+            //ret |= MonitorSecurity.WatchRegistryKeyInherited(watch, dictionary, _serial, regKey);
             //ret |= MonitorChildCount.WatchRegistryKey(watch, dictionary, _serial, regKey);
 
-            return ret;
+            //return ret;
+            return false;
         }
 
         private bool WatchRegistryValueCheck(MonitoringWatch watch, Dictionary<string, string> dictionary, RegistryKey regKey, string name)
         {
-            bool ret = MonitorExists.WatchRegistryValue(watch, dictionary, _serial, regKey, name);
+            //bool ret = MonitorExists.WatchRegistryValue(watch, dictionary, _serial, regKey, name);
             //ret |= MonitorHash.WatchRegistryValueMD5Hash(watch, dictionary, _serial, regKey, name);
             //ret |= MonitorHash.WatchRegistryValueSHA256Hash(watch, dictionary, _serial, regKey, name);
             //ret |= MonitorHash.WatchRegistryValueSHA512Hash(watch, dictionary, _serial, regKey, name);
-            ret |= MonitorRegistryType.WatchRegistryValue(watch, dictionary, _serial, regKey, name);
+            //ret |= MonitorRegistryType.WatchRegistryValue(watch, dictionary, _serial, regKey, name);
 
-            return ret;
+            //return ret;
+            return false;
         }
     }
 }

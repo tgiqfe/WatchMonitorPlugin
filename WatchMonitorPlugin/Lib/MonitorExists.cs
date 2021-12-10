@@ -143,10 +143,6 @@ namespace Audit.Lib
             using (RegistryKey regKey = RegistryControl.GetRegistryKey(path, false, false))
             {
                 return regKey?.GetValueNames().Any(x => x.Equals(name, StringComparison.OrdinalIgnoreCase)) ?? false;
-
-
-                if (regKey == null) { return false; }
-                return regKey.GetValueNames().Any(x => x.Equals(name, StringComparison.OrdinalIgnoreCase));
             }
         }
 
