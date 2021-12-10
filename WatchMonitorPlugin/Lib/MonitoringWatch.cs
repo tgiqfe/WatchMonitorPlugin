@@ -15,6 +15,7 @@ using System.IO;
 
 namespace Audit.Lib
 {
+    [System.Runtime.Versioning.SupportedOSPlatform("windows")]
     public class MonitoringWatch : Monitoring
     {
         /// <summary>
@@ -67,6 +68,30 @@ namespace Audit.Lib
                 return _FSInfo;
             }
         }
+
+        #region Exists method
+
+        public bool FileExists()
+        {
+            return Info.Exists;
+        }
+
+        public bool DirectoryExists()
+        {
+            return Info.Exists;
+        }
+
+        public bool RegistryKeyExists()
+        {
+            return Key != null;
+        }
+
+        public bool RegistryValueExists()
+        {
+            return Key?.GetValueNames().Any(x => x.Equals(Name, StringComparison.OrdinalIgnoreCase)) ?? false;
+        }
+
+        #endregion
 
         public const string REGPATH_PREFIX = "[registry]";
 

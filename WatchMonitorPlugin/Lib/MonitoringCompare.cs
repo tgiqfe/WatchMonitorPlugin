@@ -11,6 +11,7 @@ using System.Text.Json;
 
 namespace Audit.Lib
 {
+    [System.Runtime.Versioning.SupportedOSPlatform("windows")]
     internal class MonitoringCompare : Monitoring
     {
         /// <summary>
@@ -32,7 +33,7 @@ namespace Audit.Lib
         {
             get
             {
-                if(_FSInfoA == null)
+                if (_FSInfoA == null)
                 {
                     return PathType switch
                     {
@@ -60,6 +61,30 @@ namespace Audit.Lib
                 }
                 return _FSInfoB;
             }
+        }
+
+        #endregion
+        #region Exists method
+
+        public bool FileExists()
+        {
+            return InfoA.Exists && InfoB.Exists;
+        }
+
+        public bool DirectoryExists()
+        {
+            return InfoA.Exists && InfoB.Exists;
+        }
+
+        public bool RegistryKeyExists()
+        {
+            return KeyA != null && KeyB != null;
+        }
+
+        public bool RegistryValueExists()
+        {
+            return (KeyA?.GetValueNames().Any(x => x.Equals(NameA, StringComparison.OrdinalIgnoreCase)) ?? false) &&
+                (KeyB?.GetValueNames().Any(x => x.Equals(NameB, StringComparison.OrdinalIgnoreCase)) ?? false);
         }
 
         #endregion
