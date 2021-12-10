@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.IO;
 using Microsoft.Win32;
+using IO.Lib;
 
 namespace Audit.Lib
 {
@@ -13,13 +14,62 @@ namespace Audit.Lib
     {
         public override string CheckTarget { get { return "ChildCount"; } }
 
+        public override bool Compare(MonitoringCompare monitoring, Dictionary<string, string> dictionary, int serial)
+        {
+            if (monitoring.IsChildCount ?? false)
+            {
+                if (!monitoring.TestExists_old()) { return false; }
+
+                int[] ret = GetChildCount(monitoring);
+                int[] retA = { ret[0], ret[1] };
+                int[] retB = { ret[2], ret[3] };
+
+                dictionary[$"{monitoring.PathTypeName}A_{this.CheckTarget}_{serial}"] = ToReadable(retA, monitoring.PathType ==PathType.Directory);
+                dictionary[$"{monitoring.PathTypeName}B_{this.CheckTarget}_{serial}"] = ToReadable(retB, monitoring.PathType == PathType.Directory);
+                return retA.SequenceEqual(retB);
+            }
+            return true;
+        }
+
+        public override bool Watch(MonitoringWatch monitoring, Dictionary<string, string> dictionary, int serial)
+        {
+            bool ret = false;
+            bool isDirectory = monitoring.PathType == PathType.Directory;
+            if (monitoring.IsChildCount ?? false)
+            {
+                if (monitoring.TestExists_old())
+                {
+                    int[] result = GetChildCount(monitoring);
+                    ret = !result.SequenceEqual(monitoring.ChildCount ?? new int[0] { });
+                    if (monitoring.ChildCount != null)
+                    {
+                        dictionary[$"{monitoring.PathTypeName}_{this.CheckTarget}_{serial}"] = ret ?
+                            ToReadable(monitoring.ChildCount, isDirectory) + " -> " + ToReadable(result, isDirectory) :
+                            ToReadable(result, isDirectory);
+                    }
+                    monitoring.ChildCount = result;
+                }
+                else
+                {
+                    monitoring.ChildCount = null;
+                }
+            }
+            return ret;
+        }
+
+
+
+
+
+
+
         #region Compare method
 
         public override bool CompareDirectory(MonitoringCompare monitoring, Dictionary<string, string> dictionary, int serial)
         {
             if (monitoring.IsChildCount ?? false)
             {
-                if (!monitoring.TestExists()) { return false; }
+                if (!monitoring.TestExists_old()) { return false; }
 
                 int[] retA = GetDirectoryChildCount(monitoring.PathA);
                 int[] retB = GetDirectoryChildCount(monitoring.PathB);
@@ -35,7 +85,7 @@ namespace Audit.Lib
         {
             if (monitoring.IsChildCount ?? false)
             {
-                if (!monitoring.TestExists()) { return false; }
+                if (!monitoring.TestExists_old()) { return false; }
 
                 int[] retA = GetRegistryKeyChildCount(monitoring.KeyA);
                 int[] retB = GetRegistryKeyChildCount(monitoring.KeyB);
@@ -55,7 +105,7 @@ namespace Audit.Lib
             bool ret = false;
             if (monitoring.IsChildCount ?? false)
             {
-                if (monitoring.TestExists())
+                if (monitoring.TestExists_old())
                 {
                     int[] result = GetDirectoryChildCount(monitoring.Path);
                     ret = !result.SequenceEqual(monitoring.ChildCount ?? new int[0] { });
@@ -80,7 +130,7 @@ namespace Audit.Lib
             bool ret = false;
             if (monitoring.IsChildCount ?? false)
             {
-                if(monitoring.TestExists())
+                if (monitoring.TestExists_old())
                 {
                     int[] result = GetRegistryKeyChildCount(monitoring.Key);
                     ret = !result.SequenceEqual(monitoring.ChildCount ?? new int[0] { });
@@ -102,6 +152,49 @@ namespace Audit.Lib
 
         #endregion
         #region Get method
+
+        public static int[] GetChildCount(Monitoring monitoring)
+        {
+            if (monitoring.PathType == PathType.Directory)
+            {
+                if (monitoring is MonitoringCompare monCompare)
+                {
+                    return new int[4]
+                    {
+                        Directory.GetDirectories(monCompare.PathA, "*", SearchOption.AllDirectories).Length,
+                        Directory.GetFiles(monCompare.PathA, "*", SearchOption.AllDirectories).Length,
+                        Directory.GetDirectories(monCompare.PathB, "*", SearchOption.AllDirectories).Length,
+                        Directory.GetFiles(monCompare.PathB, "*", SearchOption.AllDirectories).Length,
+                    };
+                }
+                else if (monitoring is MonitoringWatch monWatch)
+                {
+                    return new int[2]
+                    {
+                        Directory.GetDirectories(monWatch.Path, "*", SearchOption.AllDirectories).Length,
+                        Directory.GetFiles(monWatch.Path, "*", SearchOption.AllDirectories).Length,
+                    };
+                }
+            }
+            else if (monitoring.PathType == PathType.Registry)
+            {
+                if (monitoring is MonitoringCompare monCompare)
+                {
+                    int[] retA = GetRegistryKeyChildCount(monCompare.KeyA);
+                    int[] retB = GetRegistryKeyChildCount(monCompare.KeyB);
+                    return new int[4]
+                    {
+                        retA[0], retA[1], retB[2], retB[3]
+                    };
+                }
+                else if (monitoring is MonitoringWatch monWatch)
+                {
+                    return GetRegistryKeyChildCount(monWatch.Key);
+                }
+            }
+            return null;
+        }
+
 
         /// <summary>
         /// 配下のファイルとディレクトリの総数を返す。

@@ -14,6 +14,23 @@ namespace Audit.Lib
     {
         public override string CheckTarget { get { return "Exists"; } }
 
+        public override bool Compare(MonitoringCompare monitoring, Dictionary<string, string> dictionary, int serial)
+        {
+            
+            return true;
+        }
+
+        public override bool Watch(MonitoringWatch monitoring, Dictionary<string, string> dictionary, int serial)
+        {
+            return false;
+        }
+
+
+
+
+
+
+
         #region Compare method
 
         public override bool CompareFile(MonitoringCompare monitoring, Dictionary<string, string> dictionary, int serial)

@@ -19,7 +19,7 @@ namespace Audit.Lib
         {
             if (monitoring.IsRegistryType ?? false)
             {
-                if (!monitoring.TestExists()) { return false; }
+                if (!monitoring.TestExists_old()) { return false; }
 
                 string retA = RegistryControl.ValueKindToString(monitoring.KeyA.GetValueKind(monitoring.NameA));
                 string retB = RegistryControl.ValueKindToString(monitoring.KeyB.GetValueKind(monitoring.NameB));
@@ -39,7 +39,7 @@ namespace Audit.Lib
             bool ret = false;
             if (monitoring.IsRegistryType ?? false)
             {
-                if (monitoring.TestExists())
+                if (monitoring.TestExists_old())
                 {
                     string result = RegistryControl.ValueKindToString(monitoring.Key.GetValueKind(monitoring.Name));
                     ret = result != monitoring.RegistryType;

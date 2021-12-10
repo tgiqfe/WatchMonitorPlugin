@@ -31,5 +31,9 @@ namespace Audit.Lib
         public bool? IsTimeOnly { get; set; }
 
         public virtual bool TestExists() { return false; }
+
+        public virtual bool TestExistsA() { return false; }
+
+        public virtual bool TestExistsB() { return false; }
     }
 }

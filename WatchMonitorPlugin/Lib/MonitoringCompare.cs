@@ -26,6 +26,62 @@ namespace Audit.Lib
 
         #region Target path
 
+        private FileInfo _FileInfoA = null;
+        private FileInfo _FileInfoB = null;
+        public FileInfo FileInfoA
+        {
+            get
+            {
+                if (_FileInfoA == null && this.PathType == PathType.File)
+                {
+                    this._FileInfoA = new FileInfo(this.PathA);
+                }
+                return _FileInfoA;
+            }
+        }
+        public FileInfo FileInfoB
+        {
+            get
+            {
+                if (_FileInfoB == null && this.PathType == PathType.File)
+                {
+                    this._FileInfoB = new FileInfo(this.PathA);
+                }
+                return _FileInfoB;
+            }
+        }
+
+        private DirectoryInfo _DirectoryInfoA = null;
+        private DirectoryInfo _DirectoryInfoB = null;
+        public DirectoryInfo DirectoryInfoA
+        {
+            get
+            {
+                if (_DirectoryInfoA == null && this.PathType != PathType.Directory)
+                {
+                    this._DirectoryInfoA = new DirectoryInfo(this.PathA);
+                }
+                return _DirectoryInfoA;
+            }
+        }
+        public DirectoryInfo DirectoryInfoB
+        {
+            get
+            {
+                if (_DirectoryInfoB == null && this.PathType != PathType.Directory)
+                {
+                    this._DirectoryInfoB = new DirectoryInfo(this.PathA);
+                }
+                return _DirectoryInfoB;
+            }
+        }
+
+
+
+
+
+
+
         private FileSystemInfo _FSInfoA = null;
         private FileSystemInfo _FSInfoB = null;
 
@@ -71,10 +127,69 @@ namespace Audit.Lib
             switch (PathType)
             {
                 case PathType.File:
+                    return FileInfoA.Exists && FileInfoB.Exists;
+                case PathType.Directory:
+                    return DirectoryInfoA.Exists && DirectoryInfoB.Exists;
+                case PathType.Registry:
+                    if (NameA == null && NameB == null)
+                    {
+                        return KeyA != null && KeyB != null;
+                    }
+                    else
+                    {
+                        return (KeyA?.GetValueNames().Any(x => x.Equals(NameA, StringComparison.OrdinalIgnoreCase)) ?? false) &&
+                            (KeyB?.GetValueNames().Any(x => x.Equals(NameB, StringComparison.OrdinalIgnoreCase)) ?? false);
+                    }
+            }
+            return false;
+        }
+
+        public override bool TestExistsA()
+        {
+            switch (PathType)
+            {
+                case PathType.File:
+                    return FileInfoA.Exists;
+                case PathType.Directory:
+                    return DirectoryInfoA.Exists;
+                case PathType.Registry:
+                    return NameA == null ?
+                        KeyA != null :
+                        KeyA?.GetValueNames().Any(x => x.Equals(NameA, StringComparison.OrdinalIgnoreCase)) ?? false;
+            }
+            return false;
+        }
+
+        public override bool TestExistsB()
+        {
+            switch (PathType)
+            {
+                case PathType.File:
+                    return FileInfoB.Exists;
+                case PathType.Directory:
+                    return DirectoryInfoB.Exists;
+                case PathType.Registry:
+                    return NameB == null ?
+                        KeyB != null :
+                        KeyB?.GetValueNames().Any(x => x.Equals(NameB, StringComparison.OrdinalIgnoreCase)) ?? false;
+            }
+            return false;
+        }
+
+
+
+
+
+
+        public bool TestExists_old()
+        {
+            switch (PathType)
+            {
+                case PathType.File:
                 case PathType.Directory:
                     return InfoA.Exists && InfoB.Exists;
                 case PathType.Registry:
-                    if(NameA == null && NameB == null)
+                    if (NameA == null && NameB == null)
                     {
                         return KeyA != null && KeyB != null;
                     }

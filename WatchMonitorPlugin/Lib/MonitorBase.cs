@@ -27,5 +27,11 @@ namespace Audit.Lib
         public virtual bool WatchRegistryKey(MonitoringWatch monitoring, Dictionary<string, string> dictionary, int serial) { return false; }
 
         public virtual bool WatchRegistryValue(MonitoringWatch monitoring, Dictionary<string, string> dictionary, int serial) { return false; }
+
+
+
+        public virtual bool Compare(MonitoringCompare monitoring, Dictionary<string, string> dictionary, int serial) { return true; }
+
+        public virtual bool Watch(MonitoringWatch monitoring, Dictionary<string, string> dictionary, int serial) { return false; }
     }
 }

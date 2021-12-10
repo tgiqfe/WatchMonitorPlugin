@@ -12,13 +12,56 @@ namespace Audit.Lib
     {
         public override string CheckTarget { get { return "Attributes"; } }
 
+        public override bool Compare(MonitoringCompare monitoring, Dictionary<string, string> dictionary, int serial)
+        {
+            if (monitoring.IsAttributes ?? false)
+            {
+                if (!monitoring.TestExists_old()) { return false; }
+
+                bool[] retA = GetAttributes(monitoring.PathA);
+                bool[] retB = GetAttributes(monitoring.PathB);
+
+                dictionary[$"{monitoring.PathTypeName}A_{this.CheckTarget}_{serial}"] = ToReadable(retA);
+                dictionary[$"{monitoring.PathTypeName}B_{this.CheckTarget}_{serial}"] = ToReadable(retB);
+                return retA.SequenceEqual(retB);
+            }
+            return true;
+        }
+
+        public override bool Watch(MonitoringWatch monitoring, Dictionary<string, string> dictionary, int serial)
+        {
+            bool ret = false;
+            if (monitoring.IsAttributes ?? false)
+            {
+                if (monitoring.TestExists_old())
+                {
+                    bool[] result = GetAttributes(monitoring.Path);
+                    ret = !result.SequenceEqual(monitoring.Attributes ?? new bool[0] { });
+                    if (monitoring.Attributes != null)
+                    {
+                        dictionary[$"{monitoring.PathTypeName}_{this.CheckTarget}_{serial}"] = ret ?
+                            string.Format("{0} -> {1}", ToReadable(monitoring.Attributes), ToReadable(result)) :
+                            ToReadable(result);
+                    }
+                }
+                else
+                {
+                    monitoring.Attributes = null;
+                }
+            }
+            return ret;
+        }
+
+
+
+
         #region Compare method
 
         public override bool CompareFile(MonitoringCompare monitoring, Dictionary<string, string> dictionary, int serial)
         {
             if (monitoring.IsAttributes ?? false)
             {
-                if (!monitoring.TestExists()) { return false; }
+                if (!monitoring.TestExists_old()) { return false; }
 
                 bool[] retA = GetAttributes(monitoring.PathA);
                 bool[] retB = GetAttributes(monitoring.PathB);
@@ -34,7 +77,7 @@ namespace Audit.Lib
         {
             if (monitoring.IsAttributes ?? false)
             {
-                if (!monitoring.TestExists()) { return false; }
+                if (!monitoring.TestExists_old()) { return false; }
 
                 bool[] retA = GetAttributes(monitoring.PathA);
                 bool[] retB = GetAttributes(monitoring.PathB);
@@ -54,7 +97,7 @@ namespace Audit.Lib
             bool ret = false;
             if (monitoring.IsAttributes ?? false)
             {
-                if (monitoring.TestExists())
+                if (monitoring.TestExists_old())
                 {
                     bool[] result = GetAttributes(monitoring.Path);
                     ret = !result.SequenceEqual(monitoring.Attributes ?? new bool[0] { });
@@ -78,7 +121,7 @@ namespace Audit.Lib
             bool ret = false;
             if (monitoring.IsAttributes ?? false)
             {
-                if (monitoring.TestExists())
+                if (monitoring.TestExists_old())
                 {
                     bool[] result = GetAttributes(monitoring.Path);
                     ret = !result.SequenceEqual(monitoring.Attributes ?? new bool[0] { });
