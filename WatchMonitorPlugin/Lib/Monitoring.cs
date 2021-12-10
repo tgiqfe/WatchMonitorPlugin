@@ -29,5 +29,7 @@ namespace Audit.Lib
         public bool? IsRegistryType { get; set; }
         public bool? IsDateOnly { get; set; }
         public bool? IsTimeOnly { get; set; }
+
+        public virtual bool TestExists() { return false; }
     }
 }

@@ -66,6 +66,28 @@ namespace Audit.Lib
         #endregion
         #region Exists method
 
+        public override bool TestExists()
+        {
+            switch (PathType)
+            {
+                case PathType.File:
+                case PathType.Directory:
+                    return InfoA.Exists && InfoB.Exists;
+                case PathType.Registry:
+                    if(NameA == null && NameB == null)
+                    {
+                        return KeyA != null && KeyB != null;
+                    }
+                    else
+                    {
+                        return (KeyA?.GetValueNames().Any(x => x.Equals(NameA, StringComparison.OrdinalIgnoreCase)) ?? false) &&
+                            (KeyB?.GetValueNames().Any(x => x.Equals(NameB, StringComparison.OrdinalIgnoreCase)) ?? false);
+                    }
+            }
+            return false;
+        }
+
+        /*
         public bool FileExists()
         {
             return InfoA.Exists && InfoB.Exists;
@@ -86,6 +108,7 @@ namespace Audit.Lib
             return (KeyA?.GetValueNames().Any(x => x.Equals(NameA, StringComparison.OrdinalIgnoreCase)) ?? false) &&
                 (KeyB?.GetValueNames().Any(x => x.Equals(NameB, StringComparison.OrdinalIgnoreCase)) ?? false);
         }
+        */
 
         #endregion
 

@@ -9,6 +9,7 @@ using System.IO;
 
 namespace Audit.Lib
 {
+    [System.Runtime.Versioning.SupportedOSPlatform("windows")]
     public class MonitoringWatchCollection : Dictionary<string, MonitoringWatch>
     {
         /// <summary>

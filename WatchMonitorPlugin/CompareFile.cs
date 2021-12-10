@@ -8,6 +8,7 @@ using Audit.Lib;
 
 namespace WatchMonitorPlugin
 {
+    [System.Runtime.Versioning.SupportedOSPlatform("windows")]
     internal class CompareFile
     {
         public string[] _PathA { get; set; }

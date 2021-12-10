@@ -10,7 +10,6 @@ using IO.Lib;
 
 namespace Audit.Lib
 {
-    [System.Runtime.Versioning.SupportedOSPlatform("windows")]
     internal class MonitorHash : MonitorBase
     {
         protected virtual string GetHash(string filePath) { return null; }
@@ -53,7 +52,7 @@ namespace Audit.Lib
         {
             if (monitoring.IsMD5Hash ?? false)
             {
-                if (!monitoring.FileExists()) { return false; }
+                if (!monitoring.TestExists()) { return false; }
 
                 string retA = GetHash(monitoring.PathA);
                 string retB = GetHash(monitoring.PathB);
@@ -69,7 +68,7 @@ namespace Audit.Lib
         {
             if (monitoring.IsMD5Hash ?? false)
             {
-                if (!monitoring.RegistryValueExists()) { return false; }
+                if (!monitoring.TestExists()) { return false; }
 
                 string retA = GetHash(monitoring.KeyA, monitoring.NameA);
                 string retB = GetHash(monitoring.KeyB, monitoring.NameB);
@@ -89,7 +88,7 @@ namespace Audit.Lib
             bool ret = false;
             if (monitoring.IsMD5Hash ?? false)
             {
-                if (monitoring.Info.Exists)
+                if (monitoring.TestExists())
                 {
                     string result = GetHash(monitoring.Path);
                     ret = result != monitoring.MD5Hash;
@@ -114,7 +113,7 @@ namespace Audit.Lib
             bool ret = false;
             if (monitoring.IsMD5Hash ?? false)
             {
-                if(monitoring.RegistryValueExists())
+                if(monitoring.TestExists())
                 {
                     string result = GetHash(monitoring.Key, monitoring.Name);
                     ret = result != monitoring.MD5Hash;
@@ -172,7 +171,7 @@ namespace Audit.Lib
         {
             if (monitoring.IsSHA256Hash ?? false)
             {
-                if (!monitoring.FileExists()) { return false; }
+                if (!monitoring.TestExists()) { return false; }
 
                 string retA = GetHash(monitoring.PathA);
                 string retB = GetHash(monitoring.PathB);
@@ -188,7 +187,7 @@ namespace Audit.Lib
         {
             if (monitoring.IsSHA256Hash ?? false)
             {
-                if (!monitoring.RegistryValueExists()) { return false; }
+                if (!monitoring.TestExists()) { return false; }
 
                 string retA = GetHash(monitoring.KeyA, monitoring.NameA);
                 string retB = GetHash(monitoring.KeyB, monitoring.NameB);
@@ -208,7 +207,7 @@ namespace Audit.Lib
             bool ret = false;
             if (monitoring.IsSHA256Hash ?? false)
             {
-                if (monitoring.Info.Exists)
+                if (monitoring.TestExists())
                 {
                     string result = GetHash(monitoring.Path);
                     ret = result != monitoring.SHA256Hash;
@@ -233,7 +232,7 @@ namespace Audit.Lib
             bool ret = false;
             if (monitoring.IsSHA256Hash ?? false)
             {
-                if (monitoring.RegistryValueExists())
+                if (monitoring.TestExists())
                 {
                     string result = GetHash(monitoring.Key, monitoring.Name);
                     ret = result != monitoring.SHA256Hash;
@@ -291,7 +290,7 @@ namespace Audit.Lib
         {
             if (monitoring.IsSHA512Hash ?? false)
             {
-                if (!monitoring.FileExists()) { return false; }
+                if (!monitoring.TestExists()) { return false; }
 
                 string retA = GetHash(monitoring.PathA);
                 string retB = GetHash(monitoring.PathB);
@@ -307,7 +306,7 @@ namespace Audit.Lib
         {
             if (monitoring.IsSHA512Hash ?? false)
             {
-                if (!monitoring.RegistryValueExists()) { return false; }
+                if (!monitoring.TestExists()) { return false; }
 
                 string retA = GetHash(monitoring.KeyA, monitoring.NameA);
                 string retB = GetHash(monitoring.KeyB, monitoring.NameB);
@@ -327,7 +326,7 @@ namespace Audit.Lib
             bool ret = false;
             if (monitoring.IsSHA512Hash ?? false)
             {
-                if (monitoring.Info.Exists)
+                if (monitoring.TestExists())
                 {
                     string result = GetHash(monitoring.Path);
                     ret = result != monitoring.SHA512Hash;
@@ -352,7 +351,7 @@ namespace Audit.Lib
             bool ret = false;
             if (monitoring.IsSHA512Hash ?? false)
             {
-                if (monitoring.RegistryValueExists())
+                if (monitoring.TestExists())
                 {
                     string result = GetHash(monitoring.Key, monitoring.Name);
                     ret = result != monitoring.SHA512Hash;
