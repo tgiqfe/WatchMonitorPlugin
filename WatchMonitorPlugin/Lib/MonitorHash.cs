@@ -53,7 +53,7 @@ namespace Audit.Lib
         {
             if (monitoring.IsMD5Hash ?? false)
             {
-                if (!monitoring.InfoA.Exists || !monitoring.InfoB.Exists) { return false; }
+                if (!monitoring.FileExists()) { return false; }
 
                 string retA = GetHash(monitoring.PathA);
                 string retB = GetHash(monitoring.PathB);
@@ -69,11 +69,7 @@ namespace Audit.Lib
         {
             if (monitoring.IsMD5Hash ?? false)
             {
-                if (!(monitoring.KeyA?.GetValueNames().Any(x => x.Equals(monitoring.NameA, StringComparison.OrdinalIgnoreCase)) ?? false) ||
-                    !(monitoring.KeyB?.GetValueNames().Any(x => x.Equals(monitoring.NameB, StringComparison.OrdinalIgnoreCase)) ?? false))
-                {
-                    return false;
-                }
+                if (!monitoring.RegistryValueExists()) { return false; }
 
                 string retA = GetHash(monitoring.KeyA, monitoring.NameA);
                 string retB = GetHash(monitoring.KeyB, monitoring.NameB);
@@ -118,7 +114,7 @@ namespace Audit.Lib
             bool ret = false;
             if (monitoring.IsMD5Hash ?? false)
             {
-                if (monitoring.Key?.GetValueNames().Any(x => x.Equals(monitoring.Name, StringComparison.OrdinalIgnoreCase)) ?? false)
+                if(monitoring.RegistryValueExists())
                 {
                     string result = GetHash(monitoring.Key, monitoring.Name);
                     ret = result != monitoring.MD5Hash;
@@ -176,7 +172,7 @@ namespace Audit.Lib
         {
             if (monitoring.IsSHA256Hash ?? false)
             {
-                if (!monitoring.InfoA.Exists || !monitoring.InfoB.Exists) { return false; }
+                if (!monitoring.FileExists()) { return false; }
 
                 string retA = GetHash(monitoring.PathA);
                 string retB = GetHash(monitoring.PathB);
@@ -192,11 +188,7 @@ namespace Audit.Lib
         {
             if (monitoring.IsSHA256Hash ?? false)
             {
-                if (!(monitoring.KeyA?.GetValueNames().Any(x => x.Equals(monitoring.NameA, StringComparison.OrdinalIgnoreCase)) ?? false) ||
-                    !(monitoring.KeyB?.GetValueNames().Any(x => x.Equals(monitoring.NameB, StringComparison.OrdinalIgnoreCase)) ?? false))
-                {
-                    return false;
-                }
+                if (!monitoring.RegistryValueExists()) { return false; }
 
                 string retA = GetHash(monitoring.KeyA, monitoring.NameA);
                 string retB = GetHash(monitoring.KeyB, monitoring.NameB);
@@ -241,7 +233,7 @@ namespace Audit.Lib
             bool ret = false;
             if (monitoring.IsSHA256Hash ?? false)
             {
-                if (monitoring.Key?.GetValueNames().Any(x => x.Equals(monitoring.Name, StringComparison.OrdinalIgnoreCase)) ?? false)
+                if (monitoring.RegistryValueExists())
                 {
                     string result = GetHash(monitoring.Key, monitoring.Name);
                     ret = result != monitoring.SHA256Hash;
@@ -299,7 +291,7 @@ namespace Audit.Lib
         {
             if (monitoring.IsSHA512Hash ?? false)
             {
-                if (!monitoring.InfoA.Exists || !monitoring.InfoB.Exists) { return false; }
+                if (!monitoring.FileExists()) { return false; }
 
                 string retA = GetHash(monitoring.PathA);
                 string retB = GetHash(monitoring.PathB);
@@ -315,11 +307,7 @@ namespace Audit.Lib
         {
             if (monitoring.IsSHA512Hash ?? false)
             {
-                if (!(monitoring.KeyA?.GetValueNames().Any(x => x.Equals(monitoring.NameA, StringComparison.OrdinalIgnoreCase)) ?? false) ||
-                    !(monitoring.KeyB?.GetValueNames().Any(x => x.Equals(monitoring.NameB, StringComparison.OrdinalIgnoreCase)) ?? false))
-                {
-                    return false;
-                }
+                if (!monitoring.RegistryValueExists()) { return false; }
 
                 string retA = GetHash(monitoring.KeyA, monitoring.NameA);
                 string retB = GetHash(monitoring.KeyB, monitoring.NameB);
@@ -364,7 +352,7 @@ namespace Audit.Lib
             bool ret = false;
             if (monitoring.IsSHA512Hash ?? false)
             {
-                if (monitoring.Key?.GetValueNames().Any(x => x.Equals(monitoring.Name, StringComparison.OrdinalIgnoreCase)) ?? false)
+                if (monitoring.RegistryValueExists())
                 {
                     string result = GetHash(monitoring.Key, monitoring.Name);
                     ret = result != monitoring.SHA512Hash;

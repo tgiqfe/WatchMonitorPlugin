@@ -19,11 +19,7 @@ namespace Audit.Lib
         {
             if (monitoring.IsRegistryType ?? false)
             {
-                if (!(monitoring.KeyA?.GetValueNames().Any(x => x.Equals(monitoring.NameA, StringComparison.OrdinalIgnoreCase)) ?? false) ||
-                    !(monitoring.KeyB?.GetValueNames().Any(x => x.Equals(monitoring.NameB, StringComparison.OrdinalIgnoreCase)) ?? false))
-                {
-                    return false;
-                }
+                if (!monitoring.RegistryValueExists()) { return false; }
 
                 string retA = RegistryControl.ValueKindToString(monitoring.KeyA.GetValueKind(monitoring.NameA));
                 string retB = RegistryControl.ValueKindToString(monitoring.KeyB.GetValueKind(monitoring.NameB));
@@ -38,48 +34,30 @@ namespace Audit.Lib
         #endregion
         #region Watch method
 
-
-
-        #endregion
-
-
-        const string CHECK_TARGET = "RegistryType";
-
-        #region Compare method
-
-
-
-        #endregion
-        #region Watch method
-
-        public static bool WatchRegistryValue(
-            MonitoringWatch watch, Dictionary<string, string> dictionary, int serial, RegistryKey regKey, string name)
+        public override bool WatchRegistryValue(MonitoringWatch monitoring, Dictionary<string, string> dictionary, int serial)
         {
             bool ret = false;
-            if (watch.IsRegistryType ?? false)
+            if (monitoring.IsRegistryType ?? false)
             {
-                if (regKey != null && regKey.GetValueNames().Any(x => x.Equals(name, StringComparison.OrdinalIgnoreCase)))
+                if (monitoring.RegistryValueExists())
                 {
-                    string ret_string = RegistryControl.ValueKindToString(regKey.GetValueKind(name));
-                    ret = ret_string != watch.RegistryType;
-                    if (watch.RegistryType != null)
+                    string result = RegistryControl.ValueKindToString(monitoring.Key.GetValueKind(monitoring.Name));
+                    ret = result != monitoring.RegistryType;
+                    if (monitoring.RegistryType != null)
                     {
-                        string pathType = "registry";
-                        string checkTarget = "RegistryType";
-                        dictionary[$"{pathType}_{checkTarget}_{serial}"] = ret ?
-                            $"{watch.RegistryType} -> {ret_string}" :
-                            ret_string;
+                        dictionary[$"{monitoring.PathTypeName}_{this.CheckTarget}_{serial}"] = ret ?
+                            $"{monitoring.RegistryType} -> {result}" :
+                            result;
                     }
-                    watch.RegistryType = ret_string;
+                    monitoring.RegistryType = result;
                 }
                 else
                 {
-                    watch.RegistryType = null;
+                    monitoring.RegistryType = null;
                 }
             }
             return ret;
         }
-
 
         #endregion
         #region Get method

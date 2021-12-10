@@ -18,7 +18,7 @@ namespace Audit.Lib
         {
             if (monitoring.IsAttributes ?? false)
             {
-                if (!monitoring.InfoA.Exists || !monitoring.InfoB.Exists) { return false; }
+                if (!monitoring.FileExists()) { return false; }
 
                 bool[] retA = GetAttributes(monitoring.PathA);
                 bool[] retB = GetAttributes(monitoring.PathB);
@@ -34,7 +34,7 @@ namespace Audit.Lib
         {
             if (monitoring.IsAttributes ?? false)
             {
-                if (!monitoring.InfoA.Exists || !monitoring.InfoB.Exists) { return false; }
+                if (!monitoring.DirectoryExists()) { return false; }
 
                 bool[] retA = GetAttributes(monitoring.PathA);
                 bool[] retB = GetAttributes(monitoring.PathB);
@@ -54,7 +54,7 @@ namespace Audit.Lib
             bool ret = false;
             if (monitoring.IsAttributes ?? false)
             {
-                if (monitoring.Info.Exists)
+                if (monitoring.FileExists())
                 {
                     bool[] result = GetAttributes(monitoring.Path);
                     ret = !result.SequenceEqual(monitoring.Attributes ?? new bool[0] { });
@@ -78,7 +78,7 @@ namespace Audit.Lib
             bool ret = false;
             if (monitoring.IsAttributes ?? false)
             {
-                if (monitoring.Info.Exists)
+                if (monitoring.DirectoryExists())
                 {
                     bool[] result = GetAttributes(monitoring.Path);
                     ret = !result.SequenceEqual(monitoring.Attributes ?? new bool[0] { });

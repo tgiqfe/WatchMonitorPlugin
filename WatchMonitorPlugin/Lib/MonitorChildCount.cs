@@ -19,7 +19,7 @@ namespace Audit.Lib
         {
             if (monitoring.IsChildCount ?? false)
             {
-                if (!monitoring.InfoA.Exists || !monitoring.InfoB.Exists) { return false; }
+                if (!monitoring.DirectoryExists()) { return false; }
 
                 int[] retA = GetDirectoryChildCount(monitoring.PathA);
                 int[] retB = GetDirectoryChildCount(monitoring.PathB);
@@ -35,7 +35,7 @@ namespace Audit.Lib
         {
             if (monitoring.IsChildCount ?? false)
             {
-                if (monitoring.KeyA == null || monitoring.KeyB == null) { return false; }
+                if (monitoring.RegistryKeyExists()) { return false; }
 
                 int[] retA = GetRegistryKeyChildCount(monitoring.KeyA);
                 int[] retB = GetRegistryKeyChildCount(monitoring.KeyB);
@@ -55,7 +55,7 @@ namespace Audit.Lib
             bool ret = false;
             if (monitoring.IsChildCount ?? false)
             {
-                if (monitoring.Info.Exists)
+                if (monitoring.DirectoryExists())
                 {
                     int[] result = GetDirectoryChildCount(monitoring.Path);
                     ret = !result.SequenceEqual(monitoring.ChildCount ?? new int[0] { });
@@ -80,7 +80,7 @@ namespace Audit.Lib
             bool ret = false;
             if (monitoring.IsChildCount ?? false)
             {
-                if (monitoring.Key != null)
+                if(monitoring.RegistryKeyExists())
                 {
                     int[] result = GetRegistryKeyChildCount(monitoring.Key);
                     ret = !result.SequenceEqual(monitoring.ChildCount ?? new int[0] { });
