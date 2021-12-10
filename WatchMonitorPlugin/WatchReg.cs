@@ -200,9 +200,9 @@ namespace WatchMonitorPlugin
         private bool WatchRegistryValueCheck(MonitoringWatch watch, Dictionary<string, string> dictionary, RegistryKey regKey, string name)
         {
             bool ret = MonitorExists.WatchRegistryValue(watch, dictionary, _serial, regKey, name);
-            ret |= MonitorHash.WatchRegistryValueMD5Hash(watch, dictionary, _serial, regKey, name);
-            ret |= MonitorHash.WatchRegistryValueSHA256Hash(watch, dictionary, _serial, regKey, name);
-            ret |= MonitorHash.WatchRegistryValueSHA512Hash(watch, dictionary, _serial, regKey, name);
+            //ret |= MonitorHash.WatchRegistryValueMD5Hash(watch, dictionary, _serial, regKey, name);
+            //ret |= MonitorHash.WatchRegistryValueSHA256Hash(watch, dictionary, _serial, regKey, name);
+            //ret |= MonitorHash.WatchRegistryValueSHA512Hash(watch, dictionary, _serial, regKey, name);
             ret |= MonitorRegistryType.WatchRegistryValue(watch, dictionary, _serial, regKey, name);
 
             return ret;
