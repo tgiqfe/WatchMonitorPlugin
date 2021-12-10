@@ -343,6 +343,72 @@ namespace Audit.Lib
             };
         }
 
+        protected string GetownerString(MonitoringWatch monitoring)
+        {
+            return monitoring.PathType switch
+            {
+                PathType.File => ((FileInfo)monitoring.Info).GetAccessControl().GetOwner(typeof(NTAccount)).Value,
+                PathType.Directory => ((DirectoryInfo)monitoring.Info).GetAccessControl().GetOwner(typeof(NTAccount)).Value,
+                PathType.Registry => monitoring.Key.GetAccessControl().GetOwner(typeof(NTAccount)).Value,
+                _ => null,
+            };
+        }
+
+        protected string GetownerStringA(MonitoringCompare monitoring)
+        {
+            return monitoring.PathType switch
+            {
+                PathType.File => ((FileInfo)monitoring.InfoA).GetAccessControl().GetOwner(typeof(NTAccount)).Value,
+                PathType.Directory => ((DirectoryInfo)monitoring.InfoA).GetAccessControl().GetOwner(typeof(NTAccount)).Value,
+                PathType.Registry => monitoring.KeyA.GetAccessControl().GetOwner(typeof(NTAccount)).Value,
+                _ => null,
+            };
+        }
+
+        protected string GetownerStringB(MonitoringCompare monitoring)
+        {
+            return monitoring.PathType switch
+            {
+                PathType.File => ((FileInfo)monitoring.InfoB).GetAccessControl().GetOwner(typeof(NTAccount)).Value,
+                PathType.Directory => ((DirectoryInfo)monitoring.InfoB).GetAccessControl().GetOwner(typeof(NTAccount)).Value,
+                PathType.Registry => monitoring.KeyB.GetAccessControl().GetOwner(typeof(NTAccount)).Value,
+                _ => null,
+            };
+        }
+
+        protected bool GetInherited(MonitoringWatch monitoring)
+        {
+            return monitoring.PathType switch
+            {
+                PathType.File => !((FileInfo)monitoring.Info).GetAccessControl().AreAccessRulesProtected,
+                PathType.Directory => !((DirectoryInfo)monitoring.Info).GetAccessControl().AreAccessRulesProtected,
+                PathType.Registry => !monitoring.Key.GetAccessControl().AreAccessRulesProtected,
+                _ => false,
+            };
+        }
+
+        protected bool GetInheritedA(MonitoringCompare monitoring)
+        {
+            return monitoring.PathType switch
+            {
+                PathType.File => !((FileInfo)monitoring.InfoA).GetAccessControl().AreAccessRulesProtected,
+                PathType.Directory => !((DirectoryInfo)monitoring.InfoA).GetAccessControl().AreAccessRulesProtected,
+                PathType.Registry => !monitoring.KeyA.GetAccessControl().AreAccessRulesProtected,
+                _ => false,
+            };
+        }
+
+        protected bool GetInheritedB(MonitoringCompare monitoring)
+        {
+            return monitoring.PathType switch
+            {
+                PathType.File => !((FileInfo)monitoring.InfoB).GetAccessControl().AreAccessRulesProtected,
+                PathType.Directory => !((DirectoryInfo)monitoring.InfoB).GetAccessControl().AreAccessRulesProtected,
+                PathType.Registry => !monitoring.KeyB.GetAccessControl().AreAccessRulesProtected,
+                _ => false,
+            };
+        }
+
         #endregion
     }
 
@@ -493,10 +559,14 @@ namespace Audit.Lib
         {
             if (monitoring.IsOwner ?? false)
             {
-                if (monitoring.TestExists()) { return false; }
+                if (!monitoring.TestExists()) { return false; }
 
+                string retA = GetownerStringA(monitoring);
+                string retB = GetownerStringB(monitoring);
 
-
+                dictionary[$"{monitoring.PathTypeName}A_{this.CheckTarget}_{serial}"] = retA;
+                dictionary[$"{monitoring.PathTypeName}B_{this.CheckTarget}_{serial}"] = retB;
+                return retA == retB;
             }
             return true;
         }
@@ -505,10 +575,14 @@ namespace Audit.Lib
         {
             if (monitoring.IsOwner ?? false)
             {
-                if (monitoring.TestExists()) { return false; }
+                if (!monitoring.TestExists()) { return false; }
 
+                string retA = GetownerStringA(monitoring);
+                string retB = GetownerStringB(monitoring);
 
-
+                dictionary[$"{monitoring.PathTypeName}A_{this.CheckTarget}_{serial}"] = retA;
+                dictionary[$"{monitoring.PathTypeName}B_{this.CheckTarget}_{serial}"] = retB;
+                return retA == retB;
             }
             return true;
         }
@@ -517,10 +591,14 @@ namespace Audit.Lib
         {
             if (monitoring.IsOwner ?? false)
             {
-                if (monitoring.TestExists()) { return false; }
+                if (!monitoring.TestExists()) { return false; }
 
+                string retA = GetownerStringA(monitoring);
+                string retB = GetownerStringB(monitoring);
 
-
+                dictionary[$"{monitoring.PathTypeName}A_{this.CheckTarget}_{serial}"] = retA;
+                dictionary[$"{monitoring.PathTypeName}B_{this.CheckTarget}_{serial}"] = retB;
+                return retA == retB;
             }
             return true;
         }
@@ -535,11 +613,19 @@ namespace Audit.Lib
             {
                 if (monitoring.TestExists())
                 {
-
+                    string result = GetownerString(monitoring);
+                    ret = result != monitoring.Owner;
+                    if(monitoring.Owner != null)
+                    {
+                        dictionary[$"{monitoring.PathTypeName}_{this.CheckTarget}_{serial}"] = ret ?
+                            $"{monitoring.Owner} -> {result}" :
+                            result;
+                    }
+                    monitoring.Owner = result;
                 }
                 else
                 {
-
+                    monitoring.Owner = null;
                 }
             }
             return ret;
@@ -552,11 +638,19 @@ namespace Audit.Lib
             {
                 if (monitoring.TestExists())
                 {
-
+                    string result = GetownerString(monitoring);
+                    ret = result != monitoring.Owner;
+                    if (monitoring.Owner != null)
+                    {
+                        dictionary[$"{monitoring.PathTypeName}_{this.CheckTarget}_{serial}"] = ret ?
+                            $"{monitoring.Owner} -> {result}" :
+                            result;
+                    }
+                    monitoring.Owner = result;
                 }
                 else
                 {
-
+                    monitoring.Owner = null;
                 }
             }
             return ret;
@@ -569,11 +663,19 @@ namespace Audit.Lib
             {
                 if (monitoring.TestExists())
                 {
-
+                    string result = GetownerString(monitoring);
+                    ret = result != monitoring.Owner;
+                    if (monitoring.Owner != null)
+                    {
+                        dictionary[$"{monitoring.PathTypeName}_{this.CheckTarget}_{serial}"] = ret ?
+                            $"{monitoring.Owner} -> {result}" :
+                            result;
+                    }
+                    monitoring.Owner = result;
                 }
                 else
                 {
-
+                    monitoring.Owner = null;
                 }
             }
             return ret;
@@ -593,7 +695,7 @@ namespace Audit.Lib
         {
             if (monitoring.IsInherited ?? false)
             {
-                if (monitoring.TestExists()) { return false; }
+                if (!monitoring.TestExists()) { return false; }
 
 
 
@@ -605,7 +707,7 @@ namespace Audit.Lib
         {
             if (monitoring.IsInherited ?? false)
             {
-                if (monitoring.TestExists()) { return false; }
+                if (!monitoring.TestExists()) { return false; }
 
 
 
@@ -617,7 +719,7 @@ namespace Audit.Lib
         {
             if (monitoring.IsInherited ?? false)
             {
-                if (monitoring.TestExists()) { return false; }
+                if (!monitoring.TestExists()) { return false; }
 
 
 
