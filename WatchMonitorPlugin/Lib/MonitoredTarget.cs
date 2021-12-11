@@ -93,9 +93,16 @@ namespace Audit.Lib
 
         #endregion
 
-        public MonitoredTarget(PathType pathType)
+        public MonitoredTarget(PathType pathType, string path)
         {
             this.PathType = pathType;
+            this.Path = path;
+        }
+        public MonitoredTarget(PathType pathType, string path, string name)
+        {
+            this.PathType = pathType;
+            this.Path = path;
+            this.Name = name;
         }
 
         #region TestExists

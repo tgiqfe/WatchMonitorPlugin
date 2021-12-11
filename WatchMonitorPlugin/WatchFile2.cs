@@ -4,15 +4,15 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Audit.Lib;
-
+using IO.Lib;
 
 namespace WatchMonitorPlugin
 {
     [System.Runtime.Versioning.SupportedOSPlatform("windows")]
-    internal class CompareFile
+    internal class WatchFile2
     {
-        public string _PathA { get; set; }
-        public string _PathB { get; set; }
+        public string _Serial { get; set; }
+        public string[] _Path { get; set; }
 
         public bool? _IsCreationTime { get; set; }
         public bool? _IsLastWriteTime { get; set; }
@@ -31,8 +31,9 @@ namespace WatchMonitorPlugin
         public bool? _IsDateOnly { get; set; }
         public bool? _IsTimeOnly { get; set; }
 
+        public bool _Begin { get; set; }
         protected bool Success { get; set; }
-        private int _serial = 1;
+        private int _serial;
 
         private MonitoredTarget CreateForFile(string path)
         {
@@ -56,28 +57,10 @@ namespace WatchMonitorPlugin
 
         public void MainProcess()
         {
-            var dictionary = new Dictionary<string, string>();
-            this.Success = true;
-
-            MonitoredTarget targetA = CreateForFile(_PathA);
-            MonitoredTarget targetB = CreateForFile(_PathB);
-
-            if (targetA.TestExists() && targetB.TestExists())
+            foreach (string path in _Path)
             {
-                targetA.CheckFile();
-                targetB.CheckFile();
-
-                if (_IsAttributes ?? false)
-                {
-                    dictionary[$"fileA_Attributes_{_serial}"] = MonitorAttributes.ToReadable(targetA.Attributes);
-                    dictionary[$"fileB_Attributes_{_serial}"] = MonitorAttributes.ToReadable(targetB.Attributes);
-                    Success &= targetA.Attributes.SequenceEqual(targetB.Attributes);
-                }
-
-
 
             }
-
         }
     }
 }
