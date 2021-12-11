@@ -14,6 +14,9 @@ namespace Audit.Lib
     [System.Runtime.Versioning.SupportedOSPlatform("windows")]
     internal class MonitorSecurity : MonitorBase
     {
+        
+
+
         #region Get method
 
         protected string GetAccessString(MonitoringWatch monitoring)

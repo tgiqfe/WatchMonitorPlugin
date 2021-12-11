@@ -59,6 +59,7 @@ namespace Audit.Lib
 
         #region Get method
 
+        //  ↓たぶん廃止
         public static int[] GetChildCount(Monitoring monitoring)
         {
             if (monitoring.PathType == PathType.Directory)

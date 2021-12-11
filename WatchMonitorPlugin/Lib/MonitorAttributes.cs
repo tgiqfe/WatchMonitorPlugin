@@ -12,6 +12,12 @@ namespace Audit.Lib
     {
         public override string CheckTarget { get { return "Attributes"; } }
 
+
+
+
+
+        #region Simple
+
         public override bool Compare(MonitoringCompare monitoring, Dictionary<string, string> dictionary, int serial)
         {
             if (monitoring.IsAttributes ?? false)
@@ -52,7 +58,7 @@ namespace Audit.Lib
             return ret;
         }
 
-
+        #endregion
 
 
         #region Compare method

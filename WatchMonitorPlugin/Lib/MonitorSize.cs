@@ -58,62 +58,10 @@ namespace Audit.Lib
             return ret;
         }
 
-
-        /*
-
-        const string CHECK_TARGET = "size";
-
-        #region Compare method
-
-        public static bool CompareFile(ComparePath compare, Dictionary<string, string> dictionary, int serial)
-        {
-            if (compare.IsSize ?? false)
-            {
-                if (!compare.InfoA.Exists || !compare.InfoB.Exists) { return false; }
-
-                long retA = ((FileInfo)compare.InfoA).Length;
-                long retB = ((FileInfo)compare.InfoB).Length;
-
-                dictionary[$"{compare.PathTypeName}A_{CHECK_TARGET}_{serial}"] = string.Format("{0} ({1})", retA, ToReadable(retA));
-                dictionary[$"{compare.PathTypeName}B_{CHECK_TARGET}_{serial}"] = string.Format("{0} ({1})", retB, ToReadable(retB));
-                return retA == retB;
-            }
-            return true;
-        }
-
-        #endregion
-        #region Watch method
-
-        public static bool WatchFile(
-            WatchPath watch, Dictionary<string, string> dictionary, int serial, FileInfo info)
-        {
-            bool ret = false;
-            if (watch.IsSize ?? false)
-            {
-                if (info.Exists)
-                {
-                    long ret_long = info.Length;
-                    ret = ret_long != watch.Size;
-                    if (watch.Size != null)
-                    {
-                        dictionary[$"{watch.PathTypeName}_{CHECK_TARGET}_{serial}"] = ret ?
-                            string.Format("{0} -> {1} ({2})", watch.Size, ret_long, ToReadable(ret_long)) :
-                            string.Format("{0} ({1})", ret_long, ToReadable(ret_long));
-                    }
-                    watch.Size = ret_long;
-                }
-                else
-                {
-                    watch.Size = null;
-                }
-            }
-            return ret;
-        }
-
-        */
-
         #endregion
         #region Get method
+
+        
 
         public static string ToReadable(long size)
         {

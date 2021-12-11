@@ -200,64 +200,49 @@ namespace Audit.Lib
         #endregion
         #region Get method
 
-        /*
-        public static string GetFileCreationTime(string path, bool isDateOnly, bool isTimeOnly)
+
+        public static string GetCreationTime(FileSystemInfo info, bool isDateOnly, bool isTimeOnly)
         {
-            return DateToString(new FileInfo(path).CreationTime, isDateOnly, isTimeOnly);
+            return DateToString(info.CreationTime, isDateOnly, isTimeOnly);
         }
-        */
+
+        public static string GetLastWriteTime(FileSystemInfo info, bool isDateOnly, bool isTimeOnly)
+        {
+            return DateToString(info.LastWriteTime, isDateOnly, isTimeOnly);
+        }
+
+        public static string GetLastAccessTime(FileSystemInfo info, bool isDateOnly, bool isTimeOnly)
+        {
+            return DateToString(info.LastAccessTime, isDateOnly, isTimeOnly);
+        }
+
+
+
+
+
+
         public static string GetFileCreationTime(FileInfo info, bool isDateOnly, bool isTimeOnly)
         {
             return DateToString(info.CreationTime, isDateOnly, isTimeOnly);
         }
-        /*
-        public static string GetDirectoryCreationTime(string path, bool isDateOnly, bool isTimeOnly)
-        {
-            return DateToString(new DirectoryInfo(path).CreationTime, isDateOnly, isTimeOnly);
-        }
-        */
         public static string GetDirectoryCreationTime(DirectoryInfo info, bool isDateOnly, bool isTimeOnly)
         {
             return DateToString(info.CreationTime, isDateOnly, isTimeOnly);
         }
 
-        /*
-        public static string GetFileLastWriteTime(string path, bool isDateOnly, bool isTimeOnly)
-        {
-            return DateToString(new FileInfo(path).LastWriteTime, isDateOnly, isTimeOnly);
-        }
-        */
         public static string GetFileLastWriteTime(FileInfo info, bool isDateOnly, bool isTimeOnly)
         {
             return DateToString(info.LastWriteTime, isDateOnly, isTimeOnly);
         }
-        /*
-        public static string GetDirectoryLastWriteTime(string path, bool isDateOnly, bool isTimeOnly)
-        {
-            return DateToString(new DirectoryInfo(path).LastWriteTime, isDateOnly, isTimeOnly);
-        }
-        */
         public static string GetDirectoryLastWriteTime(DirectoryInfo info, bool isDateOnly, bool isTimeOnly)
         {
             return DateToString(info.LastWriteTime, isDateOnly, isTimeOnly);
         }
 
-        /*
-        public static string GetFileLastAccessTime(string path, bool isDateOnly, bool isTimeOnly)
-        {
-            return DateToString(new FileInfo(path).LastAccessTime, isDateOnly, isTimeOnly);
-        }
-        */
         public static string GetFileLastAccessTime(FileInfo info, bool isDateOnly, bool isTimeOnly)
         {
             return DateToString(info.LastAccessTime, isDateOnly, isTimeOnly);
         }
-        /*
-        public static string GetDirectoryLastAccessTime(string path, bool isDateOnly, bool isTimeOnly)
-        {
-            return DateToString(new DirectoryInfo(path).LastAccessTime, isDateOnly, isTimeOnly);
-        }
-        */
         public static string GetDirectoryLastAccessTime(DirectoryInfo info, bool isDateOnly, bool isTimeOnly)
         {
             return DateToString(info.LastAccessTime, isDateOnly, isTimeOnly);

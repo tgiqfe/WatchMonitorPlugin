@@ -38,8 +38,8 @@ namespace Audit.Lib
 
 
 
-        public virtual bool Compare(MonitorTarget targetA, MonitorTarget targetB, Dictionary<string, string> dictionary, int serial) { return true; }
+        public virtual bool Compare(MonitoredTarget targetA, MonitoredTarget targetB, Dictionary<string, string> dictionary, int serial) { return true; }
 
-        public virtual bool Watch(MonitorTarget target, Dictionary<string, string> dictionary, int serial) { return false; }
+        public virtual bool Watch(MonitoredTarget target, Dictionary<string, string> dictionary, int serial) { return false; }
     }
 }
