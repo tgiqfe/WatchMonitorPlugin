@@ -10,11 +10,41 @@ using IO.Lib;
 
 namespace Audit.Lib
 {
+    [System.Runtime.Versioning.SupportedOSPlatform("windows")]
     internal class MonitorHash : MonitorBase
     {
         protected virtual string GetHash(string filePath) { return null; }
 
         protected virtual string GetHash(RegistryKey regKey, string name) { return null; }
+
+
+        protected virtual HashAlgorithm Hash { get; }
+
+        private string GetHash2(string filePath)
+        {
+            using (var fs = new FileStream(filePath, FileMode.Open, FileAccess.Read))
+            {
+                var hash = this.Hash;
+                string text = BitConverter.ToString(hash.ComputeHash(fs)).Replace("-", "");
+                hash.Clear();
+                return text;
+            }
+        }
+
+        private string GetHash2(RegistryKey regKey, string name)
+        {
+            byte[] bytes = RegistryControl.RegistryValueToBytes(regKey, name, null, true);
+
+            var hash = this.Hash;
+            string text = BitConverter.ToString(hash.ComputeHash(bytes)).Replace("-", "");
+            hash.Clear();
+            return text;
+        }
+
+        public override bool Compare(MonitoringCompare monitoring, Dictionary<string, string> dictionary, int serial)
+        {
+            return true;
+        }
     }
 
     /// <summary>
@@ -24,6 +54,12 @@ namespace Audit.Lib
     internal class MonitorMD5Hash : MonitorHash
     {
         public override string CheckTarget { get { return "MD5Hash"; } }
+
+
+
+
+
+
 
         protected override string GetHash(string filePath)
         {
@@ -113,7 +149,7 @@ namespace Audit.Lib
             bool ret = false;
             if (monitoring.IsMD5Hash ?? false)
             {
-                if(monitoring.TestExists_old())
+                if (monitoring.TestExists_old())
                 {
                     string result = GetHash(monitoring.Key, monitoring.Name);
                     ret = result != monitoring.MD5Hash;

@@ -16,8 +16,7 @@ namespace Audit.Lib
 
         public override bool Compare(MonitoringCompare monitoring, Dictionary<string, string> dictionary, int serial)
         {
-            
-            return true;
+            return false;
         }
 
         public override bool Watch(MonitoringWatch monitoring, Dictionary<string, string> dictionary, int serial)
