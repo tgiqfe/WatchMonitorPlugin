@@ -16,11 +16,7 @@ namespace Audit.Lib
     public class MonitoredTarget
     {
         public PathType PathType { get; set; }
-
         public string FullPath { get; set; }
-
-        private string _PathTypeName = null;
-        public string PathTypeName { get { _PathTypeName ??= this.PathType.ToString().ToLower(); return _PathTypeName; } }
 
         public string CreationTime { get; set; }
         public string LastWriteTime { get; set; }
@@ -35,6 +31,7 @@ namespace Audit.Lib
         public long? Size { get; set; }
         public int[] ChildCount { get; set; }
         public string RegistryType { get; set; }
+
         public bool? Exists { get; set; }
 
         public bool? IsCreationTime { get; set; }
@@ -56,6 +53,10 @@ namespace Audit.Lib
         public const string REGPATH_PREFIX = "[registry]";
 
         #region Target path
+
+
+        [JsonIgnore]
+        public string PathTypeName { get; set; }
 
         [JsonIgnore]
         public string Path { get; set; }
@@ -106,6 +107,19 @@ namespace Audit.Lib
         }
 
         #region TestExists
+
+        public void CheckExists()
+        {
+            this.Exists = this.PathType switch
+            {
+                PathType.File => FileInfo.Exists,
+                PathType.Directory => DirectoryInfo.Exists,
+                PathType.Registry => this.Name == null ?
+                    Key != null :
+                    Key?.GetValueNames().Any(x => x.Equals(Name, StringComparison.OrdinalIgnoreCase)) ?? false,
+                _ => null,
+            };
+        }
 
         public bool TestExists()
         {

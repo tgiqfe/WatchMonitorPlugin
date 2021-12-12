@@ -34,10 +34,11 @@ namespace WatchMonitorPlugin
         protected bool Success { get; set; }
         private int _serial = 1;
 
-        private MonitoredTarget CreateForFile(string path)
+        private MonitoredTarget CreateForFile(string path, string pathTypeName)
         {
             return new MonitoredTarget(IO.Lib.PathType.File, path)
             {
+                PathTypeName = pathTypeName,
                 IsCreationTime = _IsCreationTime,
                 IsLastWriteTime = _IsLastWriteTime,
                 IsLastAccessTime = _IsLastAccessTime,
@@ -59,8 +60,8 @@ namespace WatchMonitorPlugin
             var dictionary = new Dictionary<string, string>();
             this.Success = true;
 
-            MonitoredTarget targetA = CreateForFile(_PathA);
-            MonitoredTarget targetB = CreateForFile(_PathB);
+            MonitoredTarget targetA = CreateForFile(_PathA, "fileA");
+            MonitoredTarget targetB = CreateForFile(_PathB, "fileB");
 
             if (targetA.TestExists() && targetB.TestExists())
             {
@@ -69,8 +70,8 @@ namespace WatchMonitorPlugin
 
                 if (_IsAttributes ?? false)
                 {
-                    dictionary[$"fileA_Attributes_{_serial}"] = MonitorAttributes.ToReadable(targetA.Attributes);
-                    dictionary[$"fileB_Attributes_{_serial}"] = MonitorAttributes.ToReadable(targetB.Attributes);
+                    dictionary[$"{targetA.PathTypeName}_Attributes_{_serial}"] = MonitorAttributes.ToReadable(targetA.Attributes);
+                    dictionary[$"{targetA.PathTypeName}_Attributes_{_serial}"] = MonitorAttributes.ToReadable(targetB.Attributes);
                     Success &= targetA.Attributes.SequenceEqual(targetB.Attributes);
                 }
 
