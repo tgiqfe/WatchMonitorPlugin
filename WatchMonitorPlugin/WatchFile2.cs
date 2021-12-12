@@ -74,11 +74,10 @@ namespace WatchMonitorPlugin
                 target_monitor.CheckExists();
                 if (target_monitor.Exists ?? false)
                 {
-                    target_monitor.CheckFile();
-
                     //  CreationTime
                     if ((_IsCreationTime ?? false) || (target_db.IsCreationTime ?? false))
                     {
+                        target_monitor.CheckCreationTime();
                         bool ret = target_monitor.CreationTime != target_db.CreationTime;
                         if (target_db.CreationTime != null)
                         {
@@ -88,13 +87,13 @@ namespace WatchMonitorPlugin
                                     target_monitor.CreationTime) :
                                 target_monitor.CreationTime;
                         }
-                        target_db.CreationTime = target_monitor.CreationTime;
                         Success |= ret;
                     }
 
                     //  LastWriteTime
                     if ((_IsLastWriteTime ?? false) || (target_db.IsLastWriteTime ?? false))
                     {
+                        target_monitor.CheckLastWriteTime();
                         bool ret = target_monitor.LastWriteTime != target_db.LastWriteTime;
                         if (target_db.LastWriteTime != null)
                         {
@@ -104,13 +103,13 @@ namespace WatchMonitorPlugin
                                     target_monitor.LastWriteTime) :
                                 target_monitor.LastWriteTime;
                         }
-                        target_db.LastWriteTime = target_monitor.LastWriteTime;
                         Success |= ret;
                     }
 
                     //  LastAccessTime
                     if ((_IsLastAccessTime ?? false) || (target_db.IsLastAccessTime ?? false))
                     {
+                        target_monitor.CheckLastAccessTime();
                         bool ret = target_monitor.LastAccessTime != target_db.LastAccessTime;
                         if (target_db.LastAccessTime != null)
                         {
@@ -120,13 +119,13 @@ namespace WatchMonitorPlugin
                                     target_monitor.LastAccessTime) :
                                 target_monitor.LastAccessTime;
                         }
-                        target_db.LastAccessTime = target_monitor.LastAccessTime;
                         Success |= ret;
                     }
 
                     //  Access
                     if ((_IsAccess ?? false) || (target_db.IsAccess ?? false))
                     {
+                        target_monitor.CheckAccess();
                         bool ret = target_monitor.Access != target_db.Access;
                         if (target_db.Access != null)
                         {
@@ -136,13 +135,13 @@ namespace WatchMonitorPlugin
                                     target_monitor.Access) :
                                 target_monitor.Access;
                         }
-                        target_db.Access = target_monitor.Access;
                         Success |= ret;
                     }
 
                     //  Owner
                     if ((_IsOwner ?? false) || (target_db.IsOwner ?? false))
                     {
+                        target_monitor.CheckOwner();
                         bool ret = target_monitor.Owner != target_db.Owner;
                         if (target_db.Owner != null)
                         {
@@ -152,13 +151,13 @@ namespace WatchMonitorPlugin
                                     target_monitor.Owner) :
                                 target_monitor.Owner;
                         }
-                        target_db.Owner = target_monitor.Owner;
                         Success |= ret;
                     }
 
                     //  Inherited
                     if ((_IsInherited ?? false) || (target_db.IsInherited ?? false))
                     {
+                        target_monitor.CheckInherited();
                         bool ret = target_monitor.Inherited != target_db.Inherited;
                         if (target_db.Inherited != null)
                         {
@@ -168,13 +167,13 @@ namespace WatchMonitorPlugin
                                     target_monitor.Inherited) :
                                 target_monitor.Inherited.ToString();
                         }
-                        target_db.Inherited = target_monitor.Inherited;
                         Success |= ret;
                     }
 
                     //  Attributes
                     if ((_IsAttributes ?? false) || (target_db.IsAttributes ?? false))
                     {
+                        target_monitor.CheckAttributes();
                         bool ret = !target_monitor.Attributes.SequenceEqual(target_db.Attributes);
                         if (target_db.Attributes != null)
                         {
@@ -184,13 +183,13 @@ namespace WatchMonitorPlugin
                                     MonitorFunctions.ToReadable(target_monitor.Attributes)) :
                                 MonitorFunctions.ToReadable(target_monitor.Attributes);
                         }
-                        target_db.Attributes = target_monitor.Attributes;
                         Success |= ret;
                     }
 
                     //  MD5Hash
                     if ((_IsMD5Hash ?? false) || (target_db.IsMD5Hash ?? false))
                     {
+                        target_monitor.CheckMD5Hash();
                         bool ret = target_monitor.MD5Hash != target_db.MD5Hash;
                         if (target_db.MD5Hash != null)
                         {
@@ -200,13 +199,13 @@ namespace WatchMonitorPlugin
                                     target_monitor.MD5Hash) :
                                 target_monitor.MD5Hash;
                         }
-                        target_db.MD5Hash = target_monitor.MD5Hash;
                         Success |= ret;
                     }
 
                     //  SHA256Hash
                     if ((_IsSHA256Hash ?? false) || (target_db.IsSHA256Hash ?? false))
                     {
+                        target_monitor.CheckSHA256Hash();
                         bool ret = target_monitor.SHA256Hash != target_db.SHA256Hash;
                         if (target_db.SHA256Hash != null)
                         {
@@ -216,13 +215,13 @@ namespace WatchMonitorPlugin
                                     target_monitor.SHA256Hash) :
                                 target_monitor.SHA256Hash;
                         }
-                        target_db.SHA256Hash = target_monitor.SHA256Hash;
                         Success |= ret;
                     }
 
                     //  SHA512Hash
                     if ((_IsSHA512Hash ?? false) || (target_db.IsSHA512Hash ?? false))
                     {
+                        target_monitor.CheckSHA512Hash();
                         bool ret = target_monitor.SHA512Hash != target_db.SHA512Hash;
                         if (target_db.SHA512Hash != null)
                         {
@@ -232,13 +231,13 @@ namespace WatchMonitorPlugin
                                     target_monitor.SHA512Hash) :
                                 target_monitor.SHA512Hash;
                         }
-                        target_db.SHA512Hash = target_monitor.SHA512Hash;
                         Success |= ret;
                     }
 
                     //  Size
                     if ((_IsSize ?? false) || (target_db.IsSize ?? false))
                     {
+                        target_monitor.CheckSize();
                         bool ret = target_monitor.Size != target_db.Size;
                         if (target_db.Size != null)
                         {
@@ -252,39 +251,12 @@ namespace WatchMonitorPlugin
                                     target_monitor.Size,
                                     MonitorFunctions.ToReadable(target_monitor.Size ?? 0));
                         }
-                        target_db.Size = target_monitor.Size;
                         Success |= ret;
                     }
-
-
-
-
-
-                    collection.SetMonitoredTarget(path, target_db);
                 }
-                else
-                {
-                    target_db.CreationTime = null;
-                    target_db.LastWriteTime = null;
-                    target_db.LastAccessTime = null;
-                    target_db.Access = null;
-                    target_db.Owner = null;
-                    target_db.Inherited = null;
-                    target_db.Attributes = null;
-                    target_db.MD5Hash = null;
-                    target_db.SHA256Hash = null;
-                    target_db.SHA512Hash = null;
-                    target_db.Size = null;
-                }
-
-
-
-
-
-
-
-
+                collection.SetMonitoredTarget(path, target_monitor);
             }
+            collection.Save(dbDir, _ID);
         }
     }
 }

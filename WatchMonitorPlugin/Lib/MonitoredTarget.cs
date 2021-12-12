@@ -123,6 +123,127 @@ namespace Audit.Lib
 
         #endregion
 
+        public void CheckCreationTime()
+        {
+            this.CreationTime = PathType switch
+            {
+                PathType.File => MonitorFunctions.GetCreationTime(this.FileInfo, this.IsDateOnly ?? false, this.IsTimeOnly ?? false),
+                PathType.Directory => MonitorFunctions.GetCreationTime(this.DirectoryInfo, this.IsDateOnly ?? false, this.IsTimeOnly ?? false),
+                _ => null
+            };
+        }
+        public void CheckLastWriteTime()
+        {
+            this.LastWriteTime = PathType switch
+            {
+                PathType.File => MonitorFunctions.GetLastWriteTime(this.FileInfo, this.IsDateOnly ?? false, this.IsTimeOnly ?? false),
+                PathType.Directory => MonitorFunctions.GetLastWriteTime(this.DirectoryInfo, this.IsDateOnly ?? false, this.IsTimeOnly ?? false),
+                _ => null
+            };
+        }
+        public void CheckLastAccessTime()
+        {
+            this.LastAccessTime = PathType switch
+            {
+                PathType.File => MonitorFunctions.GetLastAccessTime(this.FileInfo, this.IsDateOnly ?? false, this.IsTimeOnly ?? false),
+                PathType.Directory => MonitorFunctions.GetLastAccessTime(this.DirectoryInfo, this.IsDateOnly ?? false, this.IsTimeOnly ?? false),
+                _ => null
+            };
+        }
+        public void CheckAccess()
+        {
+            this.Access = PathType switch
+            {
+                PathType.File => AccessRuleSummary.FileToAccessString(this.FileInfo),
+                PathType.Directory => AccessRuleSummary.DirectoryToAccessString(this.DirectoryInfo),
+                PathType.Registry => AccessRuleSummary.RegistryKeyToAccessString(this.Key),
+                _ => null
+            };
+        }
+        public void CheckOwner()
+        {
+            this.Owner = PathType switch
+            {
+                PathType.File => this.FileInfo.GetAccessControl().GetOwner(typeof(NTAccount)).Value,
+                PathType.Directory => this.DirectoryInfo.GetAccessControl().GetOwner(typeof(NTAccount)).Value,
+                PathType.Registry => this.Key.GetAccessControl().GetOwner(typeof(NTAccount)).Value,
+                _ => null
+            };
+        }
+        public void CheckInherited()
+        {
+            this.Inherited = PathType switch
+            {
+                PathType.File => !this.FileInfo.GetAccessControl().AreAccessRulesProtected,
+                PathType.Directory => !this.DirectoryInfo.GetAccessControl().AreAccessRulesProtected,
+                PathType.Registry => !this.Key.GetAccessControl().AreAccessRulesProtected,
+                _ => null
+            };
+        }
+        public void CheckAttributes()
+        {
+            this.Attributes = PathType switch
+            {
+                PathType.File => MonitorFunctions.GetAttributes(this.Path),
+                PathType.Directory => MonitorFunctions.GetAttributes(this.Path),
+                _ => null
+            };
+        }
+        public void CheckMD5Hash()
+        {
+            this.MD5Hash = PathType switch
+            {
+                PathType.File => MonitorFunctions.GetHash(this.Path, MD5.Create()),
+                PathType.Registry => MonitorFunctions.GetHash(this.Key, this.Name, MD5.Create()),
+                _ => null
+            };
+        }
+        public void CheckSHA256Hash()
+        {
+            this.SHA256Hash = PathType switch
+            {
+                PathType.File => MonitorFunctions.GetHash(this.Path, SHA256.Create()),
+                PathType.Registry => MonitorFunctions.GetHash(this.Key, this.Name, SHA256.Create()),
+                _ => null
+            };
+        }
+        public void CheckSHA512Hash()
+        {
+            this.SHA512Hash = PathType switch
+            {
+                PathType.File => MonitorFunctions.GetHash(this.Path, SHA512.Create()),
+                PathType.Registry => MonitorFunctions.GetHash(this.Key, this.Name, SHA512.Create()),
+                _ => null
+            };
+        }
+        public void CheckSize()
+        {
+            this.Size = PathType switch
+            {
+                PathType.File => this.FileInfo.Length,
+                _ => null
+            };
+        }
+        public void CheckChildCount()
+        {
+            this.ChildCount = PathType switch
+            {
+                PathType.Directory => MonitorFunctions.GetDirectoryChildCount(this.Path),
+                PathType.Registry => MonitorFunctions.GetRegistryKeyChildCount(this.Key),
+                _ => null
+            };
+        }
+        public void CheckRegistryType()
+        {
+            this.RegistryType = PathType switch
+            {
+                PathType.Registry => RegistryControl.ValueKindToString(this.Key.GetValueKind(this.Name)),
+                _ => null
+            };
+        }
+
+
+
         public void CheckFile()
         {
             if (IsCreationTime ?? false) { this.CreationTime = MonitorFunctions.GetCreationTime(this.FileInfo, this.IsDateOnly ?? false, this.IsTimeOnly ?? false); }
