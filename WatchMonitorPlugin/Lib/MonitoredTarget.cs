@@ -121,27 +121,6 @@ namespace Audit.Lib
             };
         }
 
-        public bool TestExists()
-        {
-            switch (PathType)
-            {
-                case PathType.File:
-                    return FileInfo.Exists;
-                case PathType.Directory:
-                    return DirectoryInfo.Exists;
-                case PathType.Registry:
-                    if (Name == null)
-                    {
-                        return Key != null;
-                    }
-                    else
-                    {
-                        return Key?.GetValueNames().Any(x => x.Equals(Name, StringComparison.OrdinalIgnoreCase)) ?? false;
-                    }
-            }
-            return false;
-        }
-
         #endregion
 
         public void CheckFile()

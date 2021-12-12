@@ -62,8 +62,10 @@ namespace WatchMonitorPlugin
 
             MonitoredTarget targetA = CreateForFile(_PathA, "fileA");
             MonitoredTarget targetB = CreateForFile(_PathB, "fileB");
+            targetA.CheckExists();
+            targetB.CheckExists();
 
-            if (targetA.TestExists() && targetB.TestExists())
+            if ((targetA.Exists ?? false) && (targetB.Exists ?? false))
             {
                 targetA.CheckFile();
                 targetB.CheckFile();
