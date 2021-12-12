@@ -13,6 +13,8 @@ namespace Audit.Lib
     {
         private List<string> _CheckedKeys = new List<string>();
 
+        public MonitoredTargetCollection() { }
+
         public MonitoredTarget GetMonitoredTarget(string path)
         {
             string matchKey = this.Keys.FirstOrDefault(x => x.Equals(path, StringComparison.OrdinalIgnoreCase));
@@ -43,7 +45,7 @@ namespace Audit.Lib
                 }
             }
             catch { }
-            return null;
+            return new MonitoredTargetCollection();
         }
 
         public void Save(string dbDir, string id)

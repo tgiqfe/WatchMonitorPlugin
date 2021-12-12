@@ -31,8 +31,12 @@ namespace WatchMonitorPlugin
         public bool? _IsDateOnly { get; set; }
         public bool? _IsTimeOnly { get; set; }
 
-        protected bool Success { get; set; }
+        public bool Success { get; set; }
         private int _serial = 1;
+
+
+
+        public Dictionary<string, string> Propeties = null;
 
         private MonitoredTarget CreateForFile(string path, string pathTypeName)
         {
@@ -157,9 +161,10 @@ namespace WatchMonitorPlugin
                 }
 
 
-
             }
 
+
+            this.Propeties = dictionary;
         }
     }
 }
