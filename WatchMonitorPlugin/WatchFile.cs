@@ -34,8 +34,9 @@ namespace WatchMonitorPlugin
         public bool _Begin { get; set; }
         protected bool Success { get; set; }
 
-        private int _serial;
+        //private int _serial;
 
+        /*
         private MonitoringWatch CreateForFile()
         {
             return new MonitoringWatch(PathType.File)
@@ -111,5 +112,6 @@ namespace WatchMonitorPlugin
             //return ret;
             return false;
         }
+        */
     }
 }

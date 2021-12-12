@@ -59,11 +59,8 @@ namespace WatchMonitorPlugin
         public void MainProcess()
         {
             var dictionary = new Dictionary<string, string>();
-            this.Success = true;
-
             string dbDir = @"C:\Users\User\Downloads\aaaa\dbdbdb";
             var collection = MonitoredTargetCollection.Load(dbDir, _ID);
-
 
             foreach (string path in _Path)
             {
@@ -79,6 +76,103 @@ namespace WatchMonitorPlugin
                 {
                     target_monitor.CheckFile();
 
+                    //  CreationTime
+                    if ((_IsCreationTime ?? false) || (target_db.IsCreationTime ?? false))
+                    {
+                        bool ret = target_monitor.CreationTime != target_db.CreationTime;
+                        if (target_db.CreationTime != null)
+                        {
+                            dictionary[$"{target_monitor.PathTypeName}_CreationTime_{_serial}"] = ret ?
+                                string.Format("{0} -> {1}",
+                                    target_db.CreationTime,
+                                    target_monitor.CreationTime) :
+                                target_monitor.CreationTime;
+                        }
+                        target_db.CreationTime = target_monitor.CreationTime;
+                        Success |= ret;
+                    }
+
+                    //  LastWriteTime
+                    if ((_IsLastWriteTime ?? false) || (target_db.IsLastWriteTime ?? false))
+                    {
+                        bool ret = target_monitor.LastWriteTime != target_db.LastWriteTime;
+                        if (target_db.LastWriteTime != null)
+                        {
+                            dictionary[$"{target_monitor.PathTypeName}_LastWriteTime_{_serial}"] = ret ?
+                                string.Format("{0} -> {1}",
+                                    target_db.LastWriteTime,
+                                    target_monitor.LastWriteTime) :
+                                target_monitor.LastWriteTime;
+                        }
+                        target_db.LastWriteTime = target_monitor.LastWriteTime;
+                        Success |= ret;
+                    }
+
+                    //  LastAccessTime
+                    if ((_IsLastAccessTime ?? false) || (target_db.IsLastAccessTime ?? false))
+                    {
+                        bool ret = target_monitor.LastAccessTime != target_db.LastAccessTime;
+                        if (target_db.LastAccessTime != null)
+                        {
+                            dictionary[$"{target_monitor.PathTypeName}_LastAccessTime_{_serial}"] = ret ?
+                                string.Format("{0} -> {1}",
+                                    target_db.LastAccessTime,
+                                    target_monitor.LastAccessTime) :
+                                target_monitor.LastAccessTime;
+                        }
+                        target_db.LastAccessTime = target_monitor.LastAccessTime;
+                        Success |= ret;
+                    }
+
+                    //  Access
+                    if ((_IsAccess ?? false) || (target_db.IsAccess ?? false))
+                    {
+                        bool ret = target_monitor.Access != target_db.Access;
+                        if (target_db.Access != null)
+                        {
+                            dictionary[$"{target_monitor.PathTypeName}_Access_{_serial}"] = ret ?
+                                string.Format("{0} -> {1}",
+                                    target_db.Access,
+                                    target_monitor.Access) :
+                                target_monitor.Access;
+                        }
+                        target_db.Access = target_monitor.Access;
+                        Success |= ret;
+                    }
+
+                    //  Owner
+                    if ((_IsOwner ?? false) || (target_db.IsOwner ?? false))
+                    {
+                        bool ret = target_monitor.Owner != target_db.Owner;
+                        if (target_db.Owner != null)
+                        {
+                            dictionary[$"{target_monitor.PathTypeName}_Owner_{_serial}"] = ret ?
+                                string.Format("{0} -> {1}",
+                                    target_db.Owner,
+                                    target_monitor.Owner) :
+                                target_monitor.Owner;
+                        }
+                        target_db.Owner = target_monitor.Owner;
+                        Success |= ret;
+                    }
+
+                    //  Inherited
+                    if ((_IsInherited ?? false) || (target_db.IsInherited ?? false))
+                    {
+                        bool ret = target_monitor.Inherited != target_db.Inherited;
+                        if (target_db.Inherited != null)
+                        {
+                            dictionary[$"{target_monitor.PathTypeName}_Inherited_{_serial}"] = ret ?
+                                string.Format("{0} -> {1}",
+                                    target_db.Inherited,
+                                    target_monitor.Inherited) :
+                                target_monitor.Inherited.ToString();
+                        }
+                        target_db.Inherited = target_monitor.Inherited;
+                        Success |= ret;
+                    }
+
+                    //  Attributes
                     if ((_IsAttributes ?? false) || (target_db.IsAttributes ?? false))
                     {
                         bool ret = !target_monitor.Attributes.SequenceEqual(target_db.Attributes);
@@ -86,12 +180,87 @@ namespace WatchMonitorPlugin
                         {
                             dictionary[$"{target_monitor.PathTypeName}_Attributes_{_serial}"] = ret ?
                                 string.Format("{0} -> {1}",
-                                    MonitorAttributes.ToReadable(target_db.Attributes),
-                                    MonitorAttributes.ToReadable(target_monitor.Attributes)) :
-                                MonitorAttributes.ToReadable(target_monitor.Attributes);
+                                    MonitorFunctions.ToReadable(target_db.Attributes),
+                                    MonitorFunctions.ToReadable(target_monitor.Attributes)) :
+                                MonitorFunctions.ToReadable(target_monitor.Attributes);
                         }
                         target_db.Attributes = target_monitor.Attributes;
+                        Success |= ret;
                     }
+
+                    //  MD5Hash
+                    if ((_IsMD5Hash ?? false) || (target_db.IsMD5Hash ?? false))
+                    {
+                        bool ret = target_monitor.MD5Hash != target_db.MD5Hash;
+                        if (target_db.MD5Hash != null)
+                        {
+                            dictionary[$"{target_monitor.PathTypeName}_MD5Hash_{_serial}"] = ret ?
+                                string.Format("{0} -> {1}",
+                                    target_db.MD5Hash,
+                                    target_monitor.MD5Hash) :
+                                target_monitor.MD5Hash;
+                        }
+                        target_db.MD5Hash = target_monitor.MD5Hash;
+                        Success |= ret;
+                    }
+
+                    //  SHA256Hash
+                    if ((_IsSHA256Hash ?? false) || (target_db.IsSHA256Hash ?? false))
+                    {
+                        bool ret = target_monitor.SHA256Hash != target_db.SHA256Hash;
+                        if (target_db.SHA256Hash != null)
+                        {
+                            dictionary[$"{target_monitor.PathTypeName}_SHA256Hash_{_serial}"] = ret ?
+                                string.Format("{0} -> {1}",
+                                    target_db.SHA256Hash,
+                                    target_monitor.SHA256Hash) :
+                                target_monitor.SHA256Hash;
+                        }
+                        target_db.SHA256Hash = target_monitor.SHA256Hash;
+                        Success |= ret;
+                    }
+
+                    //  SHA512Hash
+                    if ((_IsSHA512Hash ?? false) || (target_db.IsSHA512Hash ?? false))
+                    {
+                        bool ret = target_monitor.SHA512Hash != target_db.SHA512Hash;
+                        if (target_db.SHA512Hash != null)
+                        {
+                            dictionary[$"{target_monitor.PathTypeName}_SHA512Hash_{_serial}"] = ret ?
+                                string.Format("{0} -> {1}",
+                                    target_db.SHA512Hash,
+                                    target_monitor.SHA512Hash) :
+                                target_monitor.SHA512Hash;
+                        }
+                        target_db.SHA512Hash = target_monitor.SHA512Hash;
+                        Success |= ret;
+                    }
+
+                    //  Size
+                    if ((_IsSize ?? false) || (target_db.IsSize ?? false))
+                    {
+                        bool ret = target_monitor.Size != target_db.Size;
+                        if (target_db.Size != null)
+                        {
+                            dictionary[$"{target_monitor.PathTypeName}_Size_{_serial}"] = ret ?
+                                string.Format("{0}({1}) -> {2}({3})",
+                                    target_db.Size,
+                                    MonitorFunctions.ToReadable(target_db.Size ?? 0),
+                                    target_monitor.Size,
+                                    MonitorFunctions.ToReadable(target_monitor.Size ?? 0)) :
+                                string.Format("{0}({1})",
+                                    target_monitor.Size,
+                                    MonitorFunctions.ToReadable(target_monitor.Size ?? 0));
+                        }
+                        target_db.Size = target_monitor.Size;
+                        Success |= ret;
+                    }
+
+
+
+
+
+                    collection.SetMonitoredTarget(path, target_db);
                 }
                 else
                 {
@@ -106,8 +275,6 @@ namespace WatchMonitorPlugin
                     target_db.SHA256Hash = null;
                     target_db.SHA512Hash = null;
                     target_db.Size = null;
-                    target_db.ChildCount = null;
-                    target_db.RegistryType = null;
                 }
 
 

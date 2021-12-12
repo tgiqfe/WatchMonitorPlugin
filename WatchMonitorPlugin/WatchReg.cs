@@ -36,11 +36,12 @@ namespace WatchMonitorPlugin
         public bool _Begin { get; set; }
         protected bool Success { get; set; }
 
-        private int _serial;
+        //private int _serial;
         public int? _MaxDepth { get; set; }
-        private string _checkingPath;
+        //private string _checkingPath;
         const string REGPATH_PREFIX = "[registry]";
 
+        /*
         private MonitoringWatch CreateForRegistryKey()
         {
             return new MonitoringWatch(PathType.Registry)
@@ -209,5 +210,6 @@ namespace WatchMonitorPlugin
             //return ret;
             return false;
         }
+        */
     }
 }

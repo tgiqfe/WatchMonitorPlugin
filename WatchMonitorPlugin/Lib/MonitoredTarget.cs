@@ -125,16 +125,16 @@ namespace Audit.Lib
 
         public void CheckFile()
         {
-            if (IsCreationTime ?? false) { this.CreationTime = MonitorTimeStamp.GetCreationTime(this.FileInfo, this.IsDateOnly ?? false, this.IsTimeOnly ?? false); }
-            if (IsLastWriteTime ?? false) { this.LastWriteTime = MonitorTimeStamp.GetLastWriteTime(this.FileInfo, this.IsDateOnly ?? false, this.IsTimeOnly ?? false); }
-            if (IsLastAccessTime ?? false) { this.LastAccessTime = MonitorTimeStamp.GetLastAccessTime(this.FileInfo, this.IsDateOnly ?? false, this.IsTimeOnly ?? false); }
+            if (IsCreationTime ?? false) { this.CreationTime = MonitorFunctions.GetCreationTime(this.FileInfo, this.IsDateOnly ?? false, this.IsTimeOnly ?? false); }
+            if (IsLastWriteTime ?? false) { this.LastWriteTime = MonitorFunctions.GetLastWriteTime(this.FileInfo, this.IsDateOnly ?? false, this.IsTimeOnly ?? false); }
+            if (IsLastAccessTime ?? false) { this.LastAccessTime = MonitorFunctions.GetLastAccessTime(this.FileInfo, this.IsDateOnly ?? false, this.IsTimeOnly ?? false); }
             if (IsAccess ?? false) { this.Access = AccessRuleSummary.FileToAccessString(this.FileInfo); }
             if (IsOwner ?? false) { this.Owner = this.FileInfo.GetAccessControl().GetOwner(typeof(NTAccount)).Value; }
             if (IsInherited ?? false) { this.Inherited = !this.FileInfo.GetAccessControl().AreAccessRulesProtected; }
-            if (IsAttributes ?? false) { this.Attributes = MonitorAttributes.GetAttributes(this.Path); }
-            if (IsMD5Hash ?? false) { this.MD5Hash = MonitorHash.GetHash(this.Path, MD5.Create()); }
-            if (IsSHA256Hash ?? false) { this.SHA256Hash = MonitorHash.GetHash(this.Path, SHA256.Create()); }
-            if (IsSHA512Hash ?? false) { this.SHA512Hash = MonitorHash.GetHash(this.Path, SHA512.Create()); }
+            if (IsAttributes ?? false) { this.Attributes = MonitorFunctions.GetAttributes(this.Path); }
+            if (IsMD5Hash ?? false) { this.MD5Hash = MonitorFunctions.GetHash(this.Path, MD5.Create()); }
+            if (IsSHA256Hash ?? false) { this.SHA256Hash = MonitorFunctions.GetHash(this.Path, SHA256.Create()); }
+            if (IsSHA512Hash ?? false) { this.SHA512Hash = MonitorFunctions.GetHash(this.Path, SHA512.Create()); }
             if (IsSize ?? false) { this.Size = this.FileInfo.Length; }
             //if (IsChildCount ?? false) { }
             //if (IsRegistryType ?? false) { }
@@ -142,18 +142,18 @@ namespace Audit.Lib
 
         public void CheckDirectory()
         {
-            if (IsCreationTime ?? false) { this.CreationTime = MonitorTimeStamp.GetCreationTime(this.DirectoryInfo, this.IsDateOnly ?? false, this.IsTimeOnly ?? false); }
-            if (IsLastWriteTime ?? false) { this.LastWriteTime = MonitorTimeStamp.GetLastWriteTime(this.DirectoryInfo, this.IsDateOnly ?? false, this.IsTimeOnly ?? false); }
-            if (IsLastAccessTime ?? false) { this.LastAccessTime = MonitorTimeStamp.GetLastAccessTime(this.DirectoryInfo, this.IsDateOnly ?? false, this.IsTimeOnly ?? false); }
+            if (IsCreationTime ?? false) { this.CreationTime = MonitorFunctions.GetCreationTime(this.DirectoryInfo, this.IsDateOnly ?? false, this.IsTimeOnly ?? false); }
+            if (IsLastWriteTime ?? false) { this.LastWriteTime = MonitorFunctions.GetLastWriteTime(this.DirectoryInfo, this.IsDateOnly ?? false, this.IsTimeOnly ?? false); }
+            if (IsLastAccessTime ?? false) { this.LastAccessTime = MonitorFunctions.GetLastAccessTime(this.DirectoryInfo, this.IsDateOnly ?? false, this.IsTimeOnly ?? false); }
             if (IsAccess ?? false) { this.Access = AccessRuleSummary.DirectoryToAccessString(this.DirectoryInfo); }
             if (IsOwner ?? false) { this.Owner = this.DirectoryInfo.GetAccessControl().GetOwner(typeof(NTAccount)).Value; }
             if (IsInherited ?? false) { this.Inherited = !this.DirectoryInfo.GetAccessControl().AreAccessRulesProtected; }
-            if (IsAttributes ?? false) { this.Attributes = MonitorAttributes.GetAttributes(this.Path); }
+            if (IsAttributes ?? false) { this.Attributes = MonitorFunctions.GetAttributes(this.Path); }
             //if (IsMD5Hash ?? false) { }
             //if (IsSHA256Hash ?? false) { }
             //if (IsSHA512Hash ?? false) { }
             //if (IsSize ?? false) { }
-            if (IsChildCount ?? false) { this.ChildCount = MonitorChildCount.GetDirectoryChildCount(this.Path); }
+            if (IsChildCount ?? false) { this.ChildCount = MonitorFunctions.GetDirectoryChildCount(this.Path); }
             //if (IsRegistryType ?? false) { }
         }
 
@@ -170,7 +170,7 @@ namespace Audit.Lib
             //if (IsSHA256Hash ?? false) { }
             //if (IsSHA512Hash ?? false) { }
             //if (IsSize ?? false) { }
-            if (IsChildCount ?? false) { this.ChildCount = MonitorChildCount.GetRegistryKeyChildCount(this.Key); }
+            if (IsChildCount ?? false) { this.ChildCount = MonitorFunctions.GetRegistryKeyChildCount(this.Key); }
             //if (IsRegistryType ?? false) { }
         }
 
@@ -183,9 +183,9 @@ namespace Audit.Lib
             //if (IsOwner ?? false) { }
             //if (IsInherited ?? false) { }
             //if (IsAttributes ?? false) { }
-            if (IsMD5Hash ?? false) { this.MD5Hash = MonitorHash.GetHash(this.Key, this.Name, MD5.Create()); }
-            if (IsSHA256Hash ?? false) { this.SHA256Hash = MonitorHash.GetHash(this.Key, this.Name, SHA256.Create()); }
-            if (IsSHA512Hash ?? false) { this.SHA512Hash = MonitorHash.GetHash(this.Key, this.Name, SHA512.Create()); }
+            if (IsMD5Hash ?? false) { this.MD5Hash = MonitorFunctions.GetHash(this.Key, this.Name, MD5.Create()); }
+            if (IsSHA256Hash ?? false) { this.SHA256Hash = MonitorFunctions.GetHash(this.Key, this.Name, SHA256.Create()); }
+            if (IsSHA512Hash ?? false) { this.SHA512Hash = MonitorFunctions.GetHash(this.Key, this.Name, SHA512.Create()); }
             //if (IsSize ?? false) { }
             //if (IsChildCount ?? false) { }
             if (IsRegistryType ?? false) { this.RegistryType = RegistryControl.ValueKindToString(this.Key.GetValueKind(this.Name)); }

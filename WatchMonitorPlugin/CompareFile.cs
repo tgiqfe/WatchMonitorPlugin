@@ -72,8 +72,8 @@ namespace WatchMonitorPlugin
 
                 if (_IsAttributes ?? false)
                 {
-                    dictionary[$"{targetA.PathTypeName}_Attributes_{_serial}"] = MonitorAttributes.ToReadable(targetA.Attributes);
-                    dictionary[$"{targetA.PathTypeName}_Attributes_{_serial}"] = MonitorAttributes.ToReadable(targetB.Attributes);
+                    dictionary[$"{targetA.PathTypeName}_Attributes_{_serial}"] = MonitorFunctions.ToReadable(targetA.Attributes);
+                    dictionary[$"{targetA.PathTypeName}_Attributes_{_serial}"] = MonitorFunctions.ToReadable(targetB.Attributes);
                     Success &= targetA.Attributes.SequenceEqual(targetB.Attributes);
                 }
 
