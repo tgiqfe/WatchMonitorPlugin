@@ -4,11 +4,12 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Audit.Lib;
+using IO.Lib;
 
 namespace WatchMonitorPlugin
 {
     [System.Runtime.Versioning.SupportedOSPlatform("windows")]
-    internal class WatchDir
+    internal class WatchDirectory
     {
         public string _ID { get; set; }
         public string[] _Path { get; set; }
@@ -43,7 +44,7 @@ namespace WatchMonitorPlugin
 
         private MonitoredTarget CreateForFile(string path, string pathTypeName)
         {
-            return new MonitoredTarget(IO.Lib.PathType.File, path)
+            return new MonitoredTarget(PathType.File, path)
             {
                 PathTypeName = pathTypeName,
                 IsCreationTime = _IsCreationTime,
@@ -64,7 +65,7 @@ namespace WatchMonitorPlugin
 
         private MonitoredTarget CreateForDirectory(string path, string pathTypeName)
         {
-            return new MonitoredTarget(IO.Lib.PathType.File, path)
+            return new MonitoredTarget(PathType.File, path)
             {
                 PathTypeName = pathTypeName,
                 IsCreationTime = _IsCreationTime,
@@ -88,6 +89,7 @@ namespace WatchMonitorPlugin
 
             foreach (string path in _Path)
             {
+                _checkingPath = path;
                 Success |= RecursiveTree(collection, dictionary, path, 0);
             }
             collection.Save(dbDir, _ID);

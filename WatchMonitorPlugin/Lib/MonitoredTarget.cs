@@ -100,10 +100,17 @@ namespace Audit.Lib
             this.PathType = pathType;
             this.Path = path;
         }
-        public MonitoredTarget(PathType pathType, string path, string name)
+        public MonitoredTarget(PathType pathType, string path, RegistryKey key)
         {
             this.PathType = pathType;
             this.Path = path;
+            this.Key = key;
+        }
+        public MonitoredTarget(PathType pathType, string path, RegistryKey key, string name)
+        {
+            this.PathType = pathType;
+            this.Path = path;
+            this.Key = key;
             this.Name = name;
         }
 

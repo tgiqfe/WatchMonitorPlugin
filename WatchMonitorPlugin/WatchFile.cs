@@ -41,7 +41,7 @@ namespace WatchMonitorPlugin
 
         private MonitoredTarget CreateForFile(string path, string pathTypeName)
         {
-            return new MonitoredTarget(IO.Lib.PathType.File, path)
+            return new MonitoredTarget(PathType.File, path)
             {
                 PathTypeName = pathTypeName,
                 IsCreationTime = _IsCreationTime,
