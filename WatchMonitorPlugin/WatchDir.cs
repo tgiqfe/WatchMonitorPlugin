@@ -4,14 +4,13 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Audit.Lib;
-using IO.Lib;
 
 namespace WatchMonitorPlugin
 {
     [System.Runtime.Versioning.SupportedOSPlatform("windows")]
     internal class WatchDir
     {
-        public string _Serial { get; set; }
+        public string _ID { get; set; }
         public string[] _Path { get; set; }
 
         public bool? _IsCreationTime { get; set; }
@@ -32,31 +31,21 @@ namespace WatchMonitorPlugin
         public bool? _IsTimeOnly { get; set; }
 
         public bool _Begin { get; set; }
-        protected bool Success { get; set; }
-
-        //private int _serial;
+        public bool Success { get; set; }
         public int? _MaxDepth { get; set; }
-        //private string _checkingPath;
+        private int _serial;
+        private string _checkingPath;
 
-        /*
-        private MonitoringWatch CreateForDirectory()
+
+
+        private string dbDir = @"C:\Users\User\Downloads\aaaa\dbdbdb";
+        public Dictionary<string, string> Propeties = null;
+
+        private MonitoredTarget CreateForFile(string path, string pathTypeName)
         {
-            return new MonitoringWatch(PathType.Directory)
+            return new MonitoredTarget(IO.Lib.PathType.File, path)
             {
-                IsCreationTime = _IsCreationTime,
-                IsLastWriteTime = _IsLastWriteTime,
-                IsLastAccessTime = _IsLastAccessTime,
-                IsAccess = _IsAccess,
-                IsOwner = _IsOwner,
-                IsInherited = _IsInherited,
-                IsAttributes = _IsAttributes,
-                IsChildCount = _IsChildCount,
-            };
-        }
-        private MonitoringWatch CreateForFile()
-        {
-            return new MonitoringWatch(PathType.File)
-            {
+                PathTypeName = pathTypeName,
                 IsCreationTime = _IsCreationTime,
                 IsLastWriteTime = _IsLastWriteTime,
                 IsLastAccessTime = _IsLastAccessTime,
@@ -68,54 +57,48 @@ namespace WatchMonitorPlugin
                 IsSHA256Hash = _IsSHA256Hash,
                 IsSHA512Hash = _IsSHA512Hash,
                 IsSize = _IsSize,
+                IsDateOnly = _IsDateOnly,
+                IsTimeOnly = _IsTimeOnly,
+            };
+        }
+
+        private MonitoredTarget CreateForDirectory(string path, string pathTypeName)
+        {
+            return new MonitoredTarget(IO.Lib.PathType.File, path)
+            {
+                PathTypeName = pathTypeName,
+                IsCreationTime = _IsCreationTime,
+                IsLastWriteTime = _IsLastWriteTime,
+                IsLastAccessTime = _IsLastAccessTime,
+                IsAccess = _IsAccess,
+                IsOwner = _IsOwner,
+                IsInherited = _IsInherited,
+                IsAttributes = _IsAttributes,
+                IsChildCount = _IsChildCount,
+                IsDateOnly = _IsDateOnly,
+                IsTimeOnly = _IsTimeOnly,
             };
         }
 
         public void MainProcess()
         {
-            string dbDir = @"C:\Users\User\Downloads\aaaa\dbdbdb";
             var dictionary = new Dictionary<string, string>();
-            var collection = MonitoringWatchCollection.Load(dbDir, _Serial);
-
+            var collection = MonitoredTargetCollection.Load(dbDir, _ID);
             _MaxDepth ??= 5;
 
             foreach (string path in _Path)
             {
-                _checkingPath = path;
                 Success |= RecursiveTree(collection, dictionary, path, 0);
             }
-            foreach (string uncheckedPath in collection.GetUncheckedKeys())
-            {
-                _serial++;
-                dictionary[$"remove_{_serial}"] = uncheckedPath;
-                collection.Remove(uncheckedPath);
-            }
-
-            collection.Save(dbDir, _Serial);
+            collection.Save(dbDir, _ID);
 
 
 
 
-            //  確認用
-            foreach (KeyValuePair<string, string> pair in dictionary)
-            {
-                Console.WriteLine(pair.Key + " : " + pair.Value);
-            }
-            if (Success)
-            {
-                Console.ForegroundColor = ConsoleColor.Green;
-                Console.WriteLine("Success");
-                Console.ResetColor();
-            }
-            else
-            {
-                Console.ForegroundColor = ConsoleColor.Red;
-                Console.WriteLine("Failed");
-                Console.ResetColor();
-            }
+            Propeties = dictionary;
         }
 
-        private bool RecursiveTree(MonitoringWatchCollection collection, Dictionary<string, string> dictionary, string path, int depth)
+        private bool RecursiveTree(MonitoredTargetCollection collection, Dictionary<string, string> dictionary, string path, int depth)
         {
             bool ret = false;
 
@@ -123,11 +106,19 @@ namespace WatchMonitorPlugin
             dictionary[$"directory_{_serial}"] = (path == _checkingPath) ?
                 path :
                 path.Replace(_checkingPath, "");
-            MonitoringWatch watch = _Begin ?
-                CreateForDirectory() :
-                collection.GetWatchPath(path) ?? CreateForDirectory();
-            ret |= WatchDirectoryCheck(watch, dictionary, path);
-            collection.SetWatchPath(path, watch);
+            MonitoredTarget target_db = _Begin ?
+                CreateForFile(path, "directory") :
+                collection.GetMonitoredTarget(path) ?? CreateForFile(path, "directory");
+
+            MonitoredTarget target_monitor = CreateForFile(path, "directory");
+            target_monitor.Merge_is_Property(target_db);
+            target_monitor.CheckExists();
+
+            if (target_monitor.Exists ?? false)
+            {
+                ret |= WatchFunctions.CheckDirectory(target_monitor, target_db, dictionary, _serial, depth);
+            }
+            collection.SetMonitoredTarget(path, target_monitor);
 
             if (depth < _MaxDepth)
             {
@@ -135,55 +126,27 @@ namespace WatchMonitorPlugin
                 {
                     _serial++;
                     dictionary[$"file_{_serial}"] = filePath.Replace(_checkingPath, "");
-                    MonitoringWatch childWatch = _Begin ?
-                        CreateForFile() :
-                        collection.GetWatchPath(filePath) ?? CreateForFile();
-                    ret |= WatchFileCheck(childWatch, dictionary, filePath);
-                    collection.SetWatchPath(filePath, childWatch);
+                    target_db = _Begin ?
+                        CreateForFile(filePath, "file") :
+                        collection.GetMonitoredTarget(filePath) ?? CreateForFile(path, "file");
+
+                    target_monitor = CreateForDirectory(filePath, "file");
+                    target_monitor.Merge_is_Property(target_db);
+                    target_monitor.CheckExists();
+
+                    if (target_monitor.Exists ?? false)
+                    {
+                        ret |= WatchFunctions.CheckFile(target_monitor, target_db, dictionary, _serial);
+                    }
+                    collection.SetMonitoredTarget(filePath, target_monitor);
                 }
-                foreach (string dir in Directory.GetDirectories(path))
+                foreach (string dirPath in Directory.GetDirectories(path))
                 {
-                    ret |= RecursiveTree(collection, dictionary, dir, depth + 1);
+                    ret |= RecursiveTree(collection, dictionary, dirPath, depth + 1);
                 }
             }
 
             return ret;
         }
-
-        private bool WatchDirectoryCheck(MonitoringWatch watch, Dictionary<string, string> dictionary, string path)
-        {
-            var info = new DirectoryInfo(path);
-            //bool ret = MonitorExists.WatchDirectory(watch, dictionary, _serial, info);
-            //ret |= MonitorTimeStamp.WatchDirectoryCreationTime(watch, dictionary, _serial, info);
-            //ret |= MonitorTimeStamp.WatchDirectoryLastWriteTime(watch, dictionary, _serial, info);
-            //ret |= MonitorTimeStamp.WatchDirectoryLastAccessTime(watch, dictionary, _serial, info);
-            //ret |= MonitorSecurity.WatchDirectoryAccess(watch, dictionary, _serial, info);
-            //ret |= MonitorSecurity.WatchDirectoryOwner(watch, dictionary, _serial, info);
-            //ret |= MonitorSecurity.WatchDirectoryInherited(watch, dictionary, _serial, info);
-            //ret |= MonitorAttributes.WatchDirectory(watch, dictionary, _serial, path);
-            //ret |= MonitorChildCount.WatchDirectory(watch, dictionary, _serial, path);
-            //return ret;
-            return false;
-        }
-
-        private bool WatchFileCheck(MonitoringWatch watch, Dictionary<string, string> dictionary, string path)
-        {
-            var info = new FileInfo(path);
-            //bool ret = MonitorExists.WatchFile(watch, dictionary, _serial, info);
-            //ret |= MonitorTimeStamp.WatchFileCreationTime(watch, dictionary, _serial, info);
-            //ret |= MonitorTimeStamp.WatchFileLastWriteTime(watch, dictionary, _serial, info);
-            //ret |= MonitorTimeStamp.WatchFileLastAccessTime(watch, dictionary, _serial, info);
-            //ret |= MonitorSecurity.WatchFileAccess(watch, dictionary, _serial, info);
-            //ret |= MonitorSecurity.WatchFileOwner(watch, dictionary, _serial, info);
-            //ret |= MonitorSecurity.WatchFileInherited(watch, dictionary, _serial, info);
-            //ret |= MonitorAttributes.WatchFile(watch, dictionary, _serial, path);
-            //ret |= MonitorHash.WatchFileMD5Hash(watch, dictionary, _serial, path);
-            //ret |= MonitorHash.WatchFileSHA256Hash(watch, dictionary, _serial, path);
-            //ret |= MonitorHash.WatchFileSHA512Hash(watch, dictionary, _serial, path);
-            //ret |= MonitorSize.WatchFile(watch, dictionary, _serial, info);
-            //return ret;
-            return false;
-        }
-        */
     }
 }

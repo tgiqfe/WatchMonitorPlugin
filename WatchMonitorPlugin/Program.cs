@@ -15,21 +15,24 @@ namespace WatchMonitorPlugin
             Console.WriteLine("Watch対象を指定");
             string targetFile = Console.ReadLine();
 
-            Test(targetFile);
+            string[] targetFiles = targetFile.Contains(";") ?
+                targetFile.Split(';').Select(x => x.Trim()).ToArray() :
+                new string[1] { targetFile };
+
+            TestWatchFile(targetFiles);
 
             Console.ReadLine();
-
         }
 
-        private static void Test(params string[] targetPath)
+        private static void TestWatchFile(string[] targetPaths)
         {
-            WatchFile watch = new WatchFile()
+            WatchFile beginWatch = new WatchFile()
             {
                 _ID = ID,
-                _Path = targetPath,
+                _Path = targetPaths,
                 _IsLastWriteTime = true,
             };
-            CheckWatchFile(watch);
+            checkWatchFile(beginWatch);
 
             while (true)
             {
@@ -40,43 +43,43 @@ namespace WatchMonitorPlugin
                         var tempWatch = new WatchFile()
                         {
                             _ID = ID,
-                            _Path = targetPath,
+                            _Path = targetPaths,
                         };
-                        CheckWatchFile(tempWatch);
+                        checkWatchFile(tempWatch);
                         break;
                     case ConsoleKey.Escape:
                         return;
                 }
             }
-        }
 
-        private static void CheckWatchFile(WatchFile watch)
-        {
-            watch.MainProcess();
-            bool success = watch.Success;
-            Dictionary<string, string> dictionary = watch.Propeties;
+            void checkWatchFile(WatchFile watch)
+            {
+                watch.MainProcess();
+                bool success = watch.Success;
+                Dictionary<string, string> dictionary = watch.Propeties;
 
-            //  確認用
-            foreach (KeyValuePair<string, string> pair in dictionary)
-            {
-                Console.WriteLine(pair.Key + " : " + pair.Value);
-            }
+                //  確認用
+                foreach (KeyValuePair<string, string> pair in dictionary)
+                {
+                    Console.WriteLine(pair.Key + " : " + pair.Value);
+                }
 
-            if (success)
-            {
-                Console.Write("[");
-                Console.ForegroundColor = ConsoleColor.Green;
-                Console.Write("Success");
-                Console.ResetColor();
-                Console.WriteLine("]");
-            }
-            else
-            {
-                Console.Write("[");
-                Console.ForegroundColor = ConsoleColor.Red;
-                Console.Write("Failed");
-                Console.ResetColor();
-                Console.WriteLine("]");
+                if (success)
+                {
+                    Console.Write("[");
+                    Console.ForegroundColor = ConsoleColor.Green;
+                    Console.Write("Success");
+                    Console.ResetColor();
+                    Console.WriteLine("]");
+                }
+                else
+                {
+                    Console.Write("[");
+                    Console.ForegroundColor = ConsoleColor.Red;
+                    Console.Write("Failed");
+                    Console.ResetColor();
+                    Console.WriteLine("]");
+                }
             }
         }
     }

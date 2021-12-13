@@ -25,7 +25,7 @@ namespace Audit.Lib
             };
         }
 
-        public static string ToReadable(bool[] ret_bools)
+        public static string ToReadableAttributes(bool[] ret_bools)
         {
             return string.Format(
                 "[{0}]Readonly [{1}]Hidden [{2}]System",
@@ -68,7 +68,7 @@ namespace Audit.Lib
             return ret_childCounts;
         }
 
-        public static string ToReadable(int[] ret_bools, bool isDirectory)
+        public static string ToReadableChildCount(int[] ret_bools, bool isDirectory)
         {
             return isDirectory ?
                 string.Format("Directory:{0} / File:{1}", ret_bools[0], ret_bools[1]) :
@@ -100,7 +100,7 @@ namespace Audit.Lib
         #endregion
         #region Size
 
-        public static string ToReadable(long size)
+        public static string ToReadableSize(long size)
         {
             if (size < 1024 * 0.9)
             {

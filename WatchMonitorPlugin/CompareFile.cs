@@ -123,8 +123,8 @@ namespace WatchMonitorPlugin
                 {
                     targetA.CheckAttributes();
                     targetB.CheckAttributes();
-                    dictionary[$"{targetA.PathTypeName}_Attributes_{_serial}"] = MonitorFunctions.ToReadable(targetA.Attributes);
-                    dictionary[$"{targetA.PathTypeName}_Attributes_{_serial}"] = MonitorFunctions.ToReadable(targetB.Attributes);
+                    dictionary[$"{targetA.PathTypeName}_Attributes_{_serial}"] = MonitorFunctions.ToReadableAttributes(targetA.Attributes);
+                    dictionary[$"{targetA.PathTypeName}_Attributes_{_serial}"] = MonitorFunctions.ToReadableAttributes(targetB.Attributes);
                     Success &= targetA.Attributes.SequenceEqual(targetB.Attributes);
                 }
                 if (_IsMD5Hash ?? false)

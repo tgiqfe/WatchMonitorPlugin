@@ -79,7 +79,7 @@ namespace WatchMonitorPlugin
 
                 if (target_monitor.Exists ?? false)
                 {
-                    Success |= WatchFile_kari.Check(target_monitor, target_db, dictionary, _serial);
+                    Success |= WatchFunctions.CheckFile(target_monitor, target_db, dictionary, _serial);
                 }
                 collection.SetMonitoredTarget(path, target_monitor);
             }
