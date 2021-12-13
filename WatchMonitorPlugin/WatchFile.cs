@@ -259,6 +259,9 @@ namespace WatchMonitorPlugin
                 }
                 collection.SetMonitoredTarget(path, target_monitor);
             }
+
+            //  ここにIs～系をマージする処理を
+
             collection.Save(dbDir, _ID);
 
 

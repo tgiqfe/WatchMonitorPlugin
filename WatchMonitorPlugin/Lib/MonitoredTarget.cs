@@ -94,6 +94,7 @@ namespace Audit.Lib
 
         #endregion
 
+        public MonitoredTarget() { }
         public MonitoredTarget(PathType pathType, string path)
         {
             this.PathType = pathType;
@@ -105,7 +106,7 @@ namespace Audit.Lib
             this.Path = path;
             this.Name = name;
         }
-
+        
         #region TestExists
 
         public void CheckExists()
@@ -240,76 +241,6 @@ namespace Audit.Lib
                 PathType.Registry => RegistryControl.ValueKindToString(this.Key.GetValueKind(this.Name)),
                 _ => null
             };
-        }
-
-
-
-        public void CheckFile()
-        {
-            if (IsCreationTime ?? false) { this.CreationTime = MonitorFunctions.GetCreationTime(this.FileInfo, this.IsDateOnly ?? false, this.IsTimeOnly ?? false); }
-            if (IsLastWriteTime ?? false) { this.LastWriteTime = MonitorFunctions.GetLastWriteTime(this.FileInfo, this.IsDateOnly ?? false, this.IsTimeOnly ?? false); }
-            if (IsLastAccessTime ?? false) { this.LastAccessTime = MonitorFunctions.GetLastAccessTime(this.FileInfo, this.IsDateOnly ?? false, this.IsTimeOnly ?? false); }
-            if (IsAccess ?? false) { this.Access = AccessRuleSummary.FileToAccessString(this.FileInfo); }
-            if (IsOwner ?? false) { this.Owner = this.FileInfo.GetAccessControl().GetOwner(typeof(NTAccount)).Value; }
-            if (IsInherited ?? false) { this.Inherited = !this.FileInfo.GetAccessControl().AreAccessRulesProtected; }
-            if (IsAttributes ?? false) { this.Attributes = MonitorFunctions.GetAttributes(this.Path); }
-            if (IsMD5Hash ?? false) { this.MD5Hash = MonitorFunctions.GetHash(this.Path, MD5.Create()); }
-            if (IsSHA256Hash ?? false) { this.SHA256Hash = MonitorFunctions.GetHash(this.Path, SHA256.Create()); }
-            if (IsSHA512Hash ?? false) { this.SHA512Hash = MonitorFunctions.GetHash(this.Path, SHA512.Create()); }
-            if (IsSize ?? false) { this.Size = this.FileInfo.Length; }
-            //if (IsChildCount ?? false) { }
-            //if (IsRegistryType ?? false) { }
-        }
-
-        public void CheckDirectory()
-        {
-            if (IsCreationTime ?? false) { this.CreationTime = MonitorFunctions.GetCreationTime(this.DirectoryInfo, this.IsDateOnly ?? false, this.IsTimeOnly ?? false); }
-            if (IsLastWriteTime ?? false) { this.LastWriteTime = MonitorFunctions.GetLastWriteTime(this.DirectoryInfo, this.IsDateOnly ?? false, this.IsTimeOnly ?? false); }
-            if (IsLastAccessTime ?? false) { this.LastAccessTime = MonitorFunctions.GetLastAccessTime(this.DirectoryInfo, this.IsDateOnly ?? false, this.IsTimeOnly ?? false); }
-            if (IsAccess ?? false) { this.Access = AccessRuleSummary.DirectoryToAccessString(this.DirectoryInfo); }
-            if (IsOwner ?? false) { this.Owner = this.DirectoryInfo.GetAccessControl().GetOwner(typeof(NTAccount)).Value; }
-            if (IsInherited ?? false) { this.Inherited = !this.DirectoryInfo.GetAccessControl().AreAccessRulesProtected; }
-            if (IsAttributes ?? false) { this.Attributes = MonitorFunctions.GetAttributes(this.Path); }
-            //if (IsMD5Hash ?? false) { }
-            //if (IsSHA256Hash ?? false) { }
-            //if (IsSHA512Hash ?? false) { }
-            //if (IsSize ?? false) { }
-            if (IsChildCount ?? false) { this.ChildCount = MonitorFunctions.GetDirectoryChildCount(this.Path); }
-            //if (IsRegistryType ?? false) { }
-        }
-
-        public void CheckRegistryKey()
-        {
-            //if (IsCreationTime ?? false) { }
-            //if (IsLastWriteTime ?? false) { }
-            //if (IsLastAccessTime ?? false) { }
-            if (IsAccess ?? false) { this.Access = AccessRuleSummary.RegistryKeyToAccessString(this.Key); }
-            if (IsOwner ?? false) { this.Owner = this.Key.GetAccessControl().GetOwner(typeof(NTAccount)).Value; }
-            if (IsInherited ?? false) { this.Inherited = !this.Key.GetAccessControl().AreAccessRulesProtected; }
-            //if (IsAttributes ?? false) { }
-            //if (IsMD5Hash ?? false) { }
-            //if (IsSHA256Hash ?? false) { }
-            //if (IsSHA512Hash ?? false) { }
-            //if (IsSize ?? false) { }
-            if (IsChildCount ?? false) { this.ChildCount = MonitorFunctions.GetRegistryKeyChildCount(this.Key); }
-            //if (IsRegistryType ?? false) { }
-        }
-
-        public void CheckRegistryValue()
-        {
-            //if (IsCreationTime ?? false) { }
-            //if (IsLastWriteTime ?? false) { }
-            //if (IsLastAccessTime ?? false) { }
-            //if (IsAccess ?? false) { }
-            //if (IsOwner ?? false) { }
-            //if (IsInherited ?? false) { }
-            //if (IsAttributes ?? false) { }
-            if (IsMD5Hash ?? false) { this.MD5Hash = MonitorFunctions.GetHash(this.Key, this.Name, MD5.Create()); }
-            if (IsSHA256Hash ?? false) { this.SHA256Hash = MonitorFunctions.GetHash(this.Key, this.Name, SHA256.Create()); }
-            if (IsSHA512Hash ?? false) { this.SHA512Hash = MonitorFunctions.GetHash(this.Key, this.Name, SHA512.Create()); }
-            //if (IsSize ?? false) { }
-            //if (IsChildCount ?? false) { }
-            if (IsRegistryType ?? false) { this.RegistryType = RegistryControl.ValueKindToString(this.Key.GetValueKind(this.Name)); }
         }
     }
 }

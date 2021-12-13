@@ -8,19 +8,50 @@ namespace WatchMonitorPlugin
     [System.Runtime.Versioning.SupportedOSPlatform("windows")]
     public class Program
     {
+        const string ID = "sample01";
+
         public static void Main(string[] args)
         {
             Console.WriteLine("Watch対象を指定");
             string targetFile = Console.ReadLine();
 
+            Test(targetFile);
+
+            Console.ReadLine();
+
+        }
+
+        private static void Test(params string[] targetPath)
+        {
             WatchFile watch = new WatchFile()
             {
-                _ID = "sample01",
-                _Path = new string[] { targetFile },
+                _ID = ID,
+                _Path = targetPath,
                 _IsLastWriteTime = true,
             };
+            CheckWatchFile(watch);
 
+            while (true)
+            {
+                var key = Console.ReadKey(false);
+                switch (key.Key)
+                {
+                    case ConsoleKey.Enter:
+                        var tempWatch = new WatchFile()
+                        {
+                            _ID = ID,
+                            _Path = targetPath,
+                        };
+                        CheckWatchFile(tempWatch);
+                        break;
+                    case ConsoleKey.Escape:
+                        return;
+                }
+            }
+        }
 
+        private static void CheckWatchFile(WatchFile watch)
+        {
             watch.MainProcess();
             bool success = watch.Success;
             Dictionary<string, string> dictionary = watch.Propeties;
@@ -33,20 +64,20 @@ namespace WatchMonitorPlugin
 
             if (success)
             {
+                Console.Write("[");
                 Console.ForegroundColor = ConsoleColor.Green;
-                Console.WriteLine("Success");
+                Console.Write("Success");
                 Console.ResetColor();
+                Console.WriteLine("]");
             }
             else
             {
+                Console.Write("[");
                 Console.ForegroundColor = ConsoleColor.Red;
-                Console.WriteLine("Failed");
+                Console.Write("Failed");
                 Console.ResetColor();
+                Console.WriteLine("]");
             }
-
-
-            Console.ReadLine();
-
         }
     }
 }
