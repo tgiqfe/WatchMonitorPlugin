@@ -106,8 +106,8 @@ namespace Audit.Lib
             this.Path = path;
             this.Name = name;
         }
-        
-        #region TestExists
+
+        #region Check method
 
         public void CheckExists()
         {
@@ -121,8 +121,6 @@ namespace Audit.Lib
                 _ => null,
             };
         }
-
-        #endregion
 
         public void CheckCreationTime()
         {
@@ -241,6 +239,31 @@ namespace Audit.Lib
                 PathType.Registry => RegistryControl.ValueKindToString(this.Key.GetValueKind(this.Name)),
                 _ => null
             };
+        }
+
+        #endregion
+
+        /// <summary>
+        /// Is～プロパティをマージする
+        /// </summary>
+        /// <param name="target"></param>
+        public void Merge_is_Property(MonitoredTarget target)
+        {
+            if (target.IsCreationTime ?? false) { this.IsCreationTime = true; }
+            if (target.IsCreationTime ?? false) { this.IsLastWriteTime = true; }
+            if (target.IsLastAccessTime ?? false) { this.IsLastAccessTime = true; }
+            if (target.IsAccess ?? false) { this.IsAccess = true; }
+            if (target.IsOwner ?? false) { this.IsOwner = true; }
+            if (target.IsInherited ?? false) { this.IsInherited = true; }
+            if (target.IsAttributes ?? false) { this.IsAttributes = true; }
+            if (target.IsMD5Hash ?? false) { this.IsMD5Hash = true; }
+            if (target.IsSHA256Hash ?? false) { this.IsSHA256Hash = true; }
+            if (target.IsSHA512Hash ?? false) { this.IsSHA512Hash = true; }
+            if (target.IsSize ?? false) { this.IsSize = true; }
+            if (target.IsChildCount ?? false) { this.IsChildCount = true; }
+            if (target.IsRegistryType ?? false) { this.IsRegistryType = true; }
+            if (target.IsDateOnly ?? false) { this.IsDateOnly = true; }
+            if (target.IsTimeOnly ?? false) { this.IsTimeOnly = true; }
         }
     }
 }

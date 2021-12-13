@@ -74,11 +74,12 @@ namespace WatchMonitorPlugin
                     collection.GetMonitoredTarget(path) ?? CreateForFile(path, "file");
 
                 MonitoredTarget target_monitor = CreateForFile(path, "file");
+                target_monitor.Merge_is_Property(target_db);
                 target_monitor.CheckExists();
                 if (target_monitor.Exists ?? false)
                 {
                     //  CreationTime
-                    if ((_IsCreationTime ?? false) || (target_db.IsCreationTime ?? false))
+                    if (target_monitor.IsCreationTime ?? false)
                     {
                         target_monitor.CheckCreationTime();
                         bool ret = target_monitor.CreationTime != target_db.CreationTime;
@@ -94,7 +95,7 @@ namespace WatchMonitorPlugin
                     }
 
                     //  LastWriteTime
-                    if ((_IsLastWriteTime ?? false) || (target_db.IsLastWriteTime ?? false))
+                    if (target_monitor.IsLastWriteTime ?? false)
                     {
                         target_monitor.CheckLastWriteTime();
                         bool ret = target_monitor.LastWriteTime != target_db.LastWriteTime;
@@ -110,7 +111,7 @@ namespace WatchMonitorPlugin
                     }
 
                     //  LastAccessTime
-                    if ((_IsLastAccessTime ?? false) || (target_db.IsLastAccessTime ?? false))
+                    if (target_monitor.IsLastAccessTime ?? false)
                     {
                         target_monitor.CheckLastAccessTime();
                         bool ret = target_monitor.LastAccessTime != target_db.LastAccessTime;
@@ -126,7 +127,7 @@ namespace WatchMonitorPlugin
                     }
 
                     //  Access
-                    if ((_IsAccess ?? false) || (target_db.IsAccess ?? false))
+                    if (target_monitor.IsAccess ?? false)
                     {
                         target_monitor.CheckAccess();
                         bool ret = target_monitor.Access != target_db.Access;
@@ -142,7 +143,7 @@ namespace WatchMonitorPlugin
                     }
 
                     //  Owner
-                    if ((_IsOwner ?? false) || (target_db.IsOwner ?? false))
+                    if (target_monitor.IsOwner ?? false)
                     {
                         target_monitor.CheckOwner();
                         bool ret = target_monitor.Owner != target_db.Owner;
@@ -158,7 +159,7 @@ namespace WatchMonitorPlugin
                     }
 
                     //  Inherited
-                    if ((_IsInherited ?? false) || (target_db.IsInherited ?? false))
+                    if (target_monitor.IsInherited ?? false)
                     {
                         target_monitor.CheckInherited();
                         bool ret = target_monitor.Inherited != target_db.Inherited;
@@ -174,7 +175,7 @@ namespace WatchMonitorPlugin
                     }
 
                     //  Attributes
-                    if ((_IsAttributes ?? false) || (target_db.IsAttributes ?? false))
+                    if (target_monitor.IsAttributes ?? false)
                     {
                         target_monitor.CheckAttributes();
                         bool ret = !target_monitor.Attributes.SequenceEqual(target_db.Attributes);
@@ -190,7 +191,7 @@ namespace WatchMonitorPlugin
                     }
 
                     //  MD5Hash
-                    if ((_IsMD5Hash ?? false) || (target_db.IsMD5Hash ?? false))
+                    if (target_monitor.IsMD5Hash ?? false)
                     {
                         target_monitor.CheckMD5Hash();
                         bool ret = target_monitor.MD5Hash != target_db.MD5Hash;
@@ -206,7 +207,7 @@ namespace WatchMonitorPlugin
                     }
 
                     //  SHA256Hash
-                    if ((_IsSHA256Hash ?? false) || (target_db.IsSHA256Hash ?? false))
+                    if (target_monitor.IsSHA256Hash ?? false)
                     {
                         target_monitor.CheckSHA256Hash();
                         bool ret = target_monitor.SHA256Hash != target_db.SHA256Hash;
@@ -222,7 +223,7 @@ namespace WatchMonitorPlugin
                     }
 
                     //  SHA512Hash
-                    if ((_IsSHA512Hash ?? false) || (target_db.IsSHA512Hash ?? false))
+                    if (target_monitor.IsSHA512Hash ?? false)
                     {
                         target_monitor.CheckSHA512Hash();
                         bool ret = target_monitor.SHA512Hash != target_db.SHA512Hash;
@@ -238,7 +239,7 @@ namespace WatchMonitorPlugin
                     }
 
                     //  Size
-                    if ((_IsSize ?? false) || (target_db.IsSize ?? false))
+                    if (target_monitor.IsSize ?? false)
                     {
                         target_monitor.CheckSize();
                         bool ret = target_monitor.Size != target_db.Size;
@@ -259,11 +260,7 @@ namespace WatchMonitorPlugin
                 }
                 collection.SetMonitoredTarget(path, target_monitor);
             }
-
-            //  ここにIs～系をマージする処理を
-
             collection.Save(dbDir, _ID);
-
 
 
             Propeties = dictionary;
