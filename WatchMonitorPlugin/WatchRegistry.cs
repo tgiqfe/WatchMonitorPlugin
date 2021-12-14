@@ -92,21 +92,45 @@ namespace WatchMonitorPlugin
                         target_monitor.Merge_is_Property(target_db);
                         target_monitor.CheckExists();
 
-                        if(target_monitor.Exists ?? false)
+                        if (target_monitor.Exists ?? false)
                         {
-                            //  ここでWatchFunctions.CheckRegistryValue()
+                            Success |= WatchFunctions.CheckRegistryValue(target_monitor, target_db, dictionary, _serial);
                         }
-
+                        collection.SetMonitoredTarget(keyPath, name, target_monitor);
                     }
-
-
-
-
                 }
             }
             else
             {
+                foreach (string path in _Path)
+                {
+                    _checkingPath = path;
+                    using (RegistryKey regKey = RegistryControl.GetRegistryKey(path, false, false))
+                    {
+                        _serial++;
+                        dictionary[$"registry_{_serial}"] = (path == _checkingPath) ?
+                            path :
+                            path.Replace(_checkingPath, "");
+                        MonitoredTarget target_db = _Begin ?
+                            CreateForRegistryKey(path, regKey,  "registry") :
+                            collection.GetMonitoredTarget(path) ?? CreateForRegistryKey(path, regKey, "registry");
 
+                        MonitoredTarget target_monitor = CreateForRegistryKey(path, regKey, "registry");
+                        target_monitor.Merge_is_Property(target_db);
+                        target_monitor.CheckExists();
+
+                        if(target_monitor.Exists ?? false)
+                        {
+                            Success |= WatchFunctions.CheckRegistrykey(target_monitor, target_db, dictionary, _serial, 0);
+
+
+                            //  再起処理が必要
+
+
+
+                        }
+                    }
+                }
             }
             collection.Save(dbDir, _ID);
         }
