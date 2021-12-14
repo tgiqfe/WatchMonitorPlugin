@@ -50,8 +50,6 @@ namespace Audit.Lib
         public bool? IsDateOnly { get; set; }
         public bool? IsTimeOnly { get; set; }
 
-        public const string REGPATH_PREFIX = "[registry]";
-
         #region Target path
 
 

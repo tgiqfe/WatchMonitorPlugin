@@ -13,11 +13,22 @@ namespace Audit.Lib
     {
         private List<string> _CheckedKeys = new List<string>();
 
+        const string REGPATH_PREFIX = "[registry]";
+
         public MonitoredTargetCollection() { }
+
+        #region Get/Set MonitoredTarget
 
         public MonitoredTarget GetMonitoredTarget(string path)
         {
             string matchKey = this.Keys.FirstOrDefault(x => x.Equals(path, StringComparison.OrdinalIgnoreCase));
+            return matchKey == null ? null : this[matchKey];
+        }
+
+        public MonitoredTarget GetMonitoredTarget(string path, string name)
+        {
+            string regPath = REGPATH_PREFIX + path + "\\" + name;
+            string matchKey = this.Keys.FirstOrDefault(x => x.Equals(regPath, StringComparison.OrdinalIgnoreCase));
             return matchKey == null ? null : this[matchKey];
         }
 
@@ -27,6 +38,16 @@ namespace Audit.Lib
             this[path] = target;
             this._CheckedKeys.Add(path);
         }
+
+        public void SetMonitoredTarget(string path, string name, MonitoredTarget target)
+        {
+            string regPath = REGPATH_PREFIX + path + "\\" + name;
+            target.FullPath = regPath;
+            this[regPath] = target;
+            this._CheckedKeys.Add(regPath);
+        }
+
+        #endregion
 
         public IEnumerable<string> GetUncheckedKeys()
         {

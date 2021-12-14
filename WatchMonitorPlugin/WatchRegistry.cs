@@ -80,7 +80,24 @@ namespace WatchMonitorPlugin
                 string keyPath = _Path[0];
                 using (RegistryKey regKey = RegistryControl.GetRegistryKey(keyPath, false, false))
                 {
+                    foreach (string name in _Name)
+                    {
+                        _serial++;
+                        dictionary[$"registry_{_serial}"] = keyPath + "\\" + name;
+                        MonitoredTarget target_db = _Begin ?
+                            CreateForRegistryValue(keyPath, regKey, name, "registry") :
+                            collection.GetMonitoredTarget(keyPath, name) ?? CreateForRegistryValue(keyPath, regKey, name, "registry");
 
+                        MonitoredTarget target_monitor = CreateForRegistryValue(keyPath, regKey, name, "registry");
+                        target_monitor.Merge_is_Property(target_db);
+                        target_monitor.CheckExists();
+
+                        if(target_monitor.Exists ?? false)
+                        {
+                            //  ここでWatchFunctions.CheckRegistryValue()
+                        }
+
+                    }
 
 
 
