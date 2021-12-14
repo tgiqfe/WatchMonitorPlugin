@@ -45,9 +45,9 @@ namespace WatchMonitorPlugin
         public Dictionary<string, string> Propeties = null;
 
 
-        private MonitoredTarget CreateForRegistryKey(string path, RegistryKey key, string pathTypeName)
+        private MonitoredTarget CreateForRegistryKey(RegistryKey key, string pathTypeName)
         {
-            return new MonitoredTarget(PathType.Registry, path, key)
+            return new MonitoredTarget(PathType.Registry, key)
             {
                 PathTypeName = pathTypeName,
                 IsAccess = _IsAccess,
@@ -57,9 +57,9 @@ namespace WatchMonitorPlugin
             };
         }
 
-        private MonitoredTarget CreateForRegistryValue(string path, RegistryKey key, string name, string pathTypeName)
+        private MonitoredTarget CreateForRegistryValue(RegistryKey key, string name, string pathTypeName)
         {
-            return new MonitoredTarget(PathType.Registry, path, key, name)
+            return new MonitoredTarget(PathType.Registry, key, name)
             {
                 PathTypeName = pathTypeName,
                 IsMD5Hash = _IsMD5Hash,
@@ -83,20 +83,20 @@ namespace WatchMonitorPlugin
                     foreach (string name in _Name)
                     {
                         _serial++;
-                        dictionary[$"registry_{_serial}"] = keyPath + "\\" + name;
-                        MonitoredTarget target_db = _Begin ?
-                            CreateForRegistryValue(keyPath, regKey, name, "registry") :
-                            collection.GetMonitoredTarget(keyPath, name) ?? CreateForRegistryValue(keyPath, regKey, name, "registry");
+                        dictionary[$"registry_{_serial}"] = regKey.Name + "\\" + name;
+                        MonitoredTarget target_dbfs = _Begin ?
+                            CreateForRegistryValue(regKey, name, "registry") :
+                            collection.GetMonitoredTarget(regKey, name) ?? CreateForRegistryValue(regKey, name, "registry");
 
-                        MonitoredTarget target_monitor = CreateForRegistryValue(keyPath, regKey, name, "registry");
-                        target_monitor.Merge_is_Property(target_db);
-                        target_monitor.CheckExists();
+                        MonitoredTarget target_monitorfs = CreateForRegistryValue(regKey, name, "registry");
+                        target_monitorfs.Merge_is_Property(target_dbfs);
+                        target_monitorfs.CheckExists();
 
-                        if (target_monitor.Exists ?? false)
+                        if (target_monitorfs.Exists ?? false)
                         {
-                            Success |= WatchFunctions.CheckRegistryValue(target_monitor, target_db, dictionary, _serial);
+                            Success |= WatchFunctions.CheckRegistryValue(target_monitorfs, target_dbfs, dictionary, _serial);
                         }
-                        collection.SetMonitoredTarget(keyPath, name, target_monitor);
+                        collection.SetMonitoredTarget(regKey, name, target_monitorfs);
                     }
                 }
             }
@@ -112,14 +112,14 @@ namespace WatchMonitorPlugin
                             path :
                             path.Replace(_checkingPath, "");
                         MonitoredTarget target_db = _Begin ?
-                            CreateForRegistryKey(path, regKey,  "registry") :
-                            collection.GetMonitoredTarget(path) ?? CreateForRegistryKey(path, regKey, "registry");
+                            CreateForRegistryKey(regKey, "registry") :
+                            collection.GetMonitoredTarget(path) ?? CreateForRegistryKey(regKey, "registry");
 
-                        MonitoredTarget target_monitor = CreateForRegistryKey(path, regKey, "registry");
+                        MonitoredTarget target_monitor = CreateForRegistryKey(regKey, "registry");
                         target_monitor.Merge_is_Property(target_db);
                         target_monitor.CheckExists();
 
-                        if(target_monitor.Exists ?? false)
+                        if (target_monitor.Exists ?? false)
                         {
                             Success |= WatchFunctions.CheckRegistrykey(target_monitor, target_db, dictionary, _serial, 0);
 
@@ -133,6 +133,50 @@ namespace WatchMonitorPlugin
                 }
             }
             collection.Save(dbDir, _ID);
+        }
+
+        private bool RecursiveTree(MonitoredTargetCollection collection, Dictionary<string, string> dictionary, RegistryKey regKey, int depth)
+        {
+            bool ret = false;
+
+            _serial++;
+            dictionary[$"registry_{_serial}"] = (regKey.Name == _checkingPath) ?
+                regKey.Name :
+                regKey.Name.Replace(_checkingPath, "");
+            MonitoredTarget target_db = _Begin ?
+                CreateForRegistryKey(regKey, "registry") :
+                collection.GetMonitoredTarget(regKey) ?? CreateForRegistryKey(regKey, "registry");
+
+            MonitoredTarget target_monitor = CreateForRegistryKey(regKey, "registry");
+            target_monitor.Merge_is_Property(target_db);
+            target_monitor.CheckExists();
+
+            if (target_monitor.Exists ?? false)
+            {
+                ret |= WatchFunctions.CheckRegistrykey(target_monitor, target_db, dictionary, _serial, depth);
+                
+                foreach (string name in regKey.GetValueNames())
+                {
+                    _serial++;
+                    dictionary[$"registry_{_serial}"] = regKey.Name + "\\" + name;
+                    MonitoredTarget target_dbfs = _Begin ?
+                        CreateForRegistryValue(regKey, name, "registry") :
+                        collection.GetMonitoredTarget(regKey, name) ?? CreateForRegistryValue(regKey, name, "registry");
+
+                    MonitoredTarget target_monitorfs = CreateForRegistryValue(regKey, name, "registry");
+                    target_monitorfs.Merge_is_Property(target_dbfs);
+                    target_monitorfs.CheckExists();
+
+                    if (target_monitor.Exists ?? false)
+                    {
+                        Success |= WatchFunctions.CheckRegistryValue(target_monitor, target_db, dictionary, _serial);
+                    }
+                    collection.SetMonitoredTarget(regKey, name, target_monitorfs);
+                }
+            }
+            collection.SetMonitoredTarget(regKey, target_monitor);
+
+            return ret;
         }
     }
 }

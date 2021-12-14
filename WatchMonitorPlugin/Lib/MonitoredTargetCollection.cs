@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Text.Json;
 using System.Text.Json.Serialization;
+using Microsoft.Win32;
 
 namespace Audit.Lib
 {
@@ -25,9 +26,15 @@ namespace Audit.Lib
             return matchKey == null ? null : this[matchKey];
         }
 
-        public MonitoredTarget GetMonitoredTarget(string path, string name)
+        public MonitoredTarget GetMonitoredTarget(RegistryKey regKey)
         {
-            string regPath = REGPATH_PREFIX + path + "\\" + name;
+            string matchKey = this.Keys.FirstOrDefault(x => x.Equals(regKey.Name, StringComparison.OrdinalIgnoreCase));
+            return matchKey == null ? null : this[matchKey];
+        }
+
+        public MonitoredTarget GetMonitoredTarget(RegistryKey regKey, string name)
+        {
+            string regPath = REGPATH_PREFIX + regKey.Name + "\\" + name;
             string matchKey = this.Keys.FirstOrDefault(x => x.Equals(regPath, StringComparison.OrdinalIgnoreCase));
             return matchKey == null ? null : this[matchKey];
         }
@@ -39,9 +46,16 @@ namespace Audit.Lib
             this._CheckedKeys.Add(path);
         }
 
-        public void SetMonitoredTarget(string path, string name, MonitoredTarget target)
+        public void SetMonitoredTarget(RegistryKey regKey, MonitoredTarget target)
         {
-            string regPath = REGPATH_PREFIX + path + "\\" + name;
+            target.FullPath = regKey.Name;
+            this[regKey.Name] = target;
+            this._CheckedKeys.Add(regKey.Name);
+        }
+
+        public void SetMonitoredTarget(RegistryKey regKey, string name, MonitoredTarget target)
+        {
+            string regPath = REGPATH_PREFIX + regKey.Name + "\\" + name;
             target.FullPath = regPath;
             this[regPath] = target;
             this._CheckedKeys.Add(regPath);
