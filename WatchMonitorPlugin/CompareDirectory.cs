@@ -94,29 +94,6 @@ namespace WatchMonitorPlugin
             Success &= RecursiveTree(_PathA, _PathB, dictionary, 0);
 
 
-            if (System.IO.Directory.Exists(_PathA) && System.IO.Directory.Exists(_PathB))
-            {
-                dictionary["directoryA_Exists"] = _PathA;
-                dictionary["directoryB_Exists"] = _PathB;
-                _checkingPathA = _PathA;
-                _checkingPathB = _PathB;
-                Success &= RecursiveTree(_PathA, _PathB, dictionary, 0);
-            }
-            else
-            {
-                if (!System.IO.Directory.Exists(_PathA))
-                {
-                    dictionary["directoryA_NotExists"] = _PathA;
-                }
-                if (!System.IO.Directory.Exists(_PathB))
-                {
-                    dictionary["directoryB_NotExists"] = _PathB;
-                }
-            }
-
-
-
-
             this.Propeties = dictionary;
         }
 
