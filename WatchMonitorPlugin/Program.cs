@@ -31,6 +31,7 @@ namespace WatchMonitorPlugin
                 _ID = ID,
                 _Path = targetPaths,
                 _IsLastWriteTime = true,
+                _IsMD5Hash = true,
             };
             checkWatchFile(beginWatch);
 
