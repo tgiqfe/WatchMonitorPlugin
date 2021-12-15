@@ -35,7 +35,6 @@ namespace WatchMonitorPlugin
         private int _serial = 1;
 
 
-
         public Dictionary<string, string> Propeties = null;
 
         private MonitoredTarget CreateForFile(string path, string pathTypeName)
@@ -62,6 +61,8 @@ namespace WatchMonitorPlugin
         public void MainProcess()
         {
             var dictionary = new Dictionary<string, string>();
+            dictionary["fileA"] = _PathA;
+            dictionary["fileB"] = _PathB;
             this.Success = true;
 
             MonitoredTarget targetA = CreateForFile(_PathA, "fileA");
@@ -71,8 +72,27 @@ namespace WatchMonitorPlugin
 
             if ((targetA.Exists ?? false) && (targetB.Exists ?? false))
             {
+                dictionary["fileA_Exists"] = _PathA;
+                dictionary["fileB_Exists"] = _PathB;
                 Success &= CompareFunctions.CheckFile(targetA, targetB, dictionary, _serial);
             }
+            else
+            {
+                if (!targetA.Exists ?? false)
+                {
+                    dictionary["fileA_NotExists"] = _PathA;
+                    Success = false;
+                }
+                if (!targetB.Exists ?? false)
+                {
+                    dictionary["fileB_NotExists"] = _PathB;
+                    Success = false;
+                }
+            }
+
+
+
+
 
             this.Propeties = dictionary;
         }

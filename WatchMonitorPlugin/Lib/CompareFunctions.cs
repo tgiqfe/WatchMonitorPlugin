@@ -121,7 +121,7 @@ namespace Audit.Lib
         /// <param name="dictionary"></param>
         /// <param name="serial"></param>
         /// <returns></returns>
-        internal static bool CheckDirectory(MonitoredTarget targetA, MonitoredTarget targetB, Dictionary<string, string> dictionary, int serial)
+        internal static bool CheckDirectory(MonitoredTarget targetA, MonitoredTarget targetB, Dictionary<string, string> dictionary, int serial, int depth)
         {
             bool ret = false;
 
@@ -181,7 +181,7 @@ namespace Audit.Lib
                 dictionary[$"{targetB.PathTypeName}_Attributes_{serial}"] = MonitorFunctions.ToReadableAttributes(targetB.Attributes);
                 ret &= targetA.Attributes.SequenceEqual(targetB.Attributes);
             }
-            if (targetA.IsChildCount ?? false)
+            if ((targetA.IsChildCount ?? false) && depth == 0)
             {
                 targetA.CheckChildCount();
                 targetB.CheckChildCount();
@@ -201,7 +201,7 @@ namespace Audit.Lib
         /// <param name="dictionary"></param>
         /// <param name="serial"></param>
         /// <returns></returns>
-        internal static bool CheckRegistryKey(MonitoredTarget targetA, MonitoredTarget targetB, Dictionary<string, string> dictionary, int serial)
+        internal static bool CheckRegistryKey(MonitoredTarget targetA, MonitoredTarget targetB, Dictionary<string, string> dictionary, int serial, int depth)
         {
             bool ret = false;
 
@@ -229,7 +229,7 @@ namespace Audit.Lib
                 dictionary[$"{targetB.PathTypeName}_Owner_{serial}"] = targetB.Inherited.ToString();
                 ret &= targetA.Owner == targetB.Owner;
             }
-            if (targetA.IsChildCount ?? false)
+            if ((targetA.IsChildCount ?? false) && depth == 0)
             {
                 targetA.CheckChildCount();
                 targetB.CheckChildCount();
