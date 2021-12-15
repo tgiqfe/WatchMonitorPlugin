@@ -252,21 +252,21 @@ namespace Audit.Lib
         /// <param name="target"></param>
         public void Merge_is_Property(MonitoredTarget target)
         {
-            if (target.IsCreationTime ?? false) { this.IsCreationTime = true; }
-            if (target.IsCreationTime ?? false) { this.IsLastWriteTime = true; }
-            if (target.IsLastAccessTime ?? false) { this.IsLastAccessTime = true; }
-            if (target.IsAccess ?? false) { this.IsAccess = true; }
-            if (target.IsOwner ?? false) { this.IsOwner = true; }
-            if (target.IsInherited ?? false) { this.IsInherited = true; }
-            if (target.IsAttributes ?? false) { this.IsAttributes = true; }
-            if (target.IsMD5Hash ?? false) { this.IsMD5Hash = true; }
-            if (target.IsSHA256Hash ?? false) { this.IsSHA256Hash = true; }
-            if (target.IsSHA512Hash ?? false) { this.IsSHA512Hash = true; }
-            if (target.IsSize ?? false) { this.IsSize = true; }
-            if (target.IsChildCount ?? false) { this.IsChildCount = true; }
-            if (target.IsRegistryType ?? false) { this.IsRegistryType = true; }
-            if (target.IsDateOnly ?? false) { this.IsDateOnly = true; }
-            if (target.IsTimeOnly ?? false) { this.IsTimeOnly = true; }
+            if (target.IsCreationTime != null) { this.IsCreationTime = target.IsCreationTime; }
+            if (target.IsLastWriteTime != null) { this.IsLastWriteTime = target.IsLastWriteTime; }
+            if (target.IsLastAccessTime != null) { this.IsLastAccessTime = target.IsLastAccessTime; }
+            if (target.IsAccess != null) { this.IsAccess = target.IsAccess; }
+            if (target.IsOwner != null) { this.IsOwner = target.IsOwner; }
+            if (target.IsInherited != null) { this.IsInherited = target.IsInherited; }
+            if (target.IsAttributes != null) { this.IsAttributes = target.IsAttributes; }
+            if (target.IsMD5Hash != null) { this.IsMD5Hash = target.IsMD5Hash; }
+            if (target.IsSHA256Hash != null) { this.IsSHA256Hash = target.IsSHA256Hash; }
+            if (target.IsSHA512Hash != null) { this.IsSHA512Hash = target.IsSHA512Hash; }
+            if (target.IsSize != null) { this.IsSize = target.IsSize; }
+            if (target.IsChildCount != null) { this.IsChildCount = target.IsChildCount; }
+            if (target.IsRegistryType != null) { this.IsRegistryType = target.IsRegistryType; }
+            if (target.IsDateOnly != null) { this.IsDateOnly = target.IsDateOnly; }
+            if (target.IsTimeOnly != null) { this.IsTimeOnly = target.IsTimeOnly; }
         }
     }
 }
