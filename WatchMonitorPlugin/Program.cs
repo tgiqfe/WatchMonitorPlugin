@@ -19,7 +19,14 @@ namespace WatchMonitorPlugin
                 targetFile.Split(';').Select(x => x.Trim()).ToArray() :
                 new string[1] { targetFile };
 
-            TestWatchDirectory(targetFiles);
+            if(targetFiles[0].StartsWith("HKEY", StringComparison.OrdinalIgnoreCase))
+            {
+                Console.WriteLine("Watch対象のレジストリ値の名前を指定");
+            }
+            else
+            {
+                TestWatchDirectory(targetFiles);
+            }
 
             Console.ReadLine();
         }
