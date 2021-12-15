@@ -95,7 +95,7 @@ namespace WatchMonitorPlugin
             foreach (string uncheckedPath in collection.GetUncheckedKeys())
             {
                 _serial++;
-                dictionary[$"remove_{_serial}"] = uncheckedPath;
+                dictionary[$"{_serial}_remove"] = uncheckedPath;
                 collection.Remove(uncheckedPath);
                 Success = true;
             }
@@ -112,7 +112,7 @@ namespace WatchMonitorPlugin
             bool ret = false;
 
             _serial++;
-            dictionary[$"directory_{_serial}"] = (path == _checkingPath) ?
+            dictionary[$"{_serial}_directory"] = (path == _checkingPath) ?
                 path :
                 path.Replace(_checkingPath, "");
             MonitoredTarget target_db = _Begin ?
@@ -134,7 +134,7 @@ namespace WatchMonitorPlugin
                 foreach (string filePath in Directory.GetFiles(path))
                 {
                     _serial++;
-                    dictionary[$"file_{_serial}"] = filePath.Replace(_checkingPath, "");
+                    dictionary[$"{_serial}_file"] = filePath.Replace(_checkingPath, "");
                     MonitoredTarget target_db_leaf = _Begin ?
                         CreateForFile(filePath, "file") :
                         collection.GetMonitoredTarget(filePath) ?? CreateForFile(path, "file");

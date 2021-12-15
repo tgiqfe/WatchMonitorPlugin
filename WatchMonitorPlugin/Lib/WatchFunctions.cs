@@ -29,7 +29,7 @@ namespace Audit.Lib
                 bool  ret = target_monitor.CreationTime != target_db.CreationTime;
                 if (target_db.CreationTime != null)
                 {
-                    dictionary[$"{target_monitor.PathTypeName}_CreationTime_{serial}"] = ret ?
+                    dictionary[$"{serial}_{target_monitor.PathTypeName}_CreationTime"] = ret ?
                         string.Format("{0} -> {1}",
                             target_db.CreationTime,
                             target_monitor.CreationTime) :
@@ -45,7 +45,7 @@ namespace Audit.Lib
                 bool ret = target_monitor.LastWriteTime != target_db.LastWriteTime;
                 if (target_db.LastWriteTime != null)
                 {
-                    dictionary[$"{target_monitor.PathTypeName}_LastWriteTime_{serial}"] = ret ?
+                    dictionary[$"{serial}_{target_monitor.PathTypeName}_LastWriteTime"] = ret ?
                         string.Format("{0} -> {1}",
                             target_db.LastWriteTime,
                             target_monitor.LastWriteTime) :
@@ -61,7 +61,7 @@ namespace Audit.Lib
                 bool ret = target_monitor.LastAccessTime != target_db.LastAccessTime;
                 if (target_db.LastAccessTime != null)
                 {
-                    dictionary[$"{target_monitor.PathTypeName}_LastAccessTime_{serial}"] = ret ?
+                    dictionary[$"{serial}_{target_monitor.PathTypeName}_LastAccessTime"] = ret ?
                         string.Format("{0} -> {1}",
                             target_db.LastAccessTime,
                             target_monitor.LastAccessTime) :
@@ -77,7 +77,7 @@ namespace Audit.Lib
                 bool ret = target_monitor.Access != target_db.Access;
                 if (target_db.Access != null)
                 {
-                    dictionary[$"{target_monitor.PathTypeName}_Access_{serial}"] = ret ?
+                    dictionary[$"{serial}_{target_monitor.PathTypeName}_Access"] = ret ?
                         string.Format("{0} -> {1}",
                             target_db.Access,
                             target_monitor.Access) :
@@ -93,7 +93,7 @@ namespace Audit.Lib
                 bool ret = target_monitor.Owner != target_db.Owner;
                 if (target_db.Owner != null)
                 {
-                    dictionary[$"{target_monitor.PathTypeName}_Owner_{serial}"] = ret ?
+                    dictionary[$"{serial}_{target_monitor.PathTypeName}_Owner"] = ret ?
                         string.Format("{0} -> {1}",
                             target_db.Owner,
                             target_monitor.Owner) :
@@ -109,7 +109,7 @@ namespace Audit.Lib
                 bool ret = target_monitor.Inherited != target_db.Inherited;
                 if (target_db.Inherited != null)
                 {
-                    dictionary[$"{target_monitor.PathTypeName}_Inherited_{serial}"] = ret ?
+                    dictionary[$"{serial}_{target_monitor.PathTypeName}_Inherited"] = ret ?
                         string.Format("{0} -> {1}",
                             target_db.Inherited,
                             target_monitor.Inherited) :
@@ -125,7 +125,7 @@ namespace Audit.Lib
                 bool ret = !target_monitor.Attributes.SequenceEqual(target_db.Attributes ?? new bool[0] { });
                 if (target_db.Attributes != null)
                 {
-                    dictionary[$"{target_monitor.PathTypeName}_Attributes_{serial}"] = ret ?
+                    dictionary[$"{serial}_{target_monitor.PathTypeName}_Attributes"] = ret ?
                         string.Format("{0} -> {1}",
                             MonitorFunctions.ToReadableAttributes(target_db.Attributes),
                             MonitorFunctions.ToReadableAttributes(target_monitor.Attributes)) :
@@ -141,7 +141,7 @@ namespace Audit.Lib
                 bool ret = target_monitor.MD5Hash != target_db.MD5Hash;
                 if (target_db.MD5Hash != null)
                 {
-                    dictionary[$"{target_monitor.PathTypeName}_MD5Hash_{serial}"] = ret ?
+                    dictionary[$"{serial}_{target_monitor.PathTypeName}_MD5Hash"] = ret ?
                         string.Format("{0} -> {1}",
                             target_db.MD5Hash,
                             target_monitor.MD5Hash) :
@@ -157,7 +157,7 @@ namespace Audit.Lib
                 bool ret = target_monitor.SHA256Hash != target_db.SHA256Hash;
                 if (target_db.SHA256Hash != null)
                 {
-                    dictionary[$"{target_monitor.PathTypeName}_SHA256Hash_{serial}"] = ret ?
+                    dictionary[$"{serial}_{target_monitor.PathTypeName}_SHA256Hash"] = ret ?
                         string.Format("{0} -> {1}",
                             target_db.SHA256Hash,
                             target_monitor.SHA256Hash) :
@@ -173,7 +173,7 @@ namespace Audit.Lib
                 bool ret = target_monitor.SHA512Hash != target_db.SHA512Hash;
                 if (target_db.SHA512Hash != null)
                 {
-                    dictionary[$"{target_monitor.PathTypeName}_SHA512Hash_{serial}"] = ret ?
+                    dictionary[$"{serial}_{target_monitor.PathTypeName}_SHA512Hash"] = ret ?
                         string.Format("{0} -> {1}",
                             target_db.SHA512Hash,
                             target_monitor.SHA512Hash) :
@@ -189,7 +189,7 @@ namespace Audit.Lib
                 bool ret = target_monitor.Size != target_db.Size;
                 if (target_db.Size != null)
                 {
-                    dictionary[$"{target_monitor.PathTypeName}_Size_{serial}"] = ret ?
+                    dictionary[$"{serial}_{target_monitor.PathTypeName}_Size"] = ret ?
                         string.Format("{0}({1}) -> {2}({3})",
                             target_db.Size,
                             MonitorFunctions.ToReadableSize(target_db.Size ?? 0),
@@ -225,7 +225,7 @@ namespace Audit.Lib
                 bool ret = target_monitor.CreationTime != target_db.CreationTime;
                 if (target_db.CreationTime != null)
                 {
-                    dictionary[$"{target_monitor.PathTypeName}_CreationTime_{serial}"] = ret ?
+                    dictionary[$"{serial}_{target_monitor.PathTypeName}_CreationTime"] = ret ?
                         string.Format("{0} -> {1}",
                             target_db.CreationTime,
                             target_monitor.CreationTime) :
@@ -241,7 +241,7 @@ namespace Audit.Lib
                 bool ret = target_monitor.LastWriteTime != target_db.LastWriteTime;
                 if (target_db.LastWriteTime != null)
                 {
-                    dictionary[$"{target_monitor.PathTypeName}_LastWriteTime_{serial}"] = ret ?
+                    dictionary[$"{serial}_{target_monitor.PathTypeName}_LastWriteTime"] = ret ?
                         string.Format("{0} -> {1}",
                             target_db.LastWriteTime,
                             target_monitor.LastWriteTime) :
@@ -257,7 +257,7 @@ namespace Audit.Lib
                 bool ret = target_monitor.LastAccessTime != target_db.LastAccessTime;
                 if (target_db.LastAccessTime != null)
                 {
-                    dictionary[$"{target_monitor.PathTypeName}_LastAccessTime_{serial}"] = ret ?
+                    dictionary[$"{serial}_{target_monitor.PathTypeName}_LastAccessTime"] = ret ?
                         string.Format("{0} -> {1}",
                             target_db.LastAccessTime,
                             target_monitor.LastAccessTime) :
@@ -273,7 +273,7 @@ namespace Audit.Lib
                 bool ret = target_monitor.Access != target_db.Access;
                 if (target_db.Access != null)
                 {
-                    dictionary[$"{target_monitor.PathTypeName}_Access_{serial}"] = ret ?
+                    dictionary[$"{serial}_{target_monitor.PathTypeName}_Access"] = ret ?
                         string.Format("{0} -> {1}",
                             target_db.Access,
                             target_monitor.Access) :
@@ -289,7 +289,7 @@ namespace Audit.Lib
                 bool ret = target_monitor.Owner != target_db.Owner;
                 if (target_db.Owner != null)
                 {
-                    dictionary[$"{target_monitor.PathTypeName}_Owner_{serial}"] = ret ?
+                    dictionary[$"{serial}_{target_monitor.PathTypeName}_Owner"] = ret ?
                         string.Format("{0} -> {1}",
                             target_db.Owner,
                             target_monitor.Owner) :
@@ -305,7 +305,7 @@ namespace Audit.Lib
                 bool ret = target_monitor.Inherited != target_db.Inherited;
                 if (target_db.Inherited != null)
                 {
-                    dictionary[$"{target_monitor.PathTypeName}_Inherited_{serial}"] = ret ?
+                    dictionary[$"{serial}_{target_monitor.PathTypeName}_Inherited"] = ret ?
                         string.Format("{0} -> {1}",
                             target_db.Inherited,
                             target_monitor.Inherited) :
@@ -321,7 +321,7 @@ namespace Audit.Lib
                 bool ret = !target_monitor.Attributes.SequenceEqual(target_db.Attributes ?? new bool[0] { });
                 if (target_db.Attributes != null)
                 {
-                    dictionary[$"{target_monitor.PathTypeName}_Attributes_{serial}"] = ret ?
+                    dictionary[$"{serial}_{target_monitor.PathTypeName}_Attributes"] = ret ?
                         string.Format("{0} -> {1}",
                             MonitorFunctions.ToReadableAttributes(target_db.Attributes),
                             MonitorFunctions.ToReadableAttributes(target_monitor.Attributes)) :
@@ -337,7 +337,7 @@ namespace Audit.Lib
                 bool ret = !target_monitor.ChildCount.SequenceEqual(target_db.ChildCount ?? new int[0] { });
                 if (target_db.ChildCount != null)
                 {
-                    dictionary[$"{target_monitor.PathTypeName}_ChildCount_{serial}"] = ret ?
+                    dictionary[$"{serial}_{target_monitor.PathTypeName}_ChildCount"] = ret ?
                         string.Format("{0} -> {1}",
                             MonitorFunctions.ToReadableChildCount(target_db.ChildCount, target_monitor.PathType == PathType.Directory),
                             MonitorFunctions.ToReadableChildCount(target_monitor.ChildCount, target_monitor.PathType == PathType.Directory)) :
@@ -369,7 +369,7 @@ namespace Audit.Lib
                 bool ret = target_monitor.Access != target_db.Access;
                 if (target_db.Access != null)
                 {
-                    dictionary[$"{target_monitor.PathTypeName}_Access_{serial}"] = ret ?
+                    dictionary[$"{serial}_{target_monitor.PathTypeName}_Access"] = ret ?
                         string.Format("{0} -> {1}",
                             target_db.Access,
                             target_monitor.Access) :
@@ -385,7 +385,7 @@ namespace Audit.Lib
                 bool ret = target_monitor.Owner != target_db.Owner;
                 if (target_db.Owner != null)
                 {
-                    dictionary[$"{target_monitor.PathTypeName}_Owner_{serial}"] = ret ?
+                    dictionary[$"{serial}_{target_monitor.PathTypeName}_Owner"] = ret ?
                         string.Format("{0} -> {1}",
                             target_db.Owner,
                             target_monitor.Owner) :
@@ -401,7 +401,7 @@ namespace Audit.Lib
                 bool ret = target_monitor.Inherited != target_db.Inherited;
                 if (target_db.Inherited != null)
                 {
-                    dictionary[$"{target_monitor.PathTypeName}_Inherited_{serial}"] = ret ?
+                    dictionary[$"{serial}_{target_monitor.PathTypeName}_Inherited"] = ret ?
                         string.Format("{0} -> {1}",
                             target_db.Inherited,
                             target_monitor.Inherited) :
@@ -417,7 +417,7 @@ namespace Audit.Lib
                 bool ret = !target_monitor.ChildCount.SequenceEqual(target_db.ChildCount ?? new int[0] { });
                 if (target_db.ChildCount != null)
                 {
-                    dictionary[$"{target_monitor.PathTypeName}_ChildCount_{serial}"] = ret ?
+                    dictionary[$"{serial}_{target_monitor.PathTypeName}_ChildCount"] = ret ?
                         string.Format("{0} -> {1}",
                             MonitorFunctions.ToReadableChildCount(target_db.ChildCount, target_monitor.PathType == PathType.Directory),
                             MonitorFunctions.ToReadableChildCount(target_monitor.ChildCount, target_monitor.PathType == PathType.Directory)) :
@@ -448,7 +448,7 @@ namespace Audit.Lib
                 bool ret = target_monitor.MD5Hash != target_db.MD5Hash;
                 if (target_db.MD5Hash != null)
                 {
-                    dictionary[$"{target_monitor.PathTypeName}_MD5Hash_{serial}"] = ret ?
+                    dictionary[$"{serial}_{target_monitor.PathTypeName}_MD5Hash"] = ret ?
                         string.Format("{0} -> {1}",
                             target_db.MD5Hash,
                             target_monitor.MD5Hash) :
@@ -464,7 +464,7 @@ namespace Audit.Lib
                 bool ret = target_monitor.SHA256Hash != target_db.SHA256Hash;
                 if (target_db.SHA256Hash != null)
                 {
-                    dictionary[$"{target_monitor.PathTypeName}_SHA256Hash_{serial}"] = ret ?
+                    dictionary[$"{serial}_{target_monitor.PathTypeName}_SHA256Hash"] = ret ?
                         string.Format("{0} -> {1}",
                             target_db.SHA256Hash,
                             target_monitor.SHA256Hash) :
@@ -480,7 +480,7 @@ namespace Audit.Lib
                 bool ret = target_monitor.SHA512Hash != target_db.SHA512Hash;
                 if (target_db.SHA512Hash != null)
                 {
-                    dictionary[$"{target_monitor.PathTypeName}_SHA512Hash_{serial}"] = ret ?
+                    dictionary[$"{serial}_{target_monitor.PathTypeName}_SHA512Hash"] = ret ?
                         string.Format("{0} -> {1}",
                             target_db.SHA512Hash,
                             target_monitor.SHA512Hash) :
@@ -496,7 +496,7 @@ namespace Audit.Lib
                 bool ret = target_monitor.RegistryType != target_db.RegistryType;
                 if(target_db.RegistryType != null)
                 {
-                    dictionary[$"{target_monitor.PathTypeName}_RegistryType_{serial}"] = ret ?
+                    dictionary[$"{serial}_{target_monitor.PathTypeName}_RegistryType"] = ret ?
                         string.Format("{0} -> {1}",
                             target_db.RegistryType,
                             target_monitor.RegistryType) :
