@@ -122,7 +122,7 @@ namespace Audit.Lib
             if (target_monitor.IsAttributes ?? false)
             {
                 target_monitor.CheckAttributes();
-                bool ret = !target_monitor.Attributes.SequenceEqual(target_db.Attributes);
+                bool ret = !target_monitor.Attributes.SequenceEqual(target_db.Attributes ?? new bool[0] { });
                 if (target_db.Attributes != null)
                 {
                     dictionary[$"{target_monitor.PathTypeName}_Attributes_{serial}"] = ret ?
@@ -318,7 +318,7 @@ namespace Audit.Lib
             if (target_monitor.IsAttributes ?? false)
             {
                 target_monitor.CheckAttributes();
-                bool ret = !target_monitor.Attributes.SequenceEqual(target_db.Attributes);
+                bool ret = !target_monitor.Attributes.SequenceEqual(target_db.Attributes ?? new bool[0] { });
                 if (target_db.Attributes != null)
                 {
                     dictionary[$"{target_monitor.PathTypeName}_Attributes_{serial}"] = ret ?
@@ -334,7 +334,7 @@ namespace Audit.Lib
             if ((target_monitor.IsChildCount ?? false) && depth == 0)
             {
                 target_monitor.CheckChildCount();
-                bool ret = !target_monitor.ChildCount.SequenceEqual(target_db.ChildCount);
+                bool ret = !target_monitor.ChildCount.SequenceEqual(target_db.ChildCount ?? new int[0] { });
                 if (target_db.ChildCount != null)
                 {
                     dictionary[$"{target_monitor.PathTypeName}_ChildCount_{serial}"] = ret ?
@@ -414,7 +414,7 @@ namespace Audit.Lib
             if ((target_monitor.IsChildCount ?? false) && depth == 0)
             {
                 target_monitor.CheckChildCount();
-                bool ret = !target_monitor.ChildCount.SequenceEqual(target_db.ChildCount);
+                bool ret = !target_monitor.ChildCount.SequenceEqual(target_db.ChildCount ?? new int[0] { });
                 if (target_db.ChildCount != null)
                 {
                     dictionary[$"{target_monitor.PathTypeName}_ChildCount_{serial}"] = ret ?

@@ -110,6 +110,13 @@ namespace WatchMonitorPlugin
                         Success |= RecursiveTree(collection, dictionary, regKey, 0);
                     }
                 }
+                foreach (string uncheckedPath in collection.GetUncheckedKeys())
+                {
+                    _serial++;
+                    dictionary[$"remove_{_serial}"] = uncheckedPath;
+                    collection.Remove(uncheckedPath);
+                    Success = true;
+                }
             }
             collection.Save(dbDir, _ID);
         }
