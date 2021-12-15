@@ -75,8 +75,6 @@ namespace WatchMonitorPlugin
             this.Success = true;
             _MaxDepth = 5;
 
-
-
             if (_NameA != null && _NameB != null)
             {
                 _serial++;
@@ -87,17 +85,26 @@ namespace WatchMonitorPlugin
                     MonitoredTarget targetB = CreateForRegistryValue(keyB, _NameB, "registryB");
                     targetA.CheckExists();
                     targetB.CheckExists();
+
                     if ((targetA.Exists ?? false) && (targetB.Exists ?? false))
                     {
-
-
-
-                        // ****
-
-
+                        dictionary["registryA_Exists"] = _PathA + "\\" + _NameA;
+                        dictionary["registryB_Exists"] = _PathB + "\\" + _NameB;
+                        Success &= CompareFunctions.CheckRegistryValue(targetA, targetB, dictionary, _serial);
                     }
-
-
+                    else
+                    {
+                        if (!targetA.Exists ?? false)
+                        {
+                            dictionary["registryA_NotExists"] = _PathA;
+                            Success = false;
+                        }
+                        if (!targetB.Exists ?? false)
+                        {
+                            dictionary["registryB_NotExists"] = _PathB;
+                            Success = false;
+                        }
+                    }
                 }
             }
             else
@@ -118,10 +125,51 @@ namespace WatchMonitorPlugin
             bool ret = false;
 
             _serial++;
+            MonitoredTarget targetA = CreateForRegistryKey(keyA, "registryA");
+            MonitoredTarget targetB = CreateForRegistryKey(keyB, "registryB");
+            targetA.CheckExists();
+            targetB.CheckExists();
+            if ((targetA.Exists ?? false) && (targetB.Exists ?? false))
+            {
+                dictionary[$"registryA_Exists_{_serial}"] = keyA.Name;
+                dictionary[$"registryB_Exists_{_serial}"] = keyB.Name;
+                ret &= CompareFunctions.CheckRegistryKey(targetA, targetB, dictionary, _serial, depth);
 
+                if (depth < _MaxDepth)
+                {
+                    foreach (string childName in keyA.GetValueNames())
+                    {
+                        _serial++;
+                        MonitoredTarget targetA_leaf = CreateForRegistryValue(keyA, childName, "registryA");
+                        MonitoredTarget targetB_leaf = CreateForRegistryValue(keyB, childName, "registryB");
+                        targetA_leaf.CheckExists();
+                        targetB_leaf.CheckExists();
 
-            // ****
-
+                        if (targetB_leaf.Exists ?? false)
+                        {
+                            ret &= CompareFunctions.CheckRegistryValue(targetA_leaf, targetB_leaf, dictionary, _serial);
+                        }
+                        else
+                        {
+                            dictionary[$"registryB_NotExists_{_serial}"] = keyB.Name + "\\" + childName;
+                            ret = false;
+                        }
+                    }
+                }
+            }
+            else
+            {
+                if (!targetA.Exists ?? false)
+                {
+                    dictionary[$"registryA_NotExists_{_serial}"] = keyA.Name;
+                    ret = false;
+                }
+                if (!targetB.Exists ?? false)
+                {
+                    dictionary[$"registryB_NotExists_{_serial}"] = keyB.Name;
+                    ret = false;
+                }
+            }
 
             return ret;
         }

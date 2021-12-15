@@ -133,23 +133,14 @@ namespace WatchMonitorPlugin
                             ret = false;
                         }
                     }
-                    foreach (string childPathA in System.IO.Directory.GetDirectories(pathA))
+                    foreach (string childPath in System.IO.Directory.GetDirectories(pathA))
                     {
-                        string childPathB = Path.Combine(pathB, Path.GetFileName(childPathA));
-                        MonitoredTarget targetA_leaf = CreateForDirectory(childPathA, "directoryA");
-                        MonitoredTarget targetB_leaf = CreateForDirectory(childPathB, "directoryB");
-                        targetA_leaf.CheckExists();
-                        targetB_leaf.CheckExists();
-
-                        if (targetB_leaf.Exists ?? false)
-                        {
-                            ret &= CompareFunctions.CheckFile(targetA_leaf, targetB_leaf, dictionary, _serial);
-                        }
-                        else
-                        {
-                            dictionary[$"directoryB_NotExists_{_serial}"] = childPathB;
-                            ret = false;
-                        }
+                        string childPathB = Path.Combine(pathB, Path.GetFileName(childPath));
+                        RecursiveTree(
+                            childPath,
+                            Path.Combine(pathB, Path.GetFileName(childPath)),
+                            dictionary,
+                            _serial);
                     }
                 }
             }
