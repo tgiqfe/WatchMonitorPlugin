@@ -55,14 +55,12 @@ namespace Audit.Lib
 
         [JsonIgnore]
         public string PathTypeName { get; set; }
-
         [JsonIgnore]
         public string Path { get; set; }
         [JsonIgnore]
         public RegistryKey Key { get; set; }
         [JsonIgnore]
         public string Name { get; set; }
-
         private FileInfo _FileInfo = null;
         [JsonIgnore]
         public FileInfo FileInfo

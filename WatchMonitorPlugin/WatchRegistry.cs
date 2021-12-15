@@ -107,28 +107,7 @@ namespace WatchMonitorPlugin
                     _checkingPath = path;
                     using (RegistryKey regKey = RegistryControl.GetRegistryKey(path, false, false))
                     {
-                        _serial++;
-                        dictionary[$"registry_{_serial}"] = (path == _checkingPath) ?
-                            path :
-                            path.Replace(_checkingPath, "");
-                        MonitoredTarget target_db = _Begin ?
-                            CreateForRegistryKey(regKey, "registry") :
-                            collection.GetMonitoredTarget(path) ?? CreateForRegistryKey(regKey, "registry");
-
-                        MonitoredTarget target_monitor = CreateForRegistryKey(regKey, "registry");
-                        target_monitor.Merge_is_Property(target_db);
-                        target_monitor.CheckExists();
-
-                        if (target_monitor.Exists ?? false)
-                        {
-                            Success |= WatchFunctions.CheckRegistrykey(target_monitor, target_db, dictionary, _serial, 0);
-
-
-                            //  再起処理が必要
-
-
-
-                        }
+                        Success |= RecursiveTree(collection, dictionary, regKey, 0);
                     }
                 }
             }
@@ -154,27 +133,38 @@ namespace WatchMonitorPlugin
             if (target_monitor.Exists ?? false)
             {
                 ret |= WatchFunctions.CheckRegistrykey(target_monitor, target_db, dictionary, _serial, depth);
-                
+            }
+            collection.SetMonitoredTarget(regKey, target_monitor);
+
+            if (depth < _MaxDepth && (target_monitor.Exists ?? false))
+            {
                 foreach (string name in regKey.GetValueNames())
                 {
                     _serial++;
                     dictionary[$"registry_{_serial}"] = regKey.Name + "\\" + name;
-                    MonitoredTarget target_dbfs = _Begin ?
+                    MonitoredTarget target_db_leaf = _Begin ?
                         CreateForRegistryValue(regKey, name, "registry") :
                         collection.GetMonitoredTarget(regKey, name) ?? CreateForRegistryValue(regKey, name, "registry");
 
-                    MonitoredTarget target_monitorfs = CreateForRegistryValue(regKey, name, "registry");
-                    target_monitorfs.Merge_is_Property(target_dbfs);
-                    target_monitorfs.CheckExists();
+                    MonitoredTarget target_monitor_leaf = CreateForRegistryValue(regKey, name, "registry");
+                    target_monitor_leaf.Merge_is_Property(target_db_leaf);
+                    target_monitor_leaf.CheckExists();
 
-                    if (target_monitor.Exists ?? false)
+                    if (target_monitor_leaf.Exists ?? false)
                     {
-                        Success |= WatchFunctions.CheckRegistryValue(target_monitor, target_db, dictionary, _serial);
+                        ret |= WatchFunctions.CheckRegistryValue(target_monitor_leaf, target_db_leaf, dictionary, _serial);
                     }
-                    collection.SetMonitoredTarget(regKey, name, target_monitorfs);
+                    collection.SetMonitoredTarget(regKey, name, target_monitor_leaf);
+                }
+                foreach (string keyPath in regKey.GetSubKeyNames())
+                {
+                    using(RegistryKey subRegKey = RegistryControl.GetRegistryKey(keyPath, false, false))
+                    {
+                        ret |= RecursiveTree(collection, dictionary, subRegKey, depth + 1);
+                    }
+                    
                 }
             }
-            collection.SetMonitoredTarget(regKey, target_monitor);
 
             return ret;
         }

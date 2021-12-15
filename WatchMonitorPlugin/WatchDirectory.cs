@@ -122,25 +122,25 @@ namespace WatchMonitorPlugin
             }
             collection.SetMonitoredTarget(path, target_monitor);
 
-            if (depth < _MaxDepth)
+            if (depth < _MaxDepth && (target_monitor.Exists ?? false))
             {
                 foreach (string filePath in Directory.GetFiles(path))
                 {
                     _serial++;
                     dictionary[$"file_{_serial}"] = filePath.Replace(_checkingPath, "");
-                    target_db = _Begin ?
+                    MonitoredTarget target_db_leaf = _Begin ?
                         CreateForFile(filePath, "file") :
                         collection.GetMonitoredTarget(filePath) ?? CreateForFile(path, "file");
 
-                    target_monitor = CreateForDirectory(filePath, "file");
-                    target_monitor.Merge_is_Property(target_db);
-                    target_monitor.CheckExists();
+                    MonitoredTarget target_monitor_leaf = CreateForDirectory(filePath, "file");
+                    target_monitor_leaf.Merge_is_Property(target_db_leaf);
+                    target_monitor_leaf.CheckExists();
 
-                    if (target_monitor.Exists ?? false)
+                    if (target_monitor_leaf.Exists ?? false)
                     {
-                        ret |= WatchFunctions.CheckFile(target_monitor, target_db, dictionary, _serial);
+                        ret |= WatchFunctions.CheckFile(target_monitor_leaf, target_db_leaf, dictionary, _serial);
                     }
-                    collection.SetMonitoredTarget(filePath, target_monitor);
+                    collection.SetMonitoredTarget(filePath, target_monitor_leaf);
                 }
                 foreach (string dirPath in Directory.GetDirectories(path))
                 {
