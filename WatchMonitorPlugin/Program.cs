@@ -15,17 +15,24 @@ namespace WatchMonitorPlugin
             Console.WriteLine("Watch対象を指定");
             string targetFile = Console.ReadLine();
 
-            string[] targetFiles = targetFile.Contains(";") ?
+            string[] targetPaths = targetFile.Contains(";") ?
                 targetFile.Split(';').Select(x => x.Trim()).ToArray() :
                 new string[1] { targetFile };
 
-            if(targetFiles[0].StartsWith("HKEY", StringComparison.OrdinalIgnoreCase))
+            if (targetPaths[0].StartsWith("[reg]", StringComparison.OrdinalIgnoreCase))
             {
-                Console.WriteLine("Watch対象のレジストリ値の名前を指定");
+                string targetPath = targetPaths[0].Substring(0, targetPaths[0].LastIndexOf("\\"));
+                string valueName = targetPaths[0].Substring(0, targetPaths[0].LastIndexOf("\\") + 1);
+                string[] targetNames = valueName.Contains(";") ?
+                    valueName.Split(';').Select(x => x.Trim()).ToArray() :
+                    new string[1] { valueName };
+                TestWatchRegistryValue(targetPath, targetNames);
             }
             else
             {
-                TestWatchDirectory(targetFiles);
+                //TestWatchFile(targetPaths);
+                //TestWatchDirectory(targetPaths);
+                TestWatchRegistryKey(targetPaths);
             }
 
             Console.ReadLine();
@@ -122,6 +129,127 @@ namespace WatchMonitorPlugin
             }
 
             void checkWatchDirectory(WatchDirectory watch)
+            {
+                watch.MainProcess();
+                bool success = watch.Success;
+                Dictionary<string, string> dictionary = watch.Propeties;
+
+                //  確認用
+                foreach (KeyValuePair<string, string> pair in dictionary)
+                {
+                    Console.WriteLine(pair.Key + " : " + pair.Value);
+                }
+
+                if (success)
+                {
+                    Console.Write("[");
+                    Console.ForegroundColor = ConsoleColor.Green;
+                    Console.Write("Success");
+                    Console.ResetColor();
+                    Console.WriteLine("]");
+                }
+                else
+                {
+                    Console.Write("[");
+                    Console.ForegroundColor = ConsoleColor.Red;
+                    Console.Write("Failed");
+                    Console.ResetColor();
+                    Console.WriteLine("]");
+                }
+            }
+        }
+
+        private static void TestWatchRegistryKey(string[] targetPaths)
+        {
+            WatchRegistry beginWatch = new WatchRegistry()
+            {
+                _ID = ID,
+                _Path = targetPaths,
+                _IsMD5Hash = true,
+                _IsRegistryType = true,
+            };
+            checkWatchRegistryKey(beginWatch);
+
+            while (true)
+            {
+                var key = Console.ReadKey(false);
+                switch (key.Key)
+                {
+                    case ConsoleKey.Enter:
+                        var tempWatch = new WatchRegistry()
+                        {
+                            _ID = ID,
+                            _Path = targetPaths,
+                        };
+                        checkWatchRegistryKey(tempWatch);
+                        break;
+                    case ConsoleKey.Escape:
+                        return;
+                }
+            }
+
+            void checkWatchRegistryKey(WatchRegistry watch)
+            {
+                watch.MainProcess();
+                bool success = watch.Success;
+                Dictionary<string, string> dictionary = watch.Propeties;
+
+                //  確認用
+                foreach (KeyValuePair<string, string> pair in dictionary)
+                {
+                    Console.WriteLine(pair.Key + " : " + pair.Value);
+                }
+
+                if (success)
+                {
+                    Console.Write("[");
+                    Console.ForegroundColor = ConsoleColor.Green;
+                    Console.Write("Success");
+                    Console.ResetColor();
+                    Console.WriteLine("]");
+                }
+                else
+                {
+                    Console.Write("[");
+                    Console.ForegroundColor = ConsoleColor.Red;
+                    Console.Write("Failed");
+                    Console.ResetColor();
+                    Console.WriteLine("]");
+                }
+            }
+        }
+
+        private static void TestWatchRegistryValue(string targetPath, string[] targetNames)
+        {
+            WatchRegistry beginWatch = new WatchRegistry()
+            {
+                _ID = ID,
+                _Path = new string[1] { targetPath },
+                _Name = targetNames,
+                _IsMD5Hash = true,
+                _IsRegistryType = true,
+            };
+            checkWatchRegistryValue(beginWatch);
+
+            while (true)
+            {
+                var key = Console.ReadKey(false);
+                switch (key.Key)
+                {
+                    case ConsoleKey.Enter:
+                        var tempWatch = new WatchRegistry()
+                        {
+                            _ID = ID,
+                            _Path = new string[1] { targetPath },
+                        };
+                        checkWatchRegistryValue(tempWatch);
+                        break;
+                    case ConsoleKey.Escape:
+                        return;
+                }
+            }
+
+            void checkWatchRegistryValue(WatchRegistry watch)
             {
                 watch.MainProcess();
                 bool success = watch.Success;
