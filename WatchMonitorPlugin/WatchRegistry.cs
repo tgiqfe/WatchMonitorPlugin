@@ -83,7 +83,7 @@ namespace WatchMonitorPlugin
                     foreach (string name in _Name)
                     {
                         _serial++;
-                        dictionary[$"registry_{_serial}"] = regKey.Name + "\\" + name;
+                        dictionary[$"{_serial}_registry"] = regKey.Name + "\\" + name;
                         MonitoredTarget target_dbfs = _Begin ?
                             CreateForRegistryValue(regKey, name, "registry") :
                             collection.GetMonitoredTarget(regKey, name) ?? CreateForRegistryValue(regKey, name, "registry");
@@ -110,6 +110,13 @@ namespace WatchMonitorPlugin
                         Success |= RecursiveTree(collection, dictionary, regKey, 0);
                     }
                 }
+                foreach (string uncheckedPath in collection.GetUncheckedKeys())
+                {
+                    _serial++;
+                    dictionary[$"{_serial}_remove"] = uncheckedPath;
+                    collection.Remove(uncheckedPath);
+                    Success = true;
+                }
             }
             collection.Save(dbDir, _ID);
         }
@@ -119,7 +126,7 @@ namespace WatchMonitorPlugin
             bool ret = false;
 
             _serial++;
-            dictionary[$"registry_{_serial}"] = (regKey.Name == _checkingPath) ?
+            dictionary[$"{_serial}_registry"] = (regKey.Name == _checkingPath) ?
                 regKey.Name :
                 regKey.Name.Replace(_checkingPath, "");
             MonitoredTarget target_db = _Begin ?
@@ -141,7 +148,7 @@ namespace WatchMonitorPlugin
                 foreach (string name in regKey.GetValueNames())
                 {
                     _serial++;
-                    dictionary[$"registry_{_serial}"] = regKey.Name + "\\" + name;
+                    dictionary[$"{_serial}_registry"] = regKey.Name + "\\" + name;
                     MonitoredTarget target_db_leaf = _Begin ?
                         CreateForRegistryValue(regKey, name, "registry") :
                         collection.GetMonitoredTarget(regKey, name) ?? CreateForRegistryValue(regKey, name, "registry");

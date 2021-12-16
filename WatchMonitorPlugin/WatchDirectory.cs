@@ -65,7 +65,7 @@ namespace WatchMonitorPlugin
 
         private MonitoredTarget CreateForDirectory(string path, string pathTypeName)
         {
-            return new MonitoredTarget(PathType.File, path)
+            return new MonitoredTarget(PathType.Directory, path)
             {
                 PathTypeName = pathTypeName,
                 IsCreationTime = _IsCreationTime,
@@ -92,6 +92,13 @@ namespace WatchMonitorPlugin
                 _checkingPath = path;
                 Success |= RecursiveTree(collection, dictionary, path, 0);
             }
+            foreach (string uncheckedPath in collection.GetUncheckedKeys())
+            {
+                _serial++;
+                dictionary[$"{_serial}_remove"] = uncheckedPath;
+                collection.Remove(uncheckedPath);
+                Success = true;
+            }
             collection.Save(dbDir, _ID);
 
 
@@ -105,14 +112,14 @@ namespace WatchMonitorPlugin
             bool ret = false;
 
             _serial++;
-            dictionary[$"directory_{_serial}"] = (path == _checkingPath) ?
+            dictionary[$"{_serial}_directory"] = (path == _checkingPath) ?
                 path :
                 path.Replace(_checkingPath, "");
             MonitoredTarget target_db = _Begin ?
-                CreateForFile(path, "directory") :
-                collection.GetMonitoredTarget(path) ?? CreateForFile(path, "directory");
+                CreateForDirectory(path, "directory") :
+                collection.GetMonitoredTarget(path) ?? CreateForDirectory(path, "directory");
 
-            MonitoredTarget target_monitor = CreateForFile(path, "directory");
+            MonitoredTarget target_monitor = CreateForDirectory(path, "directory");
             target_monitor.Merge_is_Property(target_db);
             target_monitor.CheckExists();
 
@@ -127,7 +134,7 @@ namespace WatchMonitorPlugin
                 foreach (string filePath in Directory.GetFiles(path))
                 {
                     _serial++;
-                    dictionary[$"file_{_serial}"] = filePath.Replace(_checkingPath, "");
+                    dictionary[$"{_serial}_file"] = filePath.Replace(_checkingPath, "");
                     MonitoredTarget target_db_leaf = _Begin ?
                         CreateForFile(filePath, "file") :
                         collection.GetMonitoredTarget(filePath) ?? CreateForFile(path, "file");

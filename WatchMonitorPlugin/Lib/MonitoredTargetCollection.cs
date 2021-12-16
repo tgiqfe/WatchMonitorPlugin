@@ -14,7 +14,7 @@ namespace Audit.Lib
     {
         private List<string> _CheckedKeys = new List<string>();
 
-        const string REGPATH_PREFIX = "[registry]";
+        const string REGPATH_PREFIX = "[reg]";
 
         public MonitoredTargetCollection() { }
 
