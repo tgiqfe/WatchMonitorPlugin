@@ -12,8 +12,22 @@ namespace WatchMonitorPlugin
 
         public static void Main(string[] args)
         {
+            /*
+            //  Watch用テスト
             Console.WriteLine("Watch対象を指定");
             string targetFile = Console.ReadLine();
+            */
+
+            //  Compare用テスト
+            Console.WriteLine("Compare対象を指定 (PathA)");
+            string targetPAthA = Console.ReadLine();
+
+            Console.WriteLine("Compare対象を指定 (PathB)");
+            string targetPathB = Console.ReadLine();
+
+
+            //  作成中！
+
 
 
             string[] targetPaths = targetFile.Contains(";") ?
@@ -27,13 +41,14 @@ namespace WatchMonitorPlugin
                 string[] targetNames = valueName.Contains(";") ?
                     valueName.Split(';').Select(x => x.Trim()).ToArray() :
                     new string[1] { valueName };
-                TestWatchRegistryValue(targetPath, targetNames);
+                //TestWatchRegistryValue(targetPath, targetNames);
             }
             else
             {
                 //TestWatchFile(targetPaths);
                 //TestWatchDirectory(targetPaths);
-                TestWatchRegistryKey(targetPaths);
+                //TestWatchRegistryKey(targetPaths);
+                TestCompareFile(targetPathA, targtePathB);
             }
 
             Console.ReadLine();
@@ -280,6 +295,39 @@ namespace WatchMonitorPlugin
                     Console.ResetColor();
                     Console.WriteLine("]");
                 }
+            }
+        }
+
+        private static void TestCompareFile(string pathA, string pathB)
+        {
+            CompareFile compare = new CompareFile()
+            {
+                _PathA = pathA,
+                _PathB = pathB,
+                _IsLastWriteTime = true,
+                _IsMD5Hash = true,
+                _IsSize = true,
+            };
+
+            compare.MainProcess();
+            bool success = compare.Success;
+            Dictionary<string, string> dictionary = compare.Propeties;
+
+            if (success)
+            {
+                Console.Write("[");
+                Console.ForegroundColor = ConsoleColor.Green;
+                Console.Write("Success");
+                Console.ResetColor();
+                Console.WriteLine("]");
+            }
+            else
+            {
+                Console.Write("[");
+                Console.ForegroundColor = ConsoleColor.Red;
+                Console.Write("Failed");
+                Console.ResetColor();
+                Console.WriteLine("]");
             }
         }
     }
