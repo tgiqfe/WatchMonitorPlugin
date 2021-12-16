@@ -22,8 +22,8 @@ namespace WatchMonitorPlugin
 
             if (targetPaths[0].StartsWith("[reg]", StringComparison.OrdinalIgnoreCase))
             {
-                string targetPath = targetPaths[0].Substring(0, targetPaths[0].LastIndexOf("\\"));
-                string valueName = targetPaths[0].Substring(0, targetPaths[0].LastIndexOf("\\") + 1);
+                string targetPath = targetPaths[0].Substring(0, targetPaths[0].LastIndexOf("\\")).Substring(5);
+                string valueName = targetPaths[0].Substring(targetPaths[0].LastIndexOf("\\") + 1);
                 string[] targetNames = valueName.Contains(";") ?
                     valueName.Split(';').Select(x => x.Trim()).ToArray() :
                     new string[1] { valueName };
@@ -243,6 +243,7 @@ namespace WatchMonitorPlugin
                         {
                             _ID = ID,
                             _Path = new string[1] { targetPath },
+                            _Name = targetNames,
                         };
                         checkWatchRegistryValue(tempWatch);
                         break;
