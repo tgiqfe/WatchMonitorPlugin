@@ -10,50 +10,50 @@ using Microsoft.Win32;
 namespace Audit.Lib.Monitor
 {
     [System.Runtime.Versioning.SupportedOSPlatform("windows")]
-    internal class MonitoredTargetCollection : Dictionary<string, MonitoredTarget>
+    internal class MonitorTargetCollection : Dictionary<string, MonitorTarget>
     {
         private List<string> _CheckedKeys = new List<string>();
 
         const string REGPATH_PREFIX = "[reg]";
 
-        public MonitoredTargetCollection() { }
+        public MonitorTargetCollection() { }
 
         #region Get/Set MonitoredTarget
 
-        public MonitoredTarget GetMonitoredTarget(string path)
+        public MonitorTarget GetMonitoredTarget(string path)
         {
             string matchKey = this.Keys.FirstOrDefault(x => x.Equals(path, StringComparison.OrdinalIgnoreCase));
             return matchKey == null ? null : this[matchKey];
         }
 
-        public MonitoredTarget GetMonitoredTarget(RegistryKey regKey)
+        public MonitorTarget GetMonitoredTarget(RegistryKey regKey)
         {
             string matchKey = this.Keys.FirstOrDefault(x => x.Equals(regKey.Name, StringComparison.OrdinalIgnoreCase));
             return matchKey == null ? null : this[matchKey];
         }
 
-        public MonitoredTarget GetMonitoredTarget(RegistryKey regKey, string name)
+        public MonitorTarget GetMonitoredTarget(RegistryKey regKey, string name)
         {
             string regPath = REGPATH_PREFIX + regKey.Name + "\\" + name;
             string matchKey = this.Keys.FirstOrDefault(x => x.Equals(regPath, StringComparison.OrdinalIgnoreCase));
             return matchKey == null ? null : this[matchKey];
         }
 
-        public void SetMonitoredTarget(string path, MonitoredTarget target)
+        public void SetMonitoredTarget(string path, MonitorTarget target)
         {
             target.FullPath = path;
             this[path] = target;
             this._CheckedKeys.Add(path);
         }
 
-        public void SetMonitoredTarget(RegistryKey regKey, MonitoredTarget target)
+        public void SetMonitoredTarget(RegistryKey regKey, MonitorTarget target)
         {
             target.FullPath = regKey.Name;
             this[regKey.Name] = target;
             this._CheckedKeys.Add(regKey.Name);
         }
 
-        public void SetMonitoredTarget(RegistryKey regKey, string name, MonitoredTarget target)
+        public void SetMonitoredTarget(RegistryKey regKey, string name, MonitorTarget target)
         {
             string regPath = REGPATH_PREFIX + regKey.Name + "\\" + name;
             target.FullPath = regPath;
@@ -70,17 +70,17 @@ namespace Audit.Lib.Monitor
 
         #region Load/Save
 
-        public static MonitoredTargetCollection Load(string dbDir, string id)
+        public static MonitorTargetCollection Load(string dbDir, string id)
         {
             try
             {
                 using (var sr = new StreamReader(Path.Combine(dbDir, id), Encoding.UTF8))
                 {
-                    return JsonSerializer.Deserialize<MonitoredTargetCollection>(sr.ReadToEnd());
+                    return JsonSerializer.Deserialize<MonitorTargetCollection>(sr.ReadToEnd());
                 }
             }
             catch { }
-            return new MonitoredTargetCollection();
+            return new MonitorTargetCollection();
         }
 
         public void Save(string dbDir, string id)
