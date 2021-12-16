@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using IO.Lib;
 
-namespace Audit.Lib
+namespace Audit.Lib.Monitor
 {
     [System.Runtime.Versioning.SupportedOSPlatform("windows")]
     internal class WatchFunctions

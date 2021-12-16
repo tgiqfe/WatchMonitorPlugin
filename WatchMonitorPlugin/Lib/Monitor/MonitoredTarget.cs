@@ -10,7 +10,7 @@ using Microsoft.Win32;
 using System.Security.Cryptography;
 using System.Security.Principal;
 
-namespace Audit.Lib
+namespace Audit.Lib.Monitor
 {
     [System.Runtime.Versioning.SupportedOSPlatform("windows")]
     public class MonitoredTarget

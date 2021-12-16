@@ -7,7 +7,7 @@ using Microsoft.Win32;
 using System.Security.Cryptography;
 using IO.Lib;
 
-namespace Audit.Lib
+namespace Audit.Lib.Monitor
 {
     [System.Runtime.Versioning.SupportedOSPlatform("windows")]
     internal class MonitorFunctions
