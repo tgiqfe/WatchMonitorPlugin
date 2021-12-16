@@ -108,14 +108,8 @@ namespace WatchMonitorPlugin
                 _IsLastWriteTime = true,
                 _IsMD5Hash = true,
                 _IsChildCount = true,
-<<<<<<< HEAD
-                _IsAccess = true,
-            };
-            checkWatchFile(beginWatch);
-=======
             };
             checkWatchDirectory(beginWatch);
->>>>>>> 796658ddd18cd6953a6cb41d299ee7c58b39415b
 
             while (true)
             {
@@ -128,11 +122,7 @@ namespace WatchMonitorPlugin
                             _ID = ID,
                             _Path = targetPaths,
                         };
-<<<<<<< HEAD
-                        checkWatchFile(tempWatch);
-=======
                         checkWatchDirectory(tempWatch);
->>>>>>> 796658ddd18cd6953a6cb41d299ee7c58b39415b
                         break;
                     case ConsoleKey.Escape:
                         return;

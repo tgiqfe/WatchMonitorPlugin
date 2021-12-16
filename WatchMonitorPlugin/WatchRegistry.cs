@@ -119,6 +119,10 @@ namespace WatchMonitorPlugin
                 }
             }
             collection.Save(dbDir, _ID);
+
+
+
+            Propeties = dictionary;
         }
 
         private bool RecursiveTree(MonitoredTargetCollection collection, Dictionary<string, string> dictionary, RegistryKey regKey, int depth)
@@ -148,7 +152,7 @@ namespace WatchMonitorPlugin
                 foreach (string name in regKey.GetValueNames())
                 {
                     _serial++;
-                    dictionary[$"{_serial}_registry"] = regKey.Name + "\\" + name;
+                    dictionary[$"{_serial}_registry"] = (regKey.Name + "\\" + name).Replace(_checkingPath, "");
                     MonitoredTarget target_db_leaf = _Begin ?
                         CreateForRegistryValue(regKey, name, "registry") :
                         collection.GetMonitoredTarget(regKey, name) ?? CreateForRegistryValue(regKey, name, "registry");
@@ -165,7 +169,7 @@ namespace WatchMonitorPlugin
                 }
                 foreach (string keyPath in regKey.GetSubKeyNames())
                 {
-                    using(RegistryKey subRegKey = RegistryControl.GetRegistryKey(keyPath, false, false))
+                    using (RegistryKey subRegKey = regKey.OpenSubKey(keyPath, false))
                     {
                         ret |= RecursiveTree(collection, dictionary, subRegKey, depth + 1);
                     }
