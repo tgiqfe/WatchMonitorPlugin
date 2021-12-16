@@ -42,9 +42,9 @@ namespace WatchMonitorPlugin
         private string dbDir = @"C:\Users\User\Downloads\aaaa\dbdbdb";
         public Dictionary<string, string> Propeties = null;
 
-        private MonitoredTarget CreateForFile(string path, string pathTypeName)
+        private MonitorTarget CreateForFile(string path, string pathTypeName)
         {
-            return new MonitoredTarget(PathType.File, path)
+            return new MonitorTarget(PathType.File, path)
             {
                 PathTypeName = pathTypeName,
                 IsCreationTime = _IsCreationTime,
@@ -63,9 +63,9 @@ namespace WatchMonitorPlugin
             };
         }
 
-        private MonitoredTarget CreateForDirectory(string path, string pathTypeName)
+        private MonitorTarget CreateForDirectory(string path, string pathTypeName)
         {
-            return new MonitoredTarget(PathType.Directory, path)
+            return new MonitorTarget(PathType.Directory, path)
             {
                 PathTypeName = pathTypeName,
                 IsCreationTime = _IsCreationTime,
@@ -84,7 +84,7 @@ namespace WatchMonitorPlugin
         public void MainProcess()
         {
             var dictionary = new Dictionary<string, string>();
-            var collection = MonitoredTargetCollection.Load(dbDir, _ID);
+            var collection = MonitorTargetCollection.Load(dbDir, _ID);
             _MaxDepth ??= 5;
 
             foreach (string path in _Path)
@@ -107,7 +107,7 @@ namespace WatchMonitorPlugin
             Propeties = dictionary;
         }
 
-        private bool RecursiveTree(MonitoredTargetCollection collection, Dictionary<string, string> dictionary, string path, int depth)
+        private bool RecursiveTree(MonitorTargetCollection collection, Dictionary<string, string> dictionary, string path, int depth)
         {
             bool ret = false;
 
@@ -115,11 +115,11 @@ namespace WatchMonitorPlugin
             dictionary[$"{_serial}_directory"] = (path == _checkingPath) ?
                 path :
                 path.Replace(_checkingPath, "");
-            MonitoredTarget target_db = _Begin ?
+            MonitorTarget target_db = _Begin ?
                 CreateForDirectory(path, "directory") :
                 collection.GetMonitoredTarget(path) ?? CreateForDirectory(path, "directory");
 
-            MonitoredTarget target_monitor = CreateForDirectory(path, "directory");
+            MonitorTarget target_monitor = CreateForDirectory(path, "directory");
             target_monitor.Merge_is_Property(target_db);
             target_monitor.CheckExists();
 
@@ -135,11 +135,11 @@ namespace WatchMonitorPlugin
                 {
                     _serial++;
                     dictionary[$"{_serial}_file"] = filePath.Replace(_checkingPath, "");
-                    MonitoredTarget target_db_leaf = _Begin ?
+                    MonitorTarget target_db_leaf = _Begin ?
                         CreateForFile(filePath, "file") :
                         collection.GetMonitoredTarget(filePath) ?? CreateForFile(path, "file");
 
-                    MonitoredTarget target_monitor_leaf = CreateForDirectory(filePath, "file");
+                    MonitorTarget target_monitor_leaf = CreateForDirectory(filePath, "file");
                     target_monitor_leaf.Merge_is_Property(target_db_leaf);
                     target_monitor_leaf.CheckExists();
 

@@ -36,9 +36,9 @@ namespace WatchMonitorPlugin
 
         public Dictionary<string, string> Propeties = null;
 
-        private MonitoredTarget CreateForFile(string path, string pathTypeName)
+        private MonitorTarget CreateForFile(string path, string pathTypeName)
         {
-            return new MonitoredTarget(IO.Lib.PathType.File, path)
+            return new MonitorTarget(IO.Lib.PathType.File, path)
             {
                 PathTypeName = pathTypeName,
                 IsCreationTime = _IsCreationTime,
@@ -64,8 +64,8 @@ namespace WatchMonitorPlugin
             dictionary["fileB"] = _PathB;
             this.Success = true;
 
-            MonitoredTarget targetA = CreateForFile(_PathA, "fileA");
-            MonitoredTarget targetB = CreateForFile(_PathB, "fileB");
+            MonitorTarget targetA = CreateForFile(_PathA, "fileA");
+            MonitorTarget targetB = CreateForFile(_PathB, "fileB");
             targetA.CheckExists();
             targetB.CheckExists();
 

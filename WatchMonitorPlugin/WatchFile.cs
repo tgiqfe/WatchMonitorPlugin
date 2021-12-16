@@ -39,9 +39,9 @@ namespace WatchMonitorPlugin
         private string dbDir = @"C:\Users\User\Downloads\aaaa\dbdbdb";
         public Dictionary<string, string> Propeties = null;
 
-        private MonitoredTarget CreateForFile(string path, string pathTypeName)
+        private MonitorTarget CreateForFile(string path, string pathTypeName)
         {
-            return new MonitoredTarget(PathType.File, path)
+            return new MonitorTarget(PathType.File, path)
             {
                 PathTypeName = pathTypeName,
                 IsCreationTime = _IsCreationTime,
@@ -63,17 +63,17 @@ namespace WatchMonitorPlugin
         public void MainProcess()
         {
             var dictionary = new Dictionary<string, string>();
-            var collection = MonitoredTargetCollection.Load(dbDir, _ID);
+            var collection = MonitorTargetCollection.Load(dbDir, _ID);
 
             foreach (string path in _Path)
             {
                 _serial++;
                 dictionary[$"file_{_serial}"] = path;
-                MonitoredTarget target_db = _Begin ?
+                MonitorTarget target_db = _Begin ?
                     CreateForFile(path, "file") :
                     collection.GetMonitoredTarget(path) ?? CreateForFile(path, "file");
 
-                MonitoredTarget target_monitor = CreateForFile(path, "file");
+                MonitorTarget target_monitor = CreateForFile(path, "file");
                 target_monitor.Merge_is_Property(target_db);
                 target_monitor.CheckExists();
 

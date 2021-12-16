@@ -45,9 +45,9 @@ namespace WatchMonitorPlugin
         public Dictionary<string, string> Propeties = null;
 
 
-        private MonitoredTarget CreateForRegistryKey(RegistryKey key, string pathTypeName)
+        private MonitorTarget CreateForRegistryKey(RegistryKey key, string pathTypeName)
         {
-            return new MonitoredTarget(PathType.Registry, key)
+            return new MonitorTarget(PathType.Registry, key)
             {
                 PathTypeName = pathTypeName,
                 IsAccess = _IsAccess,
@@ -57,9 +57,9 @@ namespace WatchMonitorPlugin
             };
         }
 
-        private MonitoredTarget CreateForRegistryValue(RegistryKey key, string name, string pathTypeName)
+        private MonitorTarget CreateForRegistryValue(RegistryKey key, string name, string pathTypeName)
         {
-            return new MonitoredTarget(PathType.Registry, key, name)
+            return new MonitorTarget(PathType.Registry, key, name)
             {
                 PathTypeName = pathTypeName,
                 IsMD5Hash = _IsMD5Hash,
@@ -72,7 +72,7 @@ namespace WatchMonitorPlugin
         public void MainProcess()
         {
             var dictionary = new Dictionary<string, string>();
-            var collection = MonitoredTargetCollection.Load(dbDir, _ID);
+            var collection = MonitorTargetCollection.Load(dbDir, _ID);
             _MaxDepth ??= 5;
 
             if (_Name?.Length > 0)
@@ -84,11 +84,11 @@ namespace WatchMonitorPlugin
                     {
                         _serial++;
                         dictionary[$"{_serial}_registry"] = regKey.Name + "\\" + name;
-                        MonitoredTarget target_dbfs = _Begin ?
+                        MonitorTarget target_dbfs = _Begin ?
                             CreateForRegistryValue(regKey, name, "registry") :
                             collection.GetMonitoredTarget(regKey, name) ?? CreateForRegistryValue(regKey, name, "registry");
 
-                        MonitoredTarget target_monitorfs = CreateForRegistryValue(regKey, name, "registry");
+                        MonitorTarget target_monitorfs = CreateForRegistryValue(regKey, name, "registry");
                         target_monitorfs.Merge_is_Property(target_dbfs);
                         target_monitorfs.CheckExists();
 
@@ -125,7 +125,7 @@ namespace WatchMonitorPlugin
             Propeties = dictionary;
         }
 
-        private bool RecursiveTree(MonitoredTargetCollection collection, Dictionary<string, string> dictionary, RegistryKey regKey, int depth)
+        private bool RecursiveTree(MonitorTargetCollection collection, Dictionary<string, string> dictionary, RegistryKey regKey, int depth)
         {
             bool ret = false;
 
@@ -133,11 +133,11 @@ namespace WatchMonitorPlugin
             dictionary[$"{_serial}_registry"] = (regKey.Name == _checkingPath) ?
                 regKey.Name :
                 regKey.Name.Replace(_checkingPath, "");
-            MonitoredTarget target_db = _Begin ?
+            MonitorTarget target_db = _Begin ?
                 CreateForRegistryKey(regKey, "registry") :
                 collection.GetMonitoredTarget(regKey) ?? CreateForRegistryKey(regKey, "registry");
 
-            MonitoredTarget target_monitor = CreateForRegistryKey(regKey, "registry");
+            MonitorTarget target_monitor = CreateForRegistryKey(regKey, "registry");
             target_monitor.Merge_is_Property(target_db);
             target_monitor.CheckExists();
 
@@ -153,11 +153,11 @@ namespace WatchMonitorPlugin
                 {
                     _serial++;
                     dictionary[$"{_serial}_registry"] = (regKey.Name + "\\" + name).Replace(_checkingPath, "");
-                    MonitoredTarget target_db_leaf = _Begin ?
+                    MonitorTarget target_db_leaf = _Begin ?
                         CreateForRegistryValue(regKey, name, "registry") :
                         collection.GetMonitoredTarget(regKey, name) ?? CreateForRegistryValue(regKey, name, "registry");
 
-                    MonitoredTarget target_monitor_leaf = CreateForRegistryValue(regKey, name, "registry");
+                    MonitorTarget target_monitor_leaf = CreateForRegistryValue(regKey, name, "registry");
                     target_monitor_leaf.Merge_is_Property(target_db_leaf);
                     target_monitor_leaf.CheckExists();
 

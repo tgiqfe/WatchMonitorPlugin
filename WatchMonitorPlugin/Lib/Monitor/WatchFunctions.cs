@@ -18,7 +18,7 @@ namespace Audit.Lib.Monitor
         /// <param name="dictionary"></param>
         /// <param name="serial"></param>
         /// <returns></returns>
-        internal static bool CheckFile(MonitoredTarget target_monitor, MonitoredTarget target_db, Dictionary<string, string> dictionary, int serial)
+        internal static bool CheckFile(MonitorTarget target_monitor, MonitorTarget target_db, Dictionary<string, string> dictionary, int serial)
         {
             bool result = false;
 
@@ -214,7 +214,7 @@ namespace Audit.Lib.Monitor
         /// <param name="serial"></param>
         /// <param name="depth"></param>
         /// <returns></returns>
-        internal static bool CheckDirectory(MonitoredTarget target_monitor, MonitoredTarget target_db, Dictionary<string, string> dictionary, int serial, int depth)
+        internal static bool CheckDirectory(MonitorTarget target_monitor, MonitorTarget target_db, Dictionary<string, string> dictionary, int serial, int depth)
         {
             bool result = false;
 
@@ -358,7 +358,7 @@ namespace Audit.Lib.Monitor
         /// <param name="serial"></param>
         /// <param name="depth"></param>
         /// <returns></returns>
-        internal static bool CheckRegistrykey(MonitoredTarget target_monitor, MonitoredTarget target_db, Dictionary<string, string> dictionary, int serial, int depth)
+        internal static bool CheckRegistrykey(MonitorTarget target_monitor, MonitorTarget target_db, Dictionary<string, string> dictionary, int serial, int depth)
         {
             bool result = false;
 
@@ -437,7 +437,7 @@ namespace Audit.Lib.Monitor
         /// <param name="dictionary"></param>
         /// <param name="serial"></param>
         /// <returns></returns>
-        internal static bool CheckRegistryValue(MonitoredTarget target_monitor, MonitoredTarget target_db, Dictionary<string, string> dictionary, int serial)
+        internal static bool CheckRegistryValue(MonitorTarget target_monitor, MonitorTarget target_db, Dictionary<string, string> dictionary, int serial)
         {
             bool result = false;
 

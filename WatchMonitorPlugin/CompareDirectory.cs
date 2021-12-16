@@ -42,9 +42,9 @@ namespace WatchMonitorPlugin
 
 
 
-        private MonitoredTarget CreateForFile(string path, string pathTypeName)
+        private MonitorTarget CreateForFile(string path, string pathTypeName)
         {
-            return new MonitoredTarget(PathType.File, path)
+            return new MonitorTarget(PathType.File, path)
             {
                 PathTypeName = pathTypeName,
                 IsCreationTime = _IsCreationTime,
@@ -63,9 +63,9 @@ namespace WatchMonitorPlugin
             };
         }
 
-        private MonitoredTarget CreateForDirectory(string path, string pathTypeName)
+        private MonitorTarget CreateForDirectory(string path, string pathTypeName)
         {
-            return new MonitoredTarget(PathType.File, path)
+            return new MonitorTarget(PathType.File, path)
             {
                 PathTypeName = pathTypeName,
                 IsCreationTime = _IsCreationTime,
@@ -102,8 +102,8 @@ namespace WatchMonitorPlugin
             bool ret = true;
 
             _serial++;
-            MonitoredTarget targetA = CreateForDirectory(pathA, "directoryA");
-            MonitoredTarget targetB = CreateForDirectory(pathB, "directoryB");
+            MonitorTarget targetA = CreateForDirectory(pathA, "directoryA");
+            MonitorTarget targetB = CreateForDirectory(pathB, "directoryB");
             targetA.CheckExists();
             targetB.CheckExists();
             if ((targetA.Exists ?? false) && (targetB.Exists ?? false))
@@ -118,8 +118,8 @@ namespace WatchMonitorPlugin
                     {
                         _serial++;
                         string childPathB = Path.Combine(pathB, Path.GetFileName(childPathA));
-                        MonitoredTarget targetA_leaf = CreateForFile(childPathA, "file");
-                        MonitoredTarget targetB_leaf = CreateForFile(childPathB, "file");
+                        MonitorTarget targetA_leaf = CreateForFile(childPathA, "file");
+                        MonitorTarget targetB_leaf = CreateForFile(childPathB, "file");
                         targetA_leaf.CheckExists();
                         targetB_leaf.CheckExists();
 

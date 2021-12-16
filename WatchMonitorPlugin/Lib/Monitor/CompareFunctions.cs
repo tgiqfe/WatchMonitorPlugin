@@ -17,7 +17,7 @@ namespace Audit.Lib.Monitor
         /// <param name="dictionary"></param>
         /// <param name="serial"></param>
         /// <returns></returns>
-        internal static bool CheckFile(MonitoredTarget targetA, MonitoredTarget targetB, Dictionary<string, string> dictionary, int serial)
+        internal static bool CheckFile(MonitorTarget targetA, MonitorTarget targetB, Dictionary<string, string> dictionary, int serial)
         {
             bool ret = true;
 
@@ -121,7 +121,7 @@ namespace Audit.Lib.Monitor
         /// <param name="dictionary"></param>
         /// <param name="serial"></param>
         /// <returns></returns>
-        internal static bool CheckDirectory(MonitoredTarget targetA, MonitoredTarget targetB, Dictionary<string, string> dictionary, int serial, int depth)
+        internal static bool CheckDirectory(MonitorTarget targetA, MonitorTarget targetB, Dictionary<string, string> dictionary, int serial, int depth)
         {
             bool ret = false;
 
@@ -201,7 +201,7 @@ namespace Audit.Lib.Monitor
         /// <param name="dictionary"></param>
         /// <param name="serial"></param>
         /// <returns></returns>
-        internal static bool CheckRegistryKey(MonitoredTarget targetA, MonitoredTarget targetB, Dictionary<string, string> dictionary, int serial, int depth)
+        internal static bool CheckRegistryKey(MonitorTarget targetA, MonitorTarget targetB, Dictionary<string, string> dictionary, int serial, int depth)
         {
             bool ret = false;
 
@@ -249,7 +249,7 @@ namespace Audit.Lib.Monitor
         /// <param name="dictionary"></param>
         /// <param name="serial"></param>
         /// <returns></returns>
-        internal static bool CheckRegistryValue(MonitoredTarget targetA, MonitoredTarget targetB, Dictionary<string, string> dictionary, int serial)
+        internal static bool CheckRegistryValue(MonitorTarget targetA, MonitorTarget targetB, Dictionary<string, string> dictionary, int serial)
         {
             bool ret = false;
 

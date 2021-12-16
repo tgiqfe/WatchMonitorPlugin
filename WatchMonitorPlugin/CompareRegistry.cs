@@ -45,9 +45,9 @@ namespace WatchMonitorPlugin
 
 
 
-        private MonitoredTarget CreateForRegistryKey(RegistryKey key, string pathTypeName)
+        private MonitorTarget CreateForRegistryKey(RegistryKey key, string pathTypeName)
         {
-            return new MonitoredTarget(PathType.Registry, key)
+            return new MonitorTarget(PathType.Registry, key)
             {
                 PathTypeName = pathTypeName,
                 IsAccess = _IsAccess,
@@ -57,9 +57,9 @@ namespace WatchMonitorPlugin
             };
         }
 
-        private MonitoredTarget CreateForRegistryValue(RegistryKey key, string name, string pathTypeName)
+        private MonitorTarget CreateForRegistryValue(RegistryKey key, string name, string pathTypeName)
         {
-            return new MonitoredTarget(PathType.Registry, key, name)
+            return new MonitorTarget(PathType.Registry, key, name)
             {
                 PathTypeName = pathTypeName,
                 IsMD5Hash = _IsMD5Hash,
@@ -81,8 +81,8 @@ namespace WatchMonitorPlugin
                 using (RegistryKey keyA = RegistryControl.GetRegistryKey(_PathA, false, false))
                 using (RegistryKey keyB = RegistryControl.GetRegistryKey(_PathB, false, false))
                 {
-                    MonitoredTarget targetA = CreateForRegistryValue(keyA, _NameA, "registryA");
-                    MonitoredTarget targetB = CreateForRegistryValue(keyB, _NameB, "registryB");
+                    MonitorTarget targetA = CreateForRegistryValue(keyA, _NameA, "registryA");
+                    MonitorTarget targetB = CreateForRegistryValue(keyB, _NameB, "registryB");
                     targetA.CheckExists();
                     targetB.CheckExists();
 
@@ -125,8 +125,8 @@ namespace WatchMonitorPlugin
             bool ret = false;
 
             _serial++;
-            MonitoredTarget targetA = CreateForRegistryKey(keyA, "registryA");
-            MonitoredTarget targetB = CreateForRegistryKey(keyB, "registryB");
+            MonitorTarget targetA = CreateForRegistryKey(keyA, "registryA");
+            MonitorTarget targetB = CreateForRegistryKey(keyB, "registryB");
             targetA.CheckExists();
             targetB.CheckExists();
             if ((targetA.Exists ?? false) && (targetB.Exists ?? false))
@@ -140,8 +140,8 @@ namespace WatchMonitorPlugin
                     foreach (string childName in keyA.GetValueNames())
                     {
                         _serial++;
-                        MonitoredTarget targetA_leaf = CreateForRegistryValue(keyA, childName, "registryA");
-                        MonitoredTarget targetB_leaf = CreateForRegistryValue(keyB, childName, "registryB");
+                        MonitorTarget targetA_leaf = CreateForRegistryValue(keyA, childName, "registryA");
+                        MonitorTarget targetB_leaf = CreateForRegistryValue(keyB, childName, "registryB");
                         targetA_leaf.CheckExists();
                         targetB_leaf.CheckExists();
 

@@ -13,7 +13,7 @@ using System.Security.Principal;
 namespace Audit.Lib.Monitor
 {
     [System.Runtime.Versioning.SupportedOSPlatform("windows")]
-    public class MonitoredTarget
+    public class MonitorTarget
     {
         public PathType PathType { get; set; }
         public string FullPath { get; set; }
@@ -90,19 +90,19 @@ namespace Audit.Lib.Monitor
 
         #endregion
 
-        public MonitoredTarget() { }
-        public MonitoredTarget(PathType pathType, string path)
+        public MonitorTarget() { }
+        public MonitorTarget(PathType pathType, string path)
         {
             this.PathType = pathType;
             this.Path = path;
         }
-        public MonitoredTarget(PathType pathType, RegistryKey key)
+        public MonitorTarget(PathType pathType, RegistryKey key)
         {
             this.PathType = pathType;
             this.Path = key.Name;
             this.Key = key;
         }
-        public MonitoredTarget(PathType pathType, RegistryKey key, string name)
+        public MonitorTarget(PathType pathType, RegistryKey key, string name)
         {
             this.PathType = pathType;
             this.Path = key.Name;
@@ -250,7 +250,7 @@ namespace Audit.Lib.Monitor
         /// Is～プロパティをマージする
         /// </summary>
         /// <param name="target"></param>
-        public void Merge_is_Property(MonitoredTarget target)
+        public void Merge_is_Property(MonitorTarget target)
         {
             if (target.IsCreationTime != null) { this.IsCreationTime = target.IsCreationTime; }
             if (target.IsLastWriteTime != null) { this.IsLastWriteTime = target.IsLastWriteTime; }
