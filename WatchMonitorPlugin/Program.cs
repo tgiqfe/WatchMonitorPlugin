@@ -12,23 +12,19 @@ namespace WatchMonitorPlugin
 
         public static void Main(string[] args)
         {
-            /*
             //  Watch用テスト
-            Console.WriteLine("Watch対象を指定");
-            string targetFile = Console.ReadLine();
-            */
+            //Watching();
 
             //  Compare用テスト
-            Console.WriteLine("Compare対象を指定 (PathA)");
-            string targetPAthA = Console.ReadLine();
+            Comparing();
 
-            Console.WriteLine("Compare対象を指定 (PathB)");
-            string targetPathB = Console.ReadLine();
+            Console.ReadLine();
+        }
 
-
-            //  作成中！
-
-
+        private static void Watching()
+        {
+            Console.WriteLine("Watch対象を指定");
+            string targetFile = Console.ReadLine();
 
             string[] targetPaths = targetFile.Contains(";") ?
                 targetFile.Split(';').Select(x => x.Trim()).ToArray() :
@@ -41,17 +37,25 @@ namespace WatchMonitorPlugin
                 string[] targetNames = valueName.Contains(";") ?
                     valueName.Split(';').Select(x => x.Trim()).ToArray() :
                     new string[1] { valueName };
-                //TestWatchRegistryValue(targetPath, targetNames);
+                TestWatchRegistryValue(targetPath, targetNames);
             }
             else
             {
                 //TestWatchFile(targetPaths);
                 //TestWatchDirectory(targetPaths);
-                //TestWatchRegistryKey(targetPaths);
-                TestCompareFile(targetPathA, targtePathB);
+                TestWatchRegistryKey(targetPaths);
             }
+        }
 
-            Console.ReadLine();
+        private static void Comparing()
+        {
+            Console.WriteLine("Compare対象を指定 (PathA)");
+            string targetPAthA = Console.ReadLine();
+
+            Console.WriteLine("Compare対象を指定 (PathB)");
+            string targetPathB = Console.ReadLine();
+
+            TestCompareFile(targetPAthA, targetPathB);
         }
 
         private static void TestWatchFile(string[] targetPaths)
@@ -307,6 +311,39 @@ namespace WatchMonitorPlugin
                 _IsLastWriteTime = true,
                 _IsMD5Hash = true,
                 _IsSize = true,
+            };
+
+            compare.MainProcess();
+            bool success = compare.Success;
+            Dictionary<string, string> dictionary = compare.Propeties;
+
+            if (success)
+            {
+                Console.Write("[");
+                Console.ForegroundColor = ConsoleColor.Green;
+                Console.Write("Success");
+                Console.ResetColor();
+                Console.WriteLine("]");
+            }
+            else
+            {
+                Console.Write("[");
+                Console.ForegroundColor = ConsoleColor.Red;
+                Console.Write("Failed");
+                Console.ResetColor();
+                Console.WriteLine("]");
+            }
+        }
+
+        private static void TestCompareDirectory(string pathA, string pathB)
+        {
+            CompareDirectory compare = new CompareDirectory()
+            {
+                _PathA = pathA,
+                _PathB = pathB,
+                _IsLastWriteTime = true,
+                _IsChildCount = true,
+                _IsAccess = true,
             };
 
             compare.MainProcess();
