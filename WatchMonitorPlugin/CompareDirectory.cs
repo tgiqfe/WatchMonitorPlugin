@@ -135,7 +135,6 @@ namespace WatchMonitorPlugin
                     }
                     foreach (string childPath in System.IO.Directory.GetDirectories(pathA))
                     {
-                        string childPathB = Path.Combine(pathB, Path.GetFileName(childPath));
                         RecursiveTree(
                             childPath,
                             Path.Combine(pathB, Path.GetFileName(childPath)),
