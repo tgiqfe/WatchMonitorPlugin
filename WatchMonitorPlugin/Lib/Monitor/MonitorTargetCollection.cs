@@ -6,12 +6,32 @@ using System.Threading.Tasks;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using Microsoft.Win32;
+using IO.Lib;
+using System.Security.Principal;
+using System.Security.Cryptography;
 
 namespace Audit.Lib.Monitor
 {
     [System.Runtime.Versioning.SupportedOSPlatform("windows")]
     internal class MonitorTargetCollection : Dictionary<string, MonitorTarget>
     {
+        public bool? IsCreationTime { get; set; }
+        public bool? IsLastWriteTime { get; set; }
+        public bool? IsLastAccessTime { get; set; }
+        public bool? IsAccess { get; set; }
+        public bool? IsOwner { get; set; }
+        public bool? IsInherited { get; set; }
+        public bool? IsAttributes { get; set; }
+        public bool? IsMD5Hash { get; set; }
+        public bool? IsSHA256Hash { get; set; }
+        public bool? IsSHA512Hash { get; set; }
+        public bool? IsSize { get; set; }
+        public bool? IsChildCount { get; set; }
+        public bool? IsRegistryType { get; set; }
+        public bool? IsDateOnly { get; set; }
+        public bool? IsTimeOnly { get; set; }
+
+
         private List<string> _CheckedKeys = new List<string>();
 
         const string REGPATH_PREFIX = "[reg]";
@@ -86,5 +106,59 @@ namespace Audit.Lib.Monitor
         }
 
         #endregion
+
+        public void CheckFile(string path)
+        {
+            MonitorTarget target = this.ContainsKey(path) ? this[path] : new MonitorTarget();
+
+            if (IsCreationTime ?? false)
+            {
+                target.CreationTime = MonitorFunctions.GetCreationTime(target.FileInfo, this.IsDateOnly ?? false, this.IsTimeOnly ?? false);
+            }
+            if (IsLastWriteTime ?? false)
+            {
+                target.LastWriteTime = MonitorFunctions.GetLastWriteTime(target.FileInfo, this.IsDateOnly ?? false, this.IsTimeOnly ?? false);
+            }
+            if (IsLastAccessTime ?? false)
+            {
+                target.LastAccessTime = MonitorFunctions.GetLastAccessTime(target.FileInfo, this.IsDateOnly ?? false, this.IsTimeOnly ?? false);
+            }
+            if (IsAccess ?? false)
+            {
+                target.Access = AccessRuleSummary.FileToAccessString(target.FileInfo);
+            }
+            if (IsOwner ?? false)
+            {
+                target.Owner = target.FileInfo.GetAccessControl().GetOwner(typeof(NTAccount)).Value;
+            }
+            if (IsInherited ?? false)
+            {
+                target.Inherited = !target.FileInfo.GetAccessControl().AreAccessRulesProtected;
+            }
+            if (IsAttributes ?? false)
+            {
+                target.Attributes = MonitorFunctions.GetAttributes(target.Path);
+            }
+            if (IsMD5Hash ?? false)
+            {
+                target.MD5Hash = MonitorFunctions.GetHash(target.Path, MD5.Create());
+            }
+            if (IsSHA256Hash ?? false)
+            {
+                target.SHA256Hash = MonitorFunctions.GetHash(target.Path, SHA256.Create());
+            }
+            if (IsSHA512Hash ?? false)
+            {
+                target.SHA512Hash = MonitorFunctions.GetHash(target.Path, SHA512.Create());
+            }
+            if (IsSize ?? false)
+            {
+                target.Size = target.FileInfo.Length;
+            }
+
+
+
+
+        }
     }
 }
