@@ -18,45 +18,30 @@ namespace Audit.Lib.Monitor
 
         public MonitorTargetCollection() { }
 
-        #region Get/Set MonitoredTarget
+        #region Get/Set MonitorTarget
 
-        public MonitorTarget GetMonitoredTarget(string path)
+        public MonitorTarget GetMonitorTarget(string path)
         {
             string matchKey = this.Keys.FirstOrDefault(x => x.Equals(path, StringComparison.OrdinalIgnoreCase));
             return matchKey == null ? null : this[matchKey];
         }
 
-        public MonitorTarget GetMonitoredTarget(RegistryKey regKey)
+        public MonitorTarget GetMonitorTarget(string path, string name)
         {
-            string matchKey = this.Keys.FirstOrDefault(x => x.Equals(regKey.Name, StringComparison.OrdinalIgnoreCase));
-            return matchKey == null ? null : this[matchKey];
-        }
-
-        public MonitorTarget GetMonitoredTarget(RegistryKey regKey, string name)
-        {
-            string regPath = REGPATH_PREFIX + regKey.Name + "\\" + name;
+            string regPath = REGPATH_PREFIX + path + "\\" + name;
             string matchKey = this.Keys.FirstOrDefault(x => x.Equals(regPath, StringComparison.OrdinalIgnoreCase));
             return matchKey == null ? null : this[matchKey];
         }
 
-        public void SetMonitoredTarget(string path, MonitorTarget target)
+        public void SetMonitorTarget(string path, MonitorTarget target)
         {
-            target.FullPath = path;
             this[path] = target;
             this._CheckedKeys.Add(path);
         }
 
-        public void SetMonitoredTarget(RegistryKey regKey, MonitorTarget target)
+        public void SetMonitorTarget(string path, string name, MonitorTarget target)
         {
-            target.FullPath = regKey.Name;
-            this[regKey.Name] = target;
-            this._CheckedKeys.Add(regKey.Name);
-        }
-
-        public void SetMonitoredTarget(RegistryKey regKey, string name, MonitorTarget target)
-        {
-            string regPath = REGPATH_PREFIX + regKey.Name + "\\" + name;
-            target.FullPath = regPath;
+            string regPath = REGPATH_PREFIX + path + "\\" + name;
             this[regPath] = target;
             this._CheckedKeys.Add(regPath);
         }

@@ -8,7 +8,7 @@ namespace WatchMonitorPlugin
     [System.Runtime.Versioning.SupportedOSPlatform("windows")]
     public class Program
     {
-        const string ID = "sample01";
+        const string Id = "sample01";
 
         public static void Main(string[] args)
         {
@@ -62,7 +62,7 @@ namespace WatchMonitorPlugin
         {
             WatchFile beginWatch = new WatchFile()
             {
-                _ID = ID,
+                _Id = Id,
                 _Path = targetPaths,
                 _IsLastWriteTime = true,
                 _IsMD5Hash = true,
@@ -77,7 +77,7 @@ namespace WatchMonitorPlugin
                     case ConsoleKey.Enter:
                         var tempWatch = new WatchFile()
                         {
-                            _ID = ID,
+                            _Id = Id,
                             _Path = targetPaths,
                         };
                         checkWatchFile(tempWatch);
@@ -122,7 +122,7 @@ namespace WatchMonitorPlugin
         {
             WatchDirectory beginWatch = new WatchDirectory()
             {
-                _ID = ID,
+                _Id = Id,
                 _Path = targetPaths,
                 _IsLastWriteTime = true,
                 _IsMD5Hash = true,
@@ -138,7 +138,7 @@ namespace WatchMonitorPlugin
                     case ConsoleKey.Enter:
                         var tempWatch = new WatchDirectory()
                         {
-                            _ID = ID,
+                            _Id = Id,
                             _Path = targetPaths,
                         };
                         checkWatchDirectory(tempWatch);
@@ -184,7 +184,7 @@ namespace WatchMonitorPlugin
         {
             WatchRegistry beginWatch = new WatchRegistry()
             {
-                _ID = ID,
+                _Id = Id,
                 _Path = targetPaths,
                 _IsMD5Hash = true,
                 _IsRegistryType = true,
@@ -199,7 +199,7 @@ namespace WatchMonitorPlugin
                     case ConsoleKey.Enter:
                         var tempWatch = new WatchRegistry()
                         {
-                            _ID = ID,
+                            _Id = Id,
                             _Path = targetPaths,
                         };
                         checkWatchRegistryKey(tempWatch);
@@ -244,7 +244,7 @@ namespace WatchMonitorPlugin
         {
             WatchRegistry beginWatch = new WatchRegistry()
             {
-                _ID = ID,
+                _Id = Id,
                 _Path = new string[1] { targetPath },
                 _Name = targetNames,
                 _IsMD5Hash = true,
@@ -260,7 +260,7 @@ namespace WatchMonitorPlugin
                     case ConsoleKey.Enter:
                         var tempWatch = new WatchRegistry()
                         {
-                            _ID = ID,
+                            _Id = Id,
                             _Path = new string[1] { targetPath },
                             _Name = targetNames,
                         };

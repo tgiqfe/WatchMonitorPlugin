@@ -31,10 +31,11 @@ namespace WatchMonitorPlugin
         public bool? _IsTimeOnly { get; set; }
 
         public bool Success { get; set; }
-        private int _serial = 1;
-
 
         public Dictionary<string, string> Propeties = null;
+
+
+        private int _serial = 1;
 
         private MonitorTarget CreateForFile(string path, string pathTypeName)
         {
@@ -88,6 +89,7 @@ namespace WatchMonitorPlugin
                     Success = false;
                 }
             }
+
 
 
 

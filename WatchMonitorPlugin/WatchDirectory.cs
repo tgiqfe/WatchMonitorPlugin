@@ -9,9 +9,9 @@ using IO.Lib;
 namespace WatchMonitorPlugin
 {
     [System.Runtime.Versioning.SupportedOSPlatform("windows")]
-    internal class WatchDirectory
+    internal class WatchDirectory : WatchBase
     {
-        public string _ID { get; set; }
+        public string _Id { get; set; }
         public string[] _Path { get; set; }
 
         public bool? _IsCreationTime { get; set; }
@@ -34,13 +34,12 @@ namespace WatchMonitorPlugin
         public bool _Begin { get; set; }
         public bool Success { get; set; }
         public int? _MaxDepth { get; set; }
-        private int _serial;
-        private string _checkingPath;
 
 
-
-        private string dbDir = @"C:\Users\User\Downloads\aaaa\dbdbdb";
         public Dictionary<string, string> Propeties = null;
+
+
+        private int _serial = 0;
 
         private MonitorTarget CreateForFile(string path, string pathTypeName)
         {
@@ -84,13 +83,19 @@ namespace WatchMonitorPlugin
         public void MainProcess()
         {
             var dictionary = new Dictionary<string, string>();
-            var collection = MonitorTargetCollection.Load(dbDir, _ID);
-            _MaxDepth ??= 5;
+            var collection = _Begin ?
+                new MonitorTargetCollection() :
+                MonitorTargetCollection.Load(GetWatchDBDirectory(), _Id);
+            this._MaxDepth ??= 5;
+            this.Success = _Begin || (collection.Count == 0);
 
             foreach (string path in _Path)
             {
-                _checkingPath = path;
-                Success |= RecursiveTree(collection, dictionary, path, 0);
+                Success |= RecursiveTree(
+                    collection,
+                    CreateForDirectory(path, "directory"),
+                    dictionary,
+                    0);
             }
             foreach (string uncheckedPath in collection.GetUncheckedKeys())
             {
@@ -99,27 +104,22 @@ namespace WatchMonitorPlugin
                 collection.Remove(uncheckedPath);
                 Success = true;
             }
-            collection.Save(dbDir, _ID);
-
+            collection.Save(GetWatchDBDirectory(), _Id);
 
 
 
             Propeties = dictionary;
         }
 
-        private bool RecursiveTree(MonitorTargetCollection collection, Dictionary<string, string> dictionary, string path, int depth)
+        private bool RecursiveTree(MonitorTargetCollection collection, MonitorTarget target_monitor, Dictionary<string, string> dictionary, int depth)
         {
             bool ret = false;
 
             _serial++;
-            dictionary[$"{_serial}_directory"] = (path == _checkingPath) ?
-                path :
-                path.Replace(_checkingPath, "");
-            MonitorTarget target_db = _Begin ?
-                CreateForDirectory(path, "directory") :
-                collection.GetMonitoredTarget(path) ?? CreateForDirectory(path, "directory");
+            dictionary[$"{_serial}_directory"] = target_monitor.Path;
+            MonitorTarget target_db =
+                collection.GetMonitorTarget(target_monitor.Path) ?? CreateForDirectory(target_monitor.Path, "directory");
 
-            MonitorTarget target_monitor = CreateForDirectory(path, "directory");
             target_monitor.Merge_is_Property(target_db);
             target_monitor.CheckExists();
 
@@ -127,31 +127,31 @@ namespace WatchMonitorPlugin
             {
                 ret |= WatchFunctions.CheckDirectory(target_monitor, target_db, dictionary, _serial, depth);
             }
-            collection.SetMonitoredTarget(path, target_monitor);
+            collection.SetMonitorTarget(target_monitor.Path, target_monitor);
 
             if (depth < _MaxDepth && (target_monitor.Exists ?? false))
             {
-                foreach (string filePath in Directory.GetFiles(path))
+                foreach (string filePath in System.IO.Directory.GetFiles(target_monitor.Path))
                 {
                     _serial++;
-                    dictionary[$"{_serial}_file"] = filePath.Replace(_checkingPath, "");
-                    MonitorTarget target_db_leaf = _Begin ?
-                        CreateForFile(filePath, "file") :
-                        collection.GetMonitoredTarget(filePath) ?? CreateForFile(path, "file");
+                    dictionary[$"{_serial}_file"] = filePath;
+                    MonitorTarget target_db_leaf =
+                        collection.GetMonitorTarget(filePath) ?? CreateForFile(filePath, "file");
 
-                    MonitorTarget target_monitor_leaf = CreateForDirectory(filePath, "file");
+                    MonitorTarget target_monitor_leaf = CreateForFile(filePath, "file");
                     target_monitor_leaf.Merge_is_Property(target_db_leaf);
                     target_monitor_leaf.CheckExists();
 
-                    if (target_monitor_leaf.Exists ?? false)
-                    {
-                        ret |= WatchFunctions.CheckFile(target_monitor_leaf, target_db_leaf, dictionary, _serial);
-                    }
-                    collection.SetMonitoredTarget(filePath, target_monitor_leaf);
+                    ret |= WatchFunctions.CheckFile(target_monitor_leaf, target_db_leaf, dictionary, _serial);
+                    collection.SetMonitorTarget(filePath, target_monitor_leaf);
                 }
-                foreach (string dirPath in Directory.GetDirectories(path))
+                foreach (string dirPath in System.IO.Directory.GetDirectories(target_monitor.Path))
                 {
-                    ret |= RecursiveTree(collection, dictionary, dirPath, depth + 1);
+                    ret |= RecursiveTree(
+                        collection,
+                        CreateForDirectory(dirPath, "directory"),
+                        dictionary,
+                        depth + 1);
                 }
             }
 

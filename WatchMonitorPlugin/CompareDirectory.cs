@@ -33,14 +33,13 @@ namespace WatchMonitorPlugin
 
         public bool Success { get; set; }
         public int? _MaxDepth { get; set; }
-        private int _serial = 0;
-        private string _checkingPathA;
-        private string _checkingPathB;
-
 
         public Dictionary<string, string> Propeties = null;
 
 
+
+
+        private int _serial = 0;
 
         private MonitorTarget CreateForFile(string path, string pathTypeName)
         {
@@ -65,7 +64,7 @@ namespace WatchMonitorPlugin
 
         private MonitorTarget CreateForDirectory(string path, string pathTypeName)
         {
-            return new MonitorTarget(PathType.File, path)
+            return new MonitorTarget(PathType.Directory, path)
             {
                 PathTypeName = pathTypeName,
                 IsCreationTime = _IsCreationTime,
@@ -83,63 +82,67 @@ namespace WatchMonitorPlugin
 
         public void MainProcess()
         {
+            //  MaxDepth無指定の場合は[5]をセット
+            _MaxDepth ??= 5;
+
             var dictionary = new Dictionary<string, string>();
             dictionary["directoryA"] = _PathA;
             dictionary["directoryB"] = _PathB;
             this.Success = true;
-            _MaxDepth ??= 5;
 
-            _checkingPathA = _PathA;
-            _checkingPathB = _PathB;
-            Success &= RecursiveTree(_PathA, _PathB, dictionary, 0);
+            Success &= RecursiveTree(
+                CreateForDirectory(_PathA, "directoryA"),
+                CreateForDirectory(_PathB, "directoryB"),
+                dictionary,
+                0);
 
 
             this.Propeties = dictionary;
         }
 
-        private bool RecursiveTree(string pathA, string pathB, Dictionary<string, string> dictionary, int depth)
+        private bool RecursiveTree(MonitorTarget targetA, MonitorTarget targetB, Dictionary<string, string> dictionary, int depth)
         {
             bool ret = true;
 
             _serial++;
-            MonitorTarget targetA = CreateForDirectory(pathA, "directoryA");
-            MonitorTarget targetB = CreateForDirectory(pathB, "directoryB");
             targetA.CheckExists();
             targetB.CheckExists();
             if ((targetA.Exists ?? false) && (targetB.Exists ?? false))
             {
-                dictionary[$"directoryA_Exists_{_serial}"] = _PathA;
-                dictionary[$"directoryB_Exists_{_serial}"] = _PathB;
+                dictionary[$"{_serial}_directoryA_Exists"] = targetA.Path;
+                dictionary[$"{_serial}_directoryB_Exists"] = targetB.Path;
                 ret &= CompareFunctions.CheckDirectory(targetA, targetB, dictionary, _serial, depth);
 
                 if (depth < _MaxDepth)
                 {
-                    foreach (string childPathA in System.IO.Directory.GetFiles(pathA))
+                    foreach (string childPathA in System.IO.Directory.GetFiles(targetA.Path))
                     {
                         _serial++;
-                        string childPathB = Path.Combine(pathB, Path.GetFileName(childPathA));
-                        MonitorTarget targetA_leaf = CreateForFile(childPathA, "file");
-                        MonitorTarget targetB_leaf = CreateForFile(childPathB, "file");
+                        string childPathB = Path.Combine(targetB.Path, Path.GetFileName(childPathA));
+                        MonitorTarget targetA_leaf = CreateForFile(childPathA, "fileA");
+                        MonitorTarget targetB_leaf = CreateForFile(childPathB, "fileB");
                         targetA_leaf.CheckExists();
                         targetB_leaf.CheckExists();
 
                         if (targetB_leaf.Exists ?? false)
                         {
+                            dictionary[$"{_serial}_fileA_Exists"] = childPathA;
+                            dictionary[$"{_serial}_fileB_Exists"] = childPathB;
                             ret &= CompareFunctions.CheckFile(targetA_leaf, targetB_leaf, dictionary, _serial);
                         }
                         else
                         {
-                            dictionary[$"fileB_NotExists_{_serial}"] = childPathB;
+                            dictionary[$"{_serial}_fileB_NotExists"] = childPathB;
                             ret = false;
                         }
                     }
-                    foreach (string childPath in System.IO.Directory.GetDirectories(pathA))
+                    foreach (string childPath in System.IO.Directory.GetDirectories(targetA.Path))
                     {
-                        RecursiveTree(
-                            childPath,
-                            Path.Combine(pathB, Path.GetFileName(childPath)),
+                        ret &= RecursiveTree(
+                            CreateForDirectory(childPath, "directoryA"),
+                            CreateForDirectory(Path.Combine(targetB.Path, Path.GetFileName(childPath)), "directoryB"),
                             dictionary,
-                            _serial);
+                            depth + 1);
                     }
                 }
             }
@@ -147,15 +150,17 @@ namespace WatchMonitorPlugin
             {
                 if (!targetA.Exists ?? false)
                 {
-                    dictionary[$"directoryA_NotExists_{_serial}"] = pathA;
+                    dictionary[$"{_serial}_directoryA_NotExists"] = targetA.Path;
                     ret = false;
                 }
                 if (!targetB.Exists ?? false)
                 {
-                    dictionary[$"directoryB_NotExists_{_serial}"] = pathB;
+                    dictionary[$"{_serial}_directoryB_NotExists"] = targetB.Path;
                     ret = false;
                 }
             }
+
+
 
             return ret;
         }

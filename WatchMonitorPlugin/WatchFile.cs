@@ -9,9 +9,9 @@ using IO.Lib;
 namespace WatchMonitorPlugin
 {
     [System.Runtime.Versioning.SupportedOSPlatform("windows")]
-    internal class WatchFile
+    internal class WatchFile : WatchBase
     {
-        public string _ID { get; set; }
+        public string _Id { get; set; }
         public string[] _Path { get; set; }
 
         public bool? _IsCreationTime { get; set; }
@@ -33,15 +33,16 @@ namespace WatchMonitorPlugin
 
         public bool _Begin { get; set; }
         public bool Success { get; set; }
-        private int _serial;
 
 
-        private string dbDir = @"C:\Users\User\Downloads\aaaa\dbdbdb";
         public Dictionary<string, string> Propeties = null;
+
+
+        private int _serial = 0;
 
         private MonitorTarget CreateForFile(string path, string pathTypeName)
         {
-            return new MonitorTarget(PathType.File, path)
+            return new MonitorTarget(IO.Lib.PathType.File, path)
             {
                 PathTypeName = pathTypeName,
                 IsCreationTime = _IsCreationTime,
@@ -63,15 +64,18 @@ namespace WatchMonitorPlugin
         public void MainProcess()
         {
             var dictionary = new Dictionary<string, string>();
-            var collection = MonitorTargetCollection.Load(dbDir, _ID);
+            var collection = _Begin ?
+                new MonitorTargetCollection() :
+                MonitorTargetCollection.Load(GetWatchDBDirectory(), _Id);
+
+            //  Begin=trueあるいは、collectionが空っぽ(今回初回watch)の場合、Successをtrue
+            this.Success = _Begin || (collection.Count == 0);
 
             foreach (string path in _Path)
             {
                 _serial++;
-                dictionary[$"file_{_serial}"] = path;
-                MonitorTarget target_db = _Begin ?
-                    CreateForFile(path, "file") :
-                    collection.GetMonitoredTarget(path) ?? CreateForFile(path, "file");
+                dictionary[$"{_serial}_file"] = path;
+                MonitorTarget target_db = collection.GetMonitorTarget(path) ?? CreateForFile(path, "file");
 
                 MonitorTarget target_monitor = CreateForFile(path, "file");
                 target_monitor.Merge_is_Property(target_db);
@@ -81,14 +85,12 @@ namespace WatchMonitorPlugin
                 {
                     Success |= WatchFunctions.CheckFile(target_monitor, target_db, dictionary, _serial);
                 }
-                collection.SetMonitoredTarget(path, target_monitor);
+                collection.SetMonitorTarget(path, target_monitor);
             }
-            collection.Save(dbDir, _ID);
+            collection.Save(GetWatchDBDirectory(), _Id);
 
 
             Propeties = dictionary;
         }
-
-        
     }
 }
