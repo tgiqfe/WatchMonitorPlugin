@@ -41,9 +41,9 @@ namespace WatchMonitorPlugin
             }
             else
             {
-                //TestWatchFile(targetPaths);
+                TestWatchFile(targetPaths);
                 //TestWatchDirectory(targetPaths);
-                TestWatchRegistryKey(targetPaths);
+                //TestWatchRegistryKey(targetPaths);
             }
         }
 
@@ -57,6 +57,8 @@ namespace WatchMonitorPlugin
 
             TestCompareFile(targetPAthA, targetPathB);
         }
+
+        #region Watch
 
         private static void TestWatchFile(string[] targetPaths)
         {
@@ -302,6 +304,9 @@ namespace WatchMonitorPlugin
             }
         }
 
+        #endregion
+        #region Compare
+
         private static void TestCompareFile(string pathA, string pathB)
         {
             CompareFile compare = new CompareFile()
@@ -367,5 +372,7 @@ namespace WatchMonitorPlugin
                 Console.WriteLine("]");
             }
         }
+
+        #endregion
     }
 }
