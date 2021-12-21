@@ -7,8 +7,6 @@ using System.Text.Json;
 using System.Text.Json.Serialization;
 using Microsoft.Win32;
 using IO.Lib;
-using System.Security.Principal;
-using System.Security.Cryptography;
 
 namespace Audit.Lib.Monitor
 {
@@ -30,9 +28,6 @@ namespace Audit.Lib.Monitor
         public bool? IsRegistryType { get; set; }
         public bool? IsDateOnly { get; set; }
         public bool? IsTimeOnly { get; set; }
-
-
-        private List<string> _CheckedKeys = new List<string>();
 
         const string REGPATH_PREFIX = "[reg]";
 
@@ -67,12 +62,16 @@ namespace Audit.Lib.Monitor
         }
 
         #endregion
+        #region UncheckKey
+
+        private List<string> _CheckedKeys = new List<string>();
 
         public IEnumerable<string> GetUncheckedKeys()
         {
             return this.Keys.Where(x => !_CheckedKeys.Any(y => y.Equals(x, StringComparison.OrdinalIgnoreCase)));
         }
 
+        #endregion
         #region Load/Save
 
         public static MonitorTargetCollection Load(string dbDir, string id)
@@ -107,58 +106,484 @@ namespace Audit.Lib.Monitor
 
         #endregion
 
-        public void CheckFile(string path)
+        public bool CheckFile(MonitorTarget target, Dictionary<string, string> dictionary, int serial)
         {
-            MonitorTarget target = this.ContainsKey(path) ? this[path] : new MonitorTarget();
+            bool ret = false;
 
+            MonitorTarget target_db = this.ContainsKey(target.Path) ?
+                this[target.Path] :
+                new MonitorTarget(PathType.File, target.Path);
+
+            //  CreationTime
             if (IsCreationTime ?? false)
             {
                 target.CreationTime = MonitorFunctions.GetCreationTime(target.FileInfo, this.IsDateOnly ?? false, this.IsTimeOnly ?? false);
+                bool result = target.CreationTime != target_db.CreationTime;
+                if (target_db.CreationTime != null)
+                {
+                    dictionary[$"{serial}_{target.PathTypeName}_CreationTime"] = result ?
+                        string.Format("{0} -> {1}",
+                            target_db.CreationTime,
+                            target.CreationTime) :
+                        target.CreationTime;
+                }
+                ret |= result;
             }
+
+            //  LastWriteTime
             if (IsLastWriteTime ?? false)
             {
                 target.LastWriteTime = MonitorFunctions.GetLastWriteTime(target.FileInfo, this.IsDateOnly ?? false, this.IsTimeOnly ?? false);
+                bool result = target.LastWriteTime != target_db.LastWriteTime;
+                if (target_db.LastWriteTime != null)
+                {
+                    dictionary[$"{serial}_{target.PathTypeName}_LastWriteTime"] = result ?
+                        string.Format("{0} -> {1}",
+                            target_db.LastWriteTime,
+                            target.LastWriteTime) :
+                        target.LastWriteTime;
+                }
+                ret |= result;
             }
+
+            //  LastAccessTime
             if (IsLastAccessTime ?? false)
             {
                 target.LastAccessTime = MonitorFunctions.GetLastAccessTime(target.FileInfo, this.IsDateOnly ?? false, this.IsTimeOnly ?? false);
+                bool result = target.LastAccessTime != target_db.LastAccessTime;
+                if (target_db.LastAccessTime != null)
+                {
+                    dictionary[$"{serial}_{target.PathTypeName}_LastAccessTime"] = result ?
+                        string.Format("{0} -> {1}",
+                            target_db.LastAccessTime,
+                            target.LastAccessTime) :
+                        target.LastAccessTime;
+                }
+                ret |= result;
             }
+
+            //  Access
             if (IsAccess ?? false)
             {
                 target.Access = AccessRuleSummary.FileToAccessString(target.FileInfo);
+                bool result = target.Access != target_db.Access;
+                if (target_db.Access != null)
+                {
+                    dictionary[$"{serial}_{target.PathTypeName}_Access"] = result ?
+                        string.Format("{0} -> {1}",
+                            target_db.Access,
+                            target.Access) :
+                        target.Access;
+                }
+                ret |= result;
             }
+
+            //  Owner
             if (IsOwner ?? false)
             {
-                target.Owner = target.FileInfo.GetAccessControl().GetOwner(typeof(NTAccount)).Value;
+                target.Owner = target.FileInfo.GetAccessControl().GetOwner(typeof(System.Security.Principal.NTAccount)).Value;
+                bool result = target.Owner != target_db.Owner;
+                if (target_db.Owner != null)
+                {
+                    dictionary[$"{serial}_{target.PathTypeName}_Owner"] = result ?
+                        string.Format("{0} -> {1}",
+                            target_db.Owner,
+                            target.Owner) :
+                        target.Owner;
+                }
+                ret |= result;
             }
+
+            //  Inherited
             if (IsInherited ?? false)
             {
                 target.Inherited = !target.FileInfo.GetAccessControl().AreAccessRulesProtected;
+                bool result = target.Inherited != target_db.Inherited;
+                if (target_db.Inherited != null)
+                {
+                    dictionary[$"{serial}_{target.PathTypeName}_Inherited"] = result ?
+                        string.Format("{0} -> {1}",
+                            target_db.Inherited,
+                            target.Inherited) :
+                        target.Inherited.ToString();
+                }
+                ret |= result;
             }
+
+            //  Attributes
             if (IsAttributes ?? false)
             {
                 target.Attributes = MonitorFunctions.GetAttributes(target.Path);
+                bool result = !target.Attributes.SequenceEqual(target_db.Attributes ?? new bool[0] { });
+                if (target_db.Attributes != null)
+                {
+                    dictionary[$"{serial}_{target.PathTypeName}_Attributes"] = result ?
+                        string.Format("{0} -> {1}",
+                            MonitorFunctions.ToReadableAttributes(target_db.Attributes),
+                            MonitorFunctions.ToReadableAttributes(target.Attributes)) :
+                        MonitorFunctions.ToReadableAttributes(target.Attributes);
+                }
+                ret |= result;
             }
+
+            //  MD5Hash
             if (IsMD5Hash ?? false)
             {
-                target.MD5Hash = MonitorFunctions.GetHash(target.Path, MD5.Create());
+                target.MD5Hash = MonitorFunctions.GetHash(target.Path, System.Security.Cryptography.MD5.Create());
+                bool result = target.MD5Hash != target_db.MD5Hash;
+                if (target_db.MD5Hash != null)
+                {
+                    dictionary[$"{serial}_{target.PathTypeName}_MD5Hash"] = result ?
+                        string.Format("{0} -> {1}",
+                            target_db.MD5Hash,
+                            target.MD5Hash) :
+                        target.MD5Hash;
+                }
+                ret |= result;
             }
+
+            //  SHA256
             if (IsSHA256Hash ?? false)
             {
-                target.SHA256Hash = MonitorFunctions.GetHash(target.Path, SHA256.Create());
+                target.SHA256Hash = MonitorFunctions.GetHash(target.Path, System.Security.Cryptography.SHA256.Create());
+                bool result = target.SHA256Hash != target_db.SHA256Hash;
+                if (target_db.SHA256Hash != null)
+                {
+                    dictionary[$"{serial}_{target.PathTypeName}_SHA256Hash"] = result ?
+                        string.Format("{0} -> {1}",
+                            target_db.SHA256Hash,
+                            target.SHA256Hash) :
+                        target.SHA256Hash;
+                }
+                ret |= result;
             }
+
+            //  SHA512
             if (IsSHA512Hash ?? false)
             {
-                target.SHA512Hash = MonitorFunctions.GetHash(target.Path, SHA512.Create());
+                target.SHA512Hash = MonitorFunctions.GetHash(target.Path, System.Security.Cryptography.SHA512.Create());
+                bool result = target.SHA512Hash != target_db.SHA512Hash;
+                if (target_db.SHA512Hash != null)
+                {
+                    dictionary[$"{serial}_{target.PathTypeName}_SHA512Hash"] = result ?
+                        string.Format("{0} -> {1}",
+                            target_db.SHA512Hash,
+                            target.SHA512Hash) :
+                        target.SHA512Hash;
+                }
+                ret |= result;
             }
+
+            //  Size
             if (IsSize ?? false)
             {
                 target.Size = target.FileInfo.Length;
+                bool result = target.Size != target_db.Size;
+                if (target_db.Size != null)
+                {
+                    dictionary[$"{serial}_{target.PathTypeName}_Size"] = result ?
+                        string.Format("{0}({1}) -> {2}({3})",
+                            target_db.Size,
+                            MonitorFunctions.ToReadableSize(target_db.Size ?? 0),
+                            target.Size,
+                            MonitorFunctions.ToReadableSize(target.Size ?? 0)) :
+                        string.Format("{0}({1})",
+                            target.Size,
+                            MonitorFunctions.ToReadableSize(target.Size ?? 0));
+                }
+                ret |= result;
             }
 
+            return ret;
+        }
 
+        public bool CheckDirectory(MonitorTarget target, Dictionary<string, string> dictionary, int serial, int depth)
+        {
+            bool ret = false;
 
+            MonitorTarget target_db = this.ContainsKey(target.Path) ?
+                this[target.Path] :
+                new MonitorTarget(PathType.Directory, target.Path);
 
+            //  CreationTime
+            if (IsCreationTime ?? false)
+            {
+                target.CreationTime = MonitorFunctions.GetCreationTime(target.DirectoryInfo, this.IsDateOnly ?? false, this.IsTimeOnly ?? false);
+                bool result = target.CreationTime != target_db.CreationTime;
+                if (target_db.CreationTime != null)
+                {
+                    dictionary[$"{serial}_{target.PathTypeName}_CreationTime"] = result ?
+                        string.Format("{0} -> {1}",
+                            target_db.CreationTime,
+                            target.CreationTime) :
+                        target.CreationTime;
+                }
+                ret |= result;
+            }
+
+            //  LastWriteTime
+            if (IsLastWriteTime ?? false)
+            {
+                target.LastWriteTime = MonitorFunctions.GetLastWriteTime(target.DirectoryInfo, this.IsDateOnly ?? false, this.IsTimeOnly ?? false);
+                bool result = target.LastWriteTime != target_db.LastWriteTime;
+                if (target_db.LastWriteTime != null)
+                {
+                    dictionary[$"{serial}_{target.PathTypeName}_LastWriteTime"] = result ?
+                        string.Format("{0} -> {1}",
+                            target_db.LastWriteTime,
+                            target.LastWriteTime) :
+                        target.LastWriteTime;
+                }
+                ret |= result;
+            }
+
+            //  LastAccessTime
+            if (IsLastAccessTime ?? false)
+            {
+                target.LastAccessTime = MonitorFunctions.GetLastAccessTime(target.DirectoryInfo, this.IsDateOnly ?? false, this.IsTimeOnly ?? false);
+                bool result = target.LastAccessTime != target_db.LastAccessTime;
+                if (target_db.LastAccessTime != null)
+                {
+                    dictionary[$"{serial}_{target.PathTypeName}_LastAccessTime"] = result ?
+                        string.Format("{0} -> {1}",
+                            target_db.LastAccessTime,
+                            target.LastAccessTime) :
+                        target.LastAccessTime;
+                }
+                ret |= result;
+            }
+
+            //  Access
+            if (IsAccess ?? false)
+            {
+                target.Access = AccessRuleSummary.DirectoryToAccessString(target.DirectoryInfo);
+                bool result = target.Access != target_db.Access;
+                if (target_db.Access != null)
+                {
+                    dictionary[$"{serial}_{target.PathTypeName}_Access"] = result ?
+                        string.Format("{0} -> {1}",
+                            target_db.Access,
+                            target.Access) :
+                        target.Access;
+                }
+                ret |= result;
+            }
+
+            //  Owner
+            if (IsOwner ?? false)
+            {
+                target.Owner = target.DirectoryInfo.GetAccessControl().GetOwner(typeof(System.Security.Principal.NTAccount)).Value;
+                bool result = target.Owner != target_db.Owner;
+                if (target_db.Owner != null)
+                {
+                    dictionary[$"{serial}_{target.PathTypeName}_Owner"] = result ?
+                        string.Format("{0} -> {1}",
+                            target_db.Owner,
+                            target.Owner) :
+                        target.Owner;
+                }
+                ret |= result;
+            }
+
+            //  Inherited
+            if (IsInherited ?? false)
+            {
+                target.Inherited = !target.DirectoryInfo.GetAccessControl().AreAccessRulesProtected;
+                bool result = target.Inherited != target_db.Inherited;
+                if (target_db.Inherited != null)
+                {
+                    dictionary[$"{serial}_{target.PathTypeName}_Inherited"] = result ?
+                        string.Format("{0} -> {1}",
+                            target_db.Inherited,
+                            target.Inherited) :
+                        target.Inherited.ToString();
+                }
+                ret |= result;
+            }
+
+            //  Attributes
+            if (IsAttributes ?? false)
+            {
+                target.Attributes = MonitorFunctions.GetAttributes(target.Path);
+                bool result = !target.Attributes.SequenceEqual(target_db.Attributes ?? new bool[0] { });
+                if (target_db.Attributes != null)
+                {
+                    dictionary[$"{serial}_{target.PathTypeName}_Attributes"] = result ?
+                        string.Format("{0} -> {1}",
+                            MonitorFunctions.ToReadableAttributes(target_db.Attributes),
+                            MonitorFunctions.ToReadableAttributes(target.Attributes)) :
+                        MonitorFunctions.ToReadableAttributes(target.Attributes);
+                }
+                ret |= result;
+            }
+
+            //  ChildCount
+            if ((IsChildCount ?? false) && depth == 0)
+            {
+                target.ChildCount = MonitorFunctions.GetDirectoryChildCount(target.Path);
+                bool result = !target.ChildCount.SequenceEqual(target_db.ChildCount ?? new int[0] { });
+                if (target_db.ChildCount != null)
+                {
+                    dictionary[$"{serial}_{target.PathTypeName}_ChildCount"] = result ?
+                        string.Format("{0} -> {1}",
+                            MonitorFunctions.ToReadableChildCount(target_db.ChildCount, target.PathType == PathType.Directory),
+                            MonitorFunctions.ToReadableChildCount(target.ChildCount, target.PathType == PathType.Directory)) :
+                        MonitorFunctions.ToReadableChildCount(target.ChildCount, target.PathType == PathType.Directory);
+                }
+                ret |= result;
+            }
+
+            return ret;
+        }
+
+        public bool CheckRegistryKey(MonitorTarget target, Dictionary<string, string> dictionary, int serial, int depth)
+        {
+            bool ret = false;
+
+            MonitorTarget target_db = this.ContainsKey(target.Path) ?
+                this[target.Path] :
+                new MonitorTarget(PathType.Registry, target.Path, target.Key);
+
+            //  Access
+            if (target.IsAccess ?? false)
+            {
+                target.Access = AccessRuleSummary.RegistryKeyToAccessString(target.Key);
+                bool result = target.Access != target_db.Access;
+                if (target_db.Access != null)
+                {
+                    dictionary[$"{serial}_{target.PathTypeName}_Access"] = result ?
+                        string.Format("{0} -> {1}",
+                            target_db.Access,
+                            target.Access) :
+                        target.Access;
+                }
+                ret |= result;
+            }
+
+            //  Owner
+            if (target.IsOwner ?? false)
+            {
+                target.Owner = target.Key.GetAccessControl().GetOwner(typeof(System.Security.Principal.NTAccount)).Value;
+                bool result = target.Owner != target_db.Owner;
+                if (target_db.Owner != null)
+                {
+                    dictionary[$"{serial}_{target.PathTypeName}_Owner"] = result ?
+                        string.Format("{0} -> {1}",
+                            target_db.Owner,
+                            target.Owner) :
+                        target.Owner;
+                }
+                ret |= result;
+            }
+
+            //  Inherited
+            if (target.IsInherited ?? false)
+            {
+                target.Inherited = !target.Key.GetAccessControl().AreAccessRulesProtected;
+                bool result = target.Inherited != target_db.Inherited;
+                if (target_db.Inherited != null)
+                {
+                    dictionary[$"{serial}_{target.PathTypeName}_Inherited"] = result ?
+                        string.Format("{0} -> {1}",
+                            target_db.Inherited,
+                            target.Inherited) :
+                        target.Inherited.ToString();
+                }
+                ret |= result;
+            }
+
+            //  ChildCount
+            if ((IsChildCount ?? false) && depth == 0)
+            {
+                target.ChildCount = MonitorFunctions.GetRegistryKeyChildCount(target.Key);
+                bool result = !target.ChildCount.SequenceEqual(target_db.ChildCount ?? new int[0] { });
+                if (target_db.ChildCount != null)
+                {
+                    dictionary[$"{serial}_{target.PathTypeName}_ChildCount"] = result ?
+                        string.Format("{0} -> {1}",
+                            MonitorFunctions.ToReadableChildCount(target_db.ChildCount, target.PathType == PathType.Directory),
+                            MonitorFunctions.ToReadableChildCount(target.ChildCount, target.PathType == PathType.Directory)) :
+                        MonitorFunctions.ToReadableChildCount(target.ChildCount, target.PathType == PathType.Directory);
+                }
+                ret |= result;
+            }
+
+            return ret;
+        }
+
+        public bool CheckRegistryValue(MonitorTarget target, Dictionary<string, string> dictionary, int serial)
+        {
+            bool ret = false;
+
+            MonitorTarget target_db = this.ContainsKey(target.Path) ?
+                this[target.Path] :
+                new MonitorTarget(PathType.Registry, target.Path, target.Key, target.Name);
+
+            //  MD5Hash
+            if (target.IsMD5Hash ?? false)
+            {
+                target.MD5Hash = MonitorFunctions.GetHash(target.Key, target.Name, System.Security.Cryptography.MD5.Create());
+                bool result = target.MD5Hash != target_db.MD5Hash;
+                if (target_db.MD5Hash != null)
+                {
+                    dictionary[$"{serial}_{target.PathTypeName}_MD5Hash"] = result ?
+                        string.Format("{0} -> {1}",
+                            target_db.MD5Hash,
+                            target.MD5Hash) :
+                        target.MD5Hash;
+                }
+                ret |= result;
+            }
+
+            //  SHA256Hash
+            if (target.IsSHA256Hash ?? false)
+            {
+                target.SHA256Hash = MonitorFunctions.GetHash(target.Key, target.Name, System.Security.Cryptography.SHA256.Create());
+                bool result = target.SHA256Hash != target_db.SHA256Hash;
+                if (target_db.SHA256Hash != null)
+                {
+                    dictionary[$"{serial}_{target.PathTypeName}_SHA256Hash"] = result ?
+                        string.Format("{0} -> {1}",
+                            target_db.SHA256Hash,
+                            target.SHA256Hash) :
+                        target.SHA256Hash;
+                }
+                ret |= result;
+            }
+
+            //  SHA512Hash
+            if (target.IsSHA512Hash ?? false)
+            {
+                target.SHA512Hash = MonitorFunctions.GetHash(target.Key, target.Name, System.Security.Cryptography.SHA512.Create());
+                bool result = target.SHA512Hash != target_db.SHA512Hash;
+                if (target_db.SHA512Hash != null)
+                {
+                    dictionary[$"{serial}_{target.PathTypeName}_SHA512Hash"] = result ?
+                        string.Format("{0} -> {1}",
+                            target_db.SHA512Hash,
+                            target.SHA512Hash) :
+                        target.SHA512Hash;
+                }
+                ret |= result;
+            }
+
+            //  RegistryType
+            if (target.IsRegistryType ?? false)
+            {
+                target.RegistryType = RegistryControl.ValueKindToString(target.Key.GetValueKind(target.Name));
+                bool result = target.RegistryType != target_db.RegistryType;
+                if (target_db.RegistryType != null)
+                {
+                    dictionary[$"{serial}_{target.PathTypeName}_RegistryType"] = result ?
+                        string.Format("{0} -> {1}",
+                            target_db.RegistryType,
+                            target.RegistryType) :
+                        target.RegistryType;
+                }
+                ret |= result;
+            }
+
+            return ret;
         }
     }
 }
