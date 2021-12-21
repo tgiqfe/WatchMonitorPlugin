@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Audit.Lib.Monitor;
+using IO.Lib;
 
 namespace WatchMonitorPlugin
 {
@@ -56,6 +57,57 @@ namespace WatchMonitorPlugin
                 IsDateOnly = _IsDateOnly,
                 IsTimeOnly = _IsTimeOnly,
             };
+        }
+
+
+        public void MainProcess2()
+        {
+            var dictionary = new Dictionary<string, string>();
+            dictionary["fileA"] = _PathA;
+            dictionary["fileB"] = _PathB;
+            this.Success = true;
+
+            MonitorTarget targetA = new MonitorTarget(PathType.File, _PathA, "fileA");
+            MonitorTarget targetB = new MonitorTarget(PathType.File, _PathB, "fileB");
+            targetA.CheckExists();
+            targetB.CheckExists();
+
+            MonitorTargetPair targetPair = new MonitorTargetPair(targetA, targetB)
+            {
+                IsCreationTime = _IsCreationTime,
+                IsLastWriteTime = _IsLastWriteTime,
+                IsLastAccessTime = _IsLastAccessTime,
+                IsAccess = _IsAccess,
+                IsOwner = _IsOwner,
+                IsInherited = _IsInherited,
+                IsAttributes = _IsAttributes,
+                IsMD5Hash = _IsMD5Hash,
+                IsSHA256Hash = _IsSHA256Hash,
+                IsSHA512Hash = _IsSHA512Hash,
+                IsSize = _IsSize,
+                IsDateOnly = _IsDateOnly,
+                IsTimeOnly = _IsTimeOnly,
+            };
+
+            if ((targetA.Exists ?? false) && (targetB.Exists ?? false))
+            {
+                dictionary["fileA_Exists"] = _PathA;
+                dictionary["fileB_Exists"] = _PathB;
+                Success &= targetPair.CheckFile(dictionary, _serial);
+            }
+            else
+            {
+                if (!targetA.Exists ?? false)
+                {
+                    dictionary["fileA_NotExists"] = _PathA;
+                    Success = false;
+                }
+                if (!targetB.Exists ?? false)
+                {
+                    dictionary["fileB_NotExists"] = _PathB;
+                    Success = false;
+                }
+            }
         }
 
         public void MainProcess()

@@ -109,6 +109,32 @@ namespace Audit.Lib.Monitor
             this.Name = name;
         }
 
+
+
+        public MonitorTarget(PathType pathType, string path, string pathTypeName)
+        {
+            this.PathType = pathType;
+            this.Path = path;
+            this.PathTypeName = pathTypeName;
+        }
+        public MonitorTarget(PathType pathType, string path, string pathTypeName, RegistryKey key)
+        {
+            this.PathType = pathType;
+            this.Path = path;
+            this.PathTypeName = pathTypeName;
+            this.Key = key;
+        }
+        public MonitorTarget(PathType pathType, string path, string pathTypeName, RegistryKey key, string name)
+        {
+            this.PathType = pathType;
+            this.Path = path;
+            this.PathTypeName = pathTypeName;
+            this.Key = key;
+            this.Name = name;
+        }
+
+
+
         #region Check method
 
         public void CheckExists()
