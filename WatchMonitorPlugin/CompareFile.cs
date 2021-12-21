@@ -38,11 +38,10 @@ namespace WatchMonitorPlugin
 
         private int _serial = 1;
 
-        private MonitorTarget CreateForFile(string path, string pathTypeName)
+        private MonitorTargetPair CreateMonitorTargetPair(MonitorTarget targetA, MonitorTarget targetB)
         {
-            return new MonitorTarget(IO.Lib.PathType.File, path)
+            return new MonitorTargetPair(targetA, targetB)
             {
-                PathTypeName = pathTypeName,
                 IsCreationTime = _IsCreationTime,
                 IsLastWriteTime = _IsLastWriteTime,
                 IsLastAccessTime = _IsLastAccessTime,
@@ -54,13 +53,13 @@ namespace WatchMonitorPlugin
                 IsSHA256Hash = _IsSHA256Hash,
                 IsSHA512Hash = _IsSHA512Hash,
                 IsSize = _IsSize,
+                //IsChildCount = _IsChildCount,
                 IsDateOnly = _IsDateOnly,
                 IsTimeOnly = _IsTimeOnly,
             };
         }
 
-
-        public void MainProcess2()
+        public void MainProcess()
         {
             var dictionary = new Dictionary<string, string>();
             dictionary["fileA"] = _PathA;
@@ -72,27 +71,12 @@ namespace WatchMonitorPlugin
             targetA.CheckExists();
             targetB.CheckExists();
 
-            MonitorTargetPair targetPair = new MonitorTargetPair(targetA, targetB)
-            {
-                IsCreationTime = _IsCreationTime,
-                IsLastWriteTime = _IsLastWriteTime,
-                IsLastAccessTime = _IsLastAccessTime,
-                IsAccess = _IsAccess,
-                IsOwner = _IsOwner,
-                IsInherited = _IsInherited,
-                IsAttributes = _IsAttributes,
-                IsMD5Hash = _IsMD5Hash,
-                IsSHA256Hash = _IsSHA256Hash,
-                IsSHA512Hash = _IsSHA512Hash,
-                IsSize = _IsSize,
-                IsDateOnly = _IsDateOnly,
-                IsTimeOnly = _IsTimeOnly,
-            };
-
             if ((targetA.Exists ?? false) && (targetB.Exists ?? false))
             {
                 dictionary["fileA_Exists"] = _PathA;
                 dictionary["fileB_Exists"] = _PathB;
+
+                var targetPair = CreateMonitorTargetPair(targetA, targetB);
                 Success &= targetPair.CheckFile(dictionary, _serial);
             }
             else
@@ -108,42 +92,6 @@ namespace WatchMonitorPlugin
                     Success = false;
                 }
             }
-        }
-
-        public void MainProcess()
-        {
-            var dictionary = new Dictionary<string, string>();
-            dictionary["fileA"] = _PathA;
-            dictionary["fileB"] = _PathB;
-            this.Success = true;
-
-            MonitorTarget targetA = CreateForFile(_PathA, "fileA");
-            MonitorTarget targetB = CreateForFile(_PathB, "fileB");
-            targetA.CheckExists();
-            targetB.CheckExists();
-
-            if ((targetA.Exists ?? false) && (targetB.Exists ?? false))
-            {
-                dictionary["fileA_Exists"] = _PathA;
-                dictionary["fileB_Exists"] = _PathB;
-                Success &= CompareFunctions.CheckFile(targetA, targetB, dictionary, _serial);
-            }
-            else
-            {
-                if (!targetA.Exists ?? false)
-                {
-                    dictionary["fileA_NotExists"] = _PathA;
-                    Success = false;
-                }
-                if (!targetB.Exists ?? false)
-                {
-                    dictionary["fileB_NotExists"] = _PathB;
-                    Success = false;
-                }
-            }
-
-
-
 
 
 

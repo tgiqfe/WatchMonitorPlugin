@@ -80,6 +80,51 @@ namespace WatchMonitorPlugin
             };
         }
 
+
+        private MonitorTargetPair CreateMonitorTargetPair(MonitorTarget targetA, MonitorTarget targetB)
+        {
+            return new MonitorTargetPair(targetA, targetB)
+            {
+                IsCreationTime = _IsCreationTime,
+                IsLastWriteTime = _IsLastWriteTime,
+                IsLastAccessTime = _IsLastAccessTime,
+                IsAccess = _IsAccess,
+                IsOwner = _IsOwner,
+                IsInherited = _IsInherited,
+                IsAttributes = _IsAttributes,
+                IsMD5Hash = _IsMD5Hash,
+                IsSHA256Hash = _IsSHA256Hash,
+                IsSHA512Hash = _IsSHA512Hash,
+                IsSize = _IsSize,
+                IsChildCount = _IsChildCount,
+                IsDateOnly = _IsDateOnly,
+                IsTimeOnly = _IsTimeOnly,
+            };
+        }
+
+        public void MainProcess2()
+        {
+            //  MaxDepth無指定の場合は[5]をセット
+            _MaxDepth ??= 5;
+
+            var dictionary = new Dictionary<string, string>();
+            dictionary["directoryA"] = _PathA;
+            dictionary["directoryB"] = _PathB;
+            this.Success = true;
+
+            Success &= RecursiveTree(
+                new MonitorTarget(PathType.Directory, _PathA, "directoryA"),
+                new MonitorTarget(PathType.Directory, _PathB, "directoryB"),
+                dictionary,
+                0);
+
+
+
+            this.Propeties = dictionary;
+        }
+
+
+
         public void MainProcess()
         {
             //  MaxDepth無指定の場合は[5]をセット
@@ -107,11 +152,15 @@ namespace WatchMonitorPlugin
             _serial++;
             targetA.CheckExists();
             targetB.CheckExists();
+
             if ((targetA.Exists ?? false) && (targetB.Exists ?? false))
             {
                 dictionary[$"{_serial}_directoryA_Exists"] = targetA.Path;
                 dictionary[$"{_serial}_directoryB_Exists"] = targetB.Path;
-                ret &= CompareFunctions.CheckDirectory(targetA, targetB, dictionary, _serial, depth);
+
+                var targetPair = CreateMonitorTargetPair(targetA, targetB);
+                ret &= targetPair.CheckDirectory(dictionary, _serial, depth);
+                //ret &= CompareFunctions.CheckDirectory(targetA, targetB, dictionary, _serial, depth);
 
                 if (depth < _MaxDepth)
                 {
@@ -128,7 +177,10 @@ namespace WatchMonitorPlugin
                         {
                             dictionary[$"{_serial}_fileA_Exists"] = childPathA;
                             dictionary[$"{_serial}_fileB_Exists"] = childPathB;
-                            ret &= CompareFunctions.CheckFile(targetA_leaf, targetB_leaf, dictionary, _serial);
+
+                            var targetPair_leaf = CreateMonitorTargetPair(targetA_leaf, targetB_leaf);
+                            ret &= targetPair_leaf.CheckFile(dictionary, _serial);
+                            //ret &= CompareFunctions.CheckFile(targetA_leaf, targetB_leaf, dictionary, _serial);
                         }
                         else
                         {
@@ -138,9 +190,15 @@ namespace WatchMonitorPlugin
                     }
                     foreach (string childPath in System.IO.Directory.GetDirectories(targetA.Path))
                     {
+
+                        //ret &= RecursiveTree(
+                        //    CreateForDirectory(childPath, "directoryA"),
+                        //    CreateForDirectory(Path.Combine(targetB.Path, Path.GetFileName(childPath)), "directoryB"),
+                        //    dictionary,
+                        //    depth + 1);
                         ret &= RecursiveTree(
-                            CreateForDirectory(childPath, "directoryA"),
-                            CreateForDirectory(Path.Combine(targetB.Path, Path.GetFileName(childPath)), "directoryB"),
+                            new MonitorTarget(PathType.Directory, childPath, "directoryA"),
+                            new MonitorTarget(PathType.Directory, Path.Combine(targetB.Path, Path.GetFileName(childPath), "directoryB")),
                             dictionary,
                             depth + 1);
                     }
