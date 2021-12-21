@@ -35,6 +35,8 @@ namespace Audit.Lib.Monitor
             this.TargetB = targetB;
         }
 
+        #region Check method
+
         public bool CheckFile(Dictionary<string, string> dictionary, int serial)
         {
             if (TargetA.PathType != PathType.File || TargetB.PathType != PathType.File)
@@ -302,5 +304,7 @@ namespace Audit.Lib.Monitor
 
             return ret;
         }
+
+        #endregion
     }
 }

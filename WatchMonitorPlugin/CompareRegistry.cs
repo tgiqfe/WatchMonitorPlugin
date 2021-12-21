@@ -92,8 +92,8 @@ namespace WatchMonitorPlugin
 
                     if ((targetA.Exists ?? false) && (targetB.Exists ?? false))
                     {
-                        dictionary["registryA_Exists"] = _PathA + "\\" + _NameA;
-                        dictionary["registryB_Exists"] = _PathB + "\\" + _NameB;
+                        dictionary[$"{_serial}_registryA_Exists"] = _PathA + "\\" + _NameA;
+                        dictionary[$"{_serial}_registryB_Exists"] = _PathB + "\\" + _NameB;
 
                         var targetPair = CreateMonitorTargetPair(targetA, targetB);
                         Success &= targetPair.CheckRegistryValue(dictionary, _serial);

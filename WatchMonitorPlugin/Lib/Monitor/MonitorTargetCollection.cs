@@ -105,6 +105,7 @@ namespace Audit.Lib.Monitor
         }
 
         #endregion
+        #region Check method
 
         public bool CheckFile(MonitorTarget target, Dictionary<string, string> dictionary, int serial)
         {
@@ -585,5 +586,7 @@ namespace Audit.Lib.Monitor
 
             return ret;
         }
+
+        #endregion
     }
 }
