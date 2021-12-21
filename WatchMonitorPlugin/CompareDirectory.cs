@@ -41,46 +41,6 @@ namespace WatchMonitorPlugin
 
         private int _serial = 0;
 
-        private MonitorTarget CreateForFile(string path, string pathTypeName)
-        {
-            return new MonitorTarget(PathType.File, path)
-            {
-                PathTypeName = pathTypeName,
-                IsCreationTime = _IsCreationTime,
-                IsLastWriteTime = _IsLastWriteTime,
-                IsLastAccessTime = _IsLastAccessTime,
-                IsAccess = _IsAccess,
-                IsOwner = _IsOwner,
-                IsInherited = _IsInherited,
-                IsAttributes = _IsAttributes,
-                IsMD5Hash = _IsMD5Hash,
-                IsSHA256Hash = _IsSHA256Hash,
-                IsSHA512Hash = _IsSHA512Hash,
-                IsSize = _IsSize,
-                IsDateOnly = _IsDateOnly,
-                IsTimeOnly = _IsTimeOnly,
-            };
-        }
-
-        private MonitorTarget CreateForDirectory(string path, string pathTypeName)
-        {
-            return new MonitorTarget(PathType.Directory, path)
-            {
-                PathTypeName = pathTypeName,
-                IsCreationTime = _IsCreationTime,
-                IsLastWriteTime = _IsLastWriteTime,
-                IsLastAccessTime = _IsLastAccessTime,
-                IsAccess = _IsAccess,
-                IsOwner = _IsOwner,
-                IsInherited = _IsInherited,
-                IsAttributes = _IsAttributes,
-                IsChildCount = _IsChildCount,
-                IsDateOnly = _IsDateOnly,
-                IsTimeOnly = _IsTimeOnly,
-            };
-        }
-
-
         private MonitorTargetPair CreateMonitorTargetPair(MonitorTarget targetA, MonitorTarget targetB)
         {
             return new MonitorTargetPair(targetA, targetB)
@@ -97,12 +57,13 @@ namespace WatchMonitorPlugin
                 IsSHA512Hash = _IsSHA512Hash,
                 IsSize = _IsSize,
                 IsChildCount = _IsChildCount,
+                //IsRegistryType = _IsRegistryType,
                 IsDateOnly = _IsDateOnly,
                 IsTimeOnly = _IsTimeOnly,
             };
         }
 
-        public void MainProcess2()
+        public void MainProcess()
         {
             //  MaxDepth無指定の場合は[5]をセット
             _MaxDepth ??= 5;
@@ -123,28 +84,6 @@ namespace WatchMonitorPlugin
             this.Propeties = dictionary;
         }
 
-
-
-        public void MainProcess()
-        {
-            //  MaxDepth無指定の場合は[5]をセット
-            _MaxDepth ??= 5;
-
-            var dictionary = new Dictionary<string, string>();
-            dictionary["directoryA"] = _PathA;
-            dictionary["directoryB"] = _PathB;
-            this.Success = true;
-
-            Success &= RecursiveTree(
-                CreateForDirectory(_PathA, "directoryA"),
-                CreateForDirectory(_PathB, "directoryB"),
-                dictionary,
-                0);
-
-
-            this.Propeties = dictionary;
-        }
-
         private bool RecursiveTree(MonitorTarget targetA, MonitorTarget targetB, Dictionary<string, string> dictionary, int depth)
         {
             bool ret = true;
@@ -160,7 +99,6 @@ namespace WatchMonitorPlugin
 
                 var targetPair = CreateMonitorTargetPair(targetA, targetB);
                 ret &= targetPair.CheckDirectory(dictionary, _serial, depth);
-                //ret &= CompareFunctions.CheckDirectory(targetA, targetB, dictionary, _serial, depth);
 
                 if (depth < _MaxDepth)
                 {
@@ -168,8 +106,8 @@ namespace WatchMonitorPlugin
                     {
                         _serial++;
                         string childPathB = Path.Combine(targetB.Path, Path.GetFileName(childPathA));
-                        MonitorTarget targetA_leaf = CreateForFile(childPathA, "fileA");
-                        MonitorTarget targetB_leaf = CreateForFile(childPathB, "fileB");
+                        MonitorTarget targetA_leaf = new MonitorTarget(PathType.File, childPathA, "fileA");
+                        MonitorTarget targetB_leaf = new MonitorTarget(PathType.File, childPathB, "fileB");
                         targetA_leaf.CheckExists();
                         targetB_leaf.CheckExists();
 
@@ -180,7 +118,6 @@ namespace WatchMonitorPlugin
 
                             var targetPair_leaf = CreateMonitorTargetPair(targetA_leaf, targetB_leaf);
                             ret &= targetPair_leaf.CheckFile(dictionary, _serial);
-                            //ret &= CompareFunctions.CheckFile(targetA_leaf, targetB_leaf, dictionary, _serial);
                         }
                         else
                         {
@@ -190,12 +127,6 @@ namespace WatchMonitorPlugin
                     }
                     foreach (string childPath in System.IO.Directory.GetDirectories(targetA.Path))
                     {
-
-                        //ret &= RecursiveTree(
-                        //    CreateForDirectory(childPath, "directoryA"),
-                        //    CreateForDirectory(Path.Combine(targetB.Path, Path.GetFileName(childPath)), "directoryB"),
-                        //    dictionary,
-                        //    depth + 1);
                         ret &= RecursiveTree(
                             new MonitorTarget(PathType.Directory, childPath, "directoryA"),
                             new MonitorTarget(PathType.Directory, Path.Combine(targetB.Path, Path.GetFileName(childPath), "directoryB")),
@@ -217,12 +148,7 @@ namespace WatchMonitorPlugin
                     ret = false;
                 }
             }
-
-
-
             return ret;
         }
-
-
     }
 }

@@ -67,6 +67,29 @@ namespace WatchMonitorPlugin
             };
         }
 
+        private MonitorTargetPair CreateMonitorTargetPair(MonitorTarget targetA, MonitorTarget targetB)
+        {
+            return new MonitorTargetPair(targetA, targetB)
+            {
+                //IsCreationTime = _IsCreationTime,
+                //IsLastWriteTime = _IsLastWriteTime,
+                //IsLastAccessTime = _IsLastAccessTime,
+                IsAccess = _IsAccess,
+                IsOwner = _IsOwner,
+                IsInherited = _IsInherited,
+                //IsAttributes = _IsAttributes,
+                IsMD5Hash = _IsMD5Hash,
+                IsSHA256Hash = _IsSHA256Hash,
+                IsSHA512Hash = _IsSHA512Hash,
+                //IsSize = _IsSize,
+                IsChildCount = _IsChildCount,
+                IsRegistryType = _IsRegistryType,
+                //IsDateOnly = _IsDateOnly,
+                //IsTimeOnly = _IsTimeOnly,
+            };
+        }
+
+
         public void MainProcess()
         {
             //  MaxDepth無指定の場合は[5]をセット
