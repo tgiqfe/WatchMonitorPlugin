@@ -102,7 +102,9 @@ namespace WatchMonitorPlugin
 
                 if (depth < _MaxDepth)
                 {
-                    foreach (string childPathA in System.IO.Directory.GetFiles(targetA.Path))
+                    var leaves = System.IO.Directory.GetFiles(targetA.Path).ToList();
+                    leaves.AddRange(System.IO.Directory.GetFiles(targetB.Path));
+                    foreach (string childPathA in leaves.Distinct())
                     {
                         _serial++;
                         string childPathB = Path.Combine(targetB.Path, Path.GetFileName(childPathA));
@@ -111,7 +113,7 @@ namespace WatchMonitorPlugin
                         targetA_leaf.CheckExists();
                         targetB_leaf.CheckExists();
 
-                        if (targetB_leaf.Exists ?? false)
+                        if ((targetA_leaf.Exists ?? false) && (targetB_leaf.Exists ?? false))
                         {
                             dictionary[$"{_serial}_fileA_Exists"] = childPathA;
                             dictionary[$"{_serial}_fileB_Exists"] = childPathB;
@@ -121,15 +123,27 @@ namespace WatchMonitorPlugin
                         }
                         else
                         {
-                            dictionary[$"{_serial}_fileB_NotExists"] = childPathB;
-                            ret = false;
+                            if(!targetA_leaf.Exists ?? false)
+                            {
+                                dictionary[$"{_serial}_fileA_NotExists"] = childPathA;
+                                ret = false;
+                            }
+                            if (!targetB_leaf.Exists ?? false)
+                            {
+                                dictionary[$"{_serial}_fileB_NotExists"] = childPathB;
+                                ret = false;
+                            }
                         }
                     }
-                    foreach (string childPath in System.IO.Directory.GetDirectories(targetA.Path))
+
+                    var containers = System.IO.Directory.GetDirectories(targetA.Path).ToList();
+                    containers.AddRange(System.IO.Directory.GetDirectories(targetB.Path));
+                    foreach (string childPathA in containers.Distinct())
                     {
+                        string childPathB = Path.Combine(targetB.Path, Path.GetFileName(childPathA));
                         ret &= RecursiveTree(
-                            new MonitorTarget(PathType.Directory, childPath, "directoryA"),
-                            new MonitorTarget(PathType.Directory, Path.Combine(targetB.Path, Path.GetFileName(childPath), "directoryB")),
+                            new MonitorTarget(PathType.Directory, childPathA, "directoryA"),
+                            new MonitorTarget(PathType.Directory, childPathB, "directoryB"),
                             dictionary,
                             depth + 1);
                     }
