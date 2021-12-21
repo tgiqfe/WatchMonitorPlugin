@@ -36,34 +36,32 @@ namespace WatchMonitorPlugin
 
         public bool Success { get; set; }
         public int? _MaxDepth { get; set; }
-        
+
 
 
         public Dictionary<string, string> Propeties = null;
 
         private int _serial = 0;
 
-        private MonitorTarget CreateForRegistryKey(string path, RegistryKey key, string pathTypeName)
+        private MonitorTargetPair CreateMonitorTargetPair(MonitorTarget targetA, MonitorTarget targetB)
         {
-            return new MonitorTarget(PathType.Registry, path, key)
+            return new MonitorTargetPair(targetA, targetB)
             {
-                PathTypeName = pathTypeName,
+                //IsCreationTime = _IsCreationTime,
+                //IsLastWriteTime = _IsLastWriteTime,
+                //IsLastAccessTime = _IsLastAccessTime,
                 IsAccess = _IsAccess,
                 IsOwner = _IsOwner,
                 IsInherited = _IsInherited,
-                IsChildCount = _IsChildCount,
-            };
-        }
-
-        private MonitorTarget CreateForRegistryValue(string path, RegistryKey key, string name, string pathTypeName)
-        {
-            return new MonitorTarget(PathType.Registry, path, key, name)
-            {
-                PathTypeName = pathTypeName,
+                //IsAttributes = _IsAttributes,
                 IsMD5Hash = _IsMD5Hash,
                 IsSHA256Hash = _IsSHA256Hash,
                 IsSHA512Hash = _IsSHA512Hash,
+                //IsSize = _IsSize,
+                IsChildCount = _IsChildCount,
                 IsRegistryType = _IsRegistryType,
+                //IsDateOnly = _IsDateOnly,
+                //IsTimeOnly = _IsTimeOnly,
             };
         }
 
@@ -87,8 +85,8 @@ namespace WatchMonitorPlugin
                 using (RegistryKey keyA = RegistryControl.GetRegistryKey(_PathA, false, false))
                 using (RegistryKey keyB = RegistryControl.GetRegistryKey(_PathB, false, false))
                 {
-                    MonitorTarget targetA = CreateForRegistryValue(_PathA, keyA, _NameA, "registryA");
-                    MonitorTarget targetB = CreateForRegistryValue(_PathB, keyB, _NameB, "registryB");
+                    MonitorTarget targetA = new MonitorTarget(PathType.Registry, _PathA, "registryA", keyA, _NameA);
+                    MonitorTarget targetB = new MonitorTarget(PathType.Registry, _PathB, "registryB", keyB, _NameB);
                     targetA.CheckExists();
                     targetB.CheckExists();
 
@@ -96,7 +94,9 @@ namespace WatchMonitorPlugin
                     {
                         dictionary["registryA_Exists"] = _PathA + "\\" + _NameA;
                         dictionary["registryB_Exists"] = _PathB + "\\" + _NameB;
-                        Success &= CompareFunctions.CheckRegistryValue(targetA, targetB, dictionary, _serial);
+
+                        var targetPair = CreateMonitorTargetPair(targetA, targetB);
+                        Success &= targetPair.CheckRegistryValue(dictionary, _serial);
                     }
                     else
                     {
@@ -119,12 +119,15 @@ namespace WatchMonitorPlugin
                 using (RegistryKey keyB = RegistryControl.GetRegistryKey(_PathB, false, false))
                 {
                     Success &= RecursiveTree(
-                        CreateForRegistryKey(_PathA, keyA, "registryA"),
-                        CreateForRegistryKey(_PathB, keyB, "registryB"),
+                        new MonitorTarget(PathType.Registry, _PathA, "registryA", keyA),
+                        new MonitorTarget(PathType.Registry, _PathB, "registryB", keyB),
                          dictionary,
                          0);
                 }
             }
+
+
+
 
 
             this.Propeties = dictionary;
@@ -148,8 +151,8 @@ namespace WatchMonitorPlugin
                     foreach (string childName in targetA.Key.GetValueNames())
                     {
                         _serial++;
-                        MonitorTarget targetA_leaf = CreateForRegistryValue(targetA.Path, targetA.Key, childName, "registryA");
-                        MonitorTarget targetB_leaf = CreateForRegistryValue(targetB.Path, targetB.Key, childName, "registryB");
+                        MonitorTarget targetA_leaf = new MonitorTarget(PathType.Registry, targetA.Path, "registryA", targetA.Key, childName);
+                        MonitorTarget targetB_leaf = new MonitorTarget(PathType.Registry, targetB.Path, "registryB", targetB.Key, childName);
                         targetA_leaf.CheckExists();
                         targetB_leaf.CheckExists();
 
@@ -171,8 +174,8 @@ namespace WatchMonitorPlugin
                         using (RegistryKey subRegKeyB = targetB.Key.OpenSubKey(keyPath, false))
                         {
                             ret &= RecursiveTree(
-                                CreateForRegistryKey(Path.Combine(targetA.Path, keyPath), subRegKeyA, "registryA"),
-                                CreateForRegistryKey(Path.Combine(targetB.Path, keyPath), subRegKeyB, "registryB"),
+                                new MonitorTarget(PathType.Registry, Path.Combine(targetA.Path, keyPath), "registryA", subRegKeyA),
+                                new MonitorTarget(PathType.Registry, Path.Combine(targetB.Path, keyPath), "registryB", subRegKeyB),
                                 dictionary,
                                 depth + 1);
                         }

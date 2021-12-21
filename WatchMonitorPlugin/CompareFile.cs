@@ -54,6 +54,7 @@ namespace WatchMonitorPlugin
                 IsSHA512Hash = _IsSHA512Hash,
                 IsSize = _IsSize,
                 //IsChildCount = _IsChildCount,
+                //IsRegistryType = _IsRegistryType,
                 IsDateOnly = _IsDateOnly,
                 IsTimeOnly = _IsTimeOnly,
             };
