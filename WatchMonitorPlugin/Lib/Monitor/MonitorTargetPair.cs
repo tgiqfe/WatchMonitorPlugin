@@ -29,6 +29,14 @@ namespace Audit.Lib.Monitor
         public bool? IsDateOnly { get; set; }
         public bool? IsTimeOnly { get; set; }
 
+        public MonitorTargetPair(MonitorTarget targetA, MonitorTarget targetB)
+        {
+            this.TargetA = targetA;
+            this.TargetB = targetB;
+        }
+
+        #region Check method
+
         public bool CheckFile(Dictionary<string, string> dictionary, int serial)
         {
             if (TargetA.PathType != PathType.File || TargetB.PathType != PathType.File)
@@ -296,5 +304,7 @@ namespace Audit.Lib.Monitor
 
             return ret;
         }
+
+        #endregion
     }
 }

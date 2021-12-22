@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Audit.Lib.Monitor;
+using IO.Lib;
 
 namespace WatchMonitorPlugin
 {
@@ -37,11 +38,10 @@ namespace WatchMonitorPlugin
 
         private int _serial = 1;
 
-        private MonitorTarget CreateForFile(string path, string pathTypeName)
+        private MonitorTargetPair CreateMonitorTargetPair(MonitorTarget targetA, MonitorTarget targetB)
         {
-            return new MonitorTarget(IO.Lib.PathType.File, path)
+            return new MonitorTargetPair(targetA, targetB)
             {
-                PathTypeName = pathTypeName,
                 IsCreationTime = _IsCreationTime,
                 IsLastWriteTime = _IsLastWriteTime,
                 IsLastAccessTime = _IsLastAccessTime,
@@ -53,6 +53,8 @@ namespace WatchMonitorPlugin
                 IsSHA256Hash = _IsSHA256Hash,
                 IsSHA512Hash = _IsSHA512Hash,
                 IsSize = _IsSize,
+                //IsChildCount = _IsChildCount,
+                //IsRegistryType = _IsRegistryType,
                 IsDateOnly = _IsDateOnly,
                 IsTimeOnly = _IsTimeOnly,
             };
@@ -65,8 +67,8 @@ namespace WatchMonitorPlugin
             dictionary["fileB"] = _PathB;
             this.Success = true;
 
-            MonitorTarget targetA = CreateForFile(_PathA, "fileA");
-            MonitorTarget targetB = CreateForFile(_PathB, "fileB");
+            MonitorTarget targetA = new MonitorTarget(PathType.File, _PathA, "fileA");
+            MonitorTarget targetB = new MonitorTarget(PathType.File, _PathB, "fileB");
             targetA.CheckExists();
             targetB.CheckExists();
 
@@ -74,7 +76,9 @@ namespace WatchMonitorPlugin
             {
                 dictionary["fileA_Exists"] = _PathA;
                 dictionary["fileB_Exists"] = _PathB;
-                Success &= CompareFunctions.CheckFile(targetA, targetB, dictionary, _serial);
+
+                var targetPair = CreateMonitorTargetPair(targetA, targetB);
+                Success &= targetPair.CheckFile(dictionary, _serial);
             }
             else
             {
@@ -89,9 +93,6 @@ namespace WatchMonitorPlugin
                     Success = false;
                 }
             }
-
-
-
 
 
 
