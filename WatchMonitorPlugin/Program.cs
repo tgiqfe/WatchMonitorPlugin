@@ -41,9 +41,9 @@ namespace WatchMonitorPlugin
             }
             else
             {
-                TestWatchFile(targetPaths);
+                //TestWatchFile(targetPaths);
                 //TestWatchDirectory(targetPaths);
-                //TestWatchRegistryKey(targetPaths);
+                TestWatchRegistryKey(targetPaths);
             }
         }
 
@@ -68,6 +68,7 @@ namespace WatchMonitorPlugin
                 _Path = targetPaths,
                 _IsLastWriteTime = true,
                 _IsMD5Hash = true,
+                _IsSize = true,
             };
             checkWatchFile(beginWatch);
 
@@ -80,7 +81,6 @@ namespace WatchMonitorPlugin
                         var tempWatch = new WatchFile()
                         {
                             _Id = Id,
-                            _Path = targetPaths,
                         };
                         checkWatchFile(tempWatch);
                         break;
@@ -141,7 +141,6 @@ namespace WatchMonitorPlugin
                         var tempWatch = new WatchDirectory()
                         {
                             _Id = Id,
-                            _Path = targetPaths,
                         };
                         checkWatchDirectory(tempWatch);
                         break;
@@ -190,6 +189,7 @@ namespace WatchMonitorPlugin
                 _Path = targetPaths,
                 _IsMD5Hash = true,
                 _IsRegistryType = true,
+                _IsOwner = true,
             };
             checkWatchRegistryKey(beginWatch);
 
@@ -202,7 +202,6 @@ namespace WatchMonitorPlugin
                         var tempWatch = new WatchRegistry()
                         {
                             _Id = Id,
-                            _Path = targetPaths,
                         };
                         checkWatchRegistryKey(tempWatch);
                         break;
@@ -321,6 +320,12 @@ namespace WatchMonitorPlugin
             compare.MainProcess();
             bool success = compare.Success;
             Dictionary<string, string> dictionary = compare.Propeties;
+
+            //  確認用
+            foreach (KeyValuePair<string, string> pair in dictionary)
+            {
+                Console.WriteLine(pair.Key + " : " + pair.Value);
+            }
 
             if (success)
             {

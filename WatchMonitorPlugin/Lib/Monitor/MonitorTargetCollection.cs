@@ -11,7 +11,7 @@ using IO.Lib;
 namespace Audit.Lib.Monitor
 {
     [System.Runtime.Versioning.SupportedOSPlatform("windows")]
-    internal class MonitorTargetCollection : Dictionary<string, MonitorTarget>
+    public class MonitorTargetCollection
     {
         public bool? IsCreationTime { get; set; }
         public bool? IsLastWriteTime { get; set; }
@@ -29,35 +29,42 @@ namespace Audit.Lib.Monitor
         public bool? IsDateOnly { get; set; }
         public bool? IsTimeOnly { get; set; }
 
+        public string[] PrevTargetPaths { get; set; }
+
+        public Dictionary<string, MonitorTarget> Targets { get; set; }
+
         const string REGPATH_PREFIX = "[reg]";
 
-        public MonitorTargetCollection() { }
+        public MonitorTargetCollection()
+        {
+            this.Targets = new Dictionary<string, MonitorTarget>();
+        }
 
         #region Get/Set MonitorTarget
 
         public MonitorTarget GetMonitorTarget(string path)
         {
-            string matchKey = this.Keys.FirstOrDefault(x => x.Equals(path, StringComparison.OrdinalIgnoreCase));
-            return matchKey == null ? null : this[matchKey];
+            string matchKey = this.Targets.Keys.FirstOrDefault(x => x.Equals(path, StringComparison.OrdinalIgnoreCase));
+            return matchKey == null ? null : this.Targets[matchKey];
         }
 
         public MonitorTarget GetMonitorTarget(string path, string name)
         {
             string regPath = REGPATH_PREFIX + path + "\\" + name;
-            string matchKey = this.Keys.FirstOrDefault(x => x.Equals(regPath, StringComparison.OrdinalIgnoreCase));
-            return matchKey == null ? null : this[matchKey];
+            string matchKey = this.Targets.Keys.FirstOrDefault(x => x.Equals(regPath, StringComparison.OrdinalIgnoreCase));
+            return matchKey == null ? null : this.Targets[matchKey];
         }
 
         public void SetMonitorTarget(string path, MonitorTarget target)
         {
-            this[path] = target;
+            this.Targets[path] = target;
             this._CheckedKeys.Add(path);
         }
 
         public void SetMonitorTarget(string path, string name, MonitorTarget target)
         {
             string regPath = REGPATH_PREFIX + path + "\\" + name;
-            this[regPath] = target;
+            this.Targets[regPath] = target;
             this._CheckedKeys.Add(regPath);
         }
 
@@ -68,7 +75,7 @@ namespace Audit.Lib.Monitor
 
         public IEnumerable<string> GetUncheckedKeys()
         {
-            return this.Keys.Where(x => !_CheckedKeys.Any(y => y.Equals(x, StringComparison.OrdinalIgnoreCase)));
+            return this.Targets.Keys.Where(x => !_CheckedKeys.Any(y => y.Equals(x, StringComparison.OrdinalIgnoreCase)));
         }
 
         #endregion
@@ -111,8 +118,8 @@ namespace Audit.Lib.Monitor
         {
             bool ret = false;
 
-            MonitorTarget target_db = this.ContainsKey(target.Path) ?
-                this[target.Path] :
+            MonitorTarget target_db = this.Targets.ContainsKey(target.Path) ?
+                this.Targets[target.Path] :
                 new MonitorTarget(PathType.File, target.Path, "file");
 
             //  CreationTime
@@ -302,8 +309,8 @@ namespace Audit.Lib.Monitor
         {
             bool ret = false;
 
-            MonitorTarget target_db = this.ContainsKey(target.Path) ?
-                this[target.Path] :
+            MonitorTarget target_db = this.Targets.ContainsKey(target.Path) ?
+                this.Targets[target.Path] :
                 new MonitorTarget(PathType.Directory, target.Path, "directory");
 
             //  CreationTime
@@ -441,12 +448,12 @@ namespace Audit.Lib.Monitor
         {
             bool ret = false;
 
-            MonitorTarget target_db = this.ContainsKey(target.Path) ?
-                this[target.Path] :
+            MonitorTarget target_db = this.Targets.ContainsKey(target.Path) ?
+                this.Targets[target.Path] :
                 new MonitorTarget(PathType.Registry, target.Path, "registry", target.Key);
 
             //  Access
-            if (target.IsAccess ?? false)
+            if (IsAccess ?? false)
             {
                 target.Access = AccessRuleSummary.RegistryKeyToAccessString(target.Key);
                 bool result = target.Access != target_db.Access;
@@ -462,7 +469,7 @@ namespace Audit.Lib.Monitor
             }
 
             //  Owner
-            if (target.IsOwner ?? false)
+            if (IsOwner ?? false)
             {
                 target.Owner = target.Key.GetAccessControl().GetOwner(typeof(System.Security.Principal.NTAccount)).Value;
                 bool result = target.Owner != target_db.Owner;
@@ -478,7 +485,7 @@ namespace Audit.Lib.Monitor
             }
 
             //  Inherited
-            if (target.IsInherited ?? false)
+            if (IsInherited ?? false)
             {
                 target.Inherited = !target.Key.GetAccessControl().AreAccessRulesProtected;
                 bool result = target.Inherited != target_db.Inherited;
@@ -516,12 +523,12 @@ namespace Audit.Lib.Monitor
         {
             bool ret = false;
 
-            MonitorTarget target_db = this.ContainsKey(target.Path) ?
-                this[target.Path] :
+            MonitorTarget target_db = this.Targets.ContainsKey(target.Path) ?
+                this.Targets[target.Path] :
                 new MonitorTarget(PathType.Registry, target.Path, "registry", target.Key, target.Name);
 
             //  MD5Hash
-            if (target.IsMD5Hash ?? false)
+            if (IsMD5Hash ?? false)
             {
                 target.MD5Hash = MonitorFunctions.GetHash(target.Key, target.Name, System.Security.Cryptography.MD5.Create());
                 bool result = target.MD5Hash != target_db.MD5Hash;
@@ -537,7 +544,7 @@ namespace Audit.Lib.Monitor
             }
 
             //  SHA256Hash
-            if (target.IsSHA256Hash ?? false)
+            if (IsSHA256Hash ?? false)
             {
                 target.SHA256Hash = MonitorFunctions.GetHash(target.Key, target.Name, System.Security.Cryptography.SHA256.Create());
                 bool result = target.SHA256Hash != target_db.SHA256Hash;
@@ -553,7 +560,7 @@ namespace Audit.Lib.Monitor
             }
 
             //  SHA512Hash
-            if (target.IsSHA512Hash ?? false)
+            if (IsSHA512Hash ?? false)
             {
                 target.SHA512Hash = MonitorFunctions.GetHash(target.Key, target.Name, System.Security.Cryptography.SHA512.Create());
                 bool result = target.SHA512Hash != target_db.SHA512Hash;
@@ -569,7 +576,7 @@ namespace Audit.Lib.Monitor
             }
 
             //  RegistryType
-            if (target.IsRegistryType ?? false)
+            if (IsRegistryType ?? false)
             {
                 target.RegistryType = RegistryControl.ValueKindToString(target.Key.GetValueKind(target.Name));
                 bool result = target.RegistryType != target_db.RegistryType;

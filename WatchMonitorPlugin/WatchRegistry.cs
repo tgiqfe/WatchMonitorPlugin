@@ -83,6 +83,16 @@ namespace WatchMonitorPlugin
             //if (_IsDateOnly != null) { collection.IsDateOnly = _IsDateOnly; }
             //if (_IsTimeOnly != null) { collection.IsTimeOnly = _IsTimeOnly; }
 
+            if (collection.PrevTargetPaths?.Length > 0)
+            {
+                var tempPaths = collection.PrevTargetPaths.ToList();
+                if (_Path?.Length > 0)
+                {
+                    tempPaths.AddRange(_Path);
+                }
+                this._Path = tempPaths.Distinct().ToArray();
+            }
+
             return collection;
         }
 
@@ -93,7 +103,7 @@ namespace WatchMonitorPlugin
                 CreateMonitorTargetCollection() :
                 MergeMonitorTargetCollection(MonitorTargetCollection.Load(GetWatchDBDirectory(), _Id));
             this._MaxDepth ??= 5;
-            this.Success = _Begin || (collection.Count == 0);
+            this.Success = _Begin || (collection.Targets.Count == 0);
 
             if (_Name?.Length > 0)
             {
@@ -132,10 +142,11 @@ namespace WatchMonitorPlugin
                 {
                     _serial++;
                     dictionary[$"{_serial}_remove"] = uncheckedPath;
-                    collection.Remove(uncheckedPath);
+                    collection.Targets.Remove(uncheckedPath);
                     Success = true;
                 }
             }
+            collection.PrevTargetPaths = _Path;
             collection.Save(GetWatchDBDirectory(), _Id);
 
 

@@ -80,6 +80,16 @@ namespace WatchMonitorPlugin
             if (_IsDateOnly != null) { collection.IsDateOnly = _IsDateOnly; }
             if (_IsTimeOnly != null) { collection.IsTimeOnly = _IsTimeOnly; }
 
+            if (collection.PrevTargetPaths?.Length > 0)
+            {
+                var tempPaths = collection.PrevTargetPaths.ToList();
+                if(_Path?.Length > 0)
+                {
+                    tempPaths.AddRange(_Path);
+                }
+                this._Path = tempPaths.Distinct().ToArray();
+            }
+
             return collection;
         }
 
@@ -91,7 +101,7 @@ namespace WatchMonitorPlugin
                 MergeMonitorTargetCollection(MonitorTargetCollection.Load(GetWatchDBDirectory(), _Id));
 
             //  Begin=trueあるいは、collectionが空っぽ(今回初回watch)の場合、Successをtrue
-            this.Success = _Begin || (collection.Count == 0);
+            this.Success = _Begin || (collection.Targets.Count == 0);
 
             foreach (string path in _Path)
             {
@@ -100,12 +110,13 @@ namespace WatchMonitorPlugin
 
                 MonitorTarget target = new MonitorTarget(PathType.File, path, "file");
                 target.CheckExists();
-                if(target.Exists ?? false)
+                if (target.Exists ?? false)
                 {
                     Success |= collection.CheckFile(target, dictionary, _serial);
                 }
                 collection.SetMonitorTarget(path, target);
             }
+            collection.PrevTargetPaths = _Path;
             collection.Save(GetWatchDBDirectory(), _Id);
 
 
