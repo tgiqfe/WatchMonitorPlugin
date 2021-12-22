@@ -113,7 +113,7 @@ namespace Audit.Lib.Monitor
 
             MonitorTarget target_db = this.ContainsKey(target.Path) ?
                 this[target.Path] :
-                new MonitorTarget(PathType.File, target.Path);
+                new MonitorTarget(PathType.File, target.Path, "file");
 
             //  CreationTime
             if (IsCreationTime ?? false)
@@ -304,7 +304,7 @@ namespace Audit.Lib.Monitor
 
             MonitorTarget target_db = this.ContainsKey(target.Path) ?
                 this[target.Path] :
-                new MonitorTarget(PathType.Directory, target.Path);
+                new MonitorTarget(PathType.Directory, target.Path, "directory");
 
             //  CreationTime
             if (IsCreationTime ?? false)
@@ -443,7 +443,7 @@ namespace Audit.Lib.Monitor
 
             MonitorTarget target_db = this.ContainsKey(target.Path) ?
                 this[target.Path] :
-                new MonitorTarget(PathType.Registry, target.Path, target.Key);
+                new MonitorTarget(PathType.Registry, target.Path, "registry", target.Key);
 
             //  Access
             if (target.IsAccess ?? false)
@@ -518,7 +518,7 @@ namespace Audit.Lib.Monitor
 
             MonitorTarget target_db = this.ContainsKey(target.Path) ?
                 this[target.Path] :
-                new MonitorTarget(PathType.Registry, target.Path, target.Key, target.Name);
+                new MonitorTarget(PathType.Registry, target.Path, "registry", target.Key, target.Name);
 
             //  MD5Hash
             if (target.IsMD5Hash ?? false)

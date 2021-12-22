@@ -98,7 +98,7 @@ namespace WatchMonitorPlugin
                 _serial++;
                 dictionary[$"{_serial}_file"] = path;
 
-                MonitorTarget target = new MonitorTarget(PathType.File, path);
+                MonitorTarget target = new MonitorTarget(PathType.File, path, "file");
                 target.CheckExists();
                 if(target.Exists ?? false)
                 {

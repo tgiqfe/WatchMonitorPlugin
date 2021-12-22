@@ -89,6 +89,8 @@ namespace Audit.Lib.Monitor
         #endregion
 
         public MonitorTarget() { }
+
+        /*
         public MonitorTarget(PathType pathType, string path)
         {
             this.PathType = pathType;
@@ -108,6 +110,7 @@ namespace Audit.Lib.Monitor
             this.Key = key;
             this.Name = name;
         }
+        */
 
 
 
@@ -271,6 +274,7 @@ namespace Audit.Lib.Monitor
 
         #endregion
 
+        /*
         /// <summary>
         /// Is～プロパティをマージする
         /// </summary>
@@ -293,5 +297,6 @@ namespace Audit.Lib.Monitor
             if (target.IsDateOnly != null) { this.IsDateOnly = target.IsDateOnly; }
             if (target.IsTimeOnly != null) { this.IsTimeOnly = target.IsTimeOnly; }
         }
+        */
     }
 }
