@@ -80,6 +80,8 @@ namespace WatchMonitorPlugin
             if (_IsDateOnly != null) { collection.IsDateOnly = _IsDateOnly; }
             if (_IsTimeOnly != null) { collection.IsTimeOnly = _IsTimeOnly; }
 
+
+
             return collection;
         }
 
@@ -100,7 +102,7 @@ namespace WatchMonitorPlugin
 
                 MonitorTarget target = new MonitorTarget(PathType.File, path, "file");
                 target.CheckExists();
-                if(target.Exists ?? false)
+                if (target.Exists ?? false)
                 {
                     Success |= collection.CheckFile(target, dictionary, _serial);
                 }

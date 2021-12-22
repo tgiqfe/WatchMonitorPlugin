@@ -13,10 +13,10 @@ namespace WatchMonitorPlugin
         public static void Main(string[] args)
         {
             //  Watch用テスト
-            //Watching();
+            Watching();
 
             //  Compare用テスト
-            Comparing();
+            //Comparing();
 
             Console.ReadLine();
         }
@@ -37,7 +37,7 @@ namespace WatchMonitorPlugin
                 string[] targetNames = valueName.Contains(";") ?
                     valueName.Split(';').Select(x => x.Trim()).ToArray() :
                     new string[1] { valueName };
-                TestWatchRegistryValue(targetPath, targetNames);
+                //TestWatchRegistryValue(targetPath, targetNames);
             }
             else
             {
@@ -68,6 +68,7 @@ namespace WatchMonitorPlugin
                 _Path = targetPaths,
                 _IsLastWriteTime = true,
                 _IsMD5Hash = true,
+                _IsSize = true,
             };
             checkWatchFile(beginWatch);
 
@@ -80,7 +81,6 @@ namespace WatchMonitorPlugin
                         var tempWatch = new WatchFile()
                         {
                             _Id = Id,
-                            _Path = targetPaths,
                         };
                         checkWatchFile(tempWatch);
                         break;

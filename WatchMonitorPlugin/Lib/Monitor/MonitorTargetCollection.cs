@@ -11,7 +11,7 @@ using IO.Lib;
 namespace Audit.Lib.Monitor
 {
     [System.Runtime.Versioning.SupportedOSPlatform("windows")]
-    internal class MonitorTargetCollection : Dictionary<string, MonitorTarget>
+    public class MonitorTargetCollection : Dictionary<string, MonitorTarget>
     {
         public bool? IsCreationTime { get; set; }
         public bool? IsLastWriteTime { get; set; }
